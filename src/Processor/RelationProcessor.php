@@ -46,7 +46,7 @@ class RelationProcessor implements ProcessorInterface
     public function __construct(DatabaseManager $databaseManager, EmgHelper $helper)
     {
         $this->databaseManager = $databaseManager;
-        $this->helper          = $helper;
+        $this->helper = $helper;
     }
 
     /**
@@ -55,7 +55,7 @@ class RelationProcessor implements ProcessorInterface
     public function process(EloquentModel $model, Config $config)
     {
         $schemaManager = $this->databaseManager->connection($config->get('connection'))->getDoctrineSchemaManager();
-        $prefix        = $this->databaseManager->connection($config->get('connection'))->getTablePrefix();
+        $prefix = $this->databaseManager->connection($config->get('connection'))->getTablePrefix();
 
         $foreignKeys = $schemaManager->listTableForeignKeys($prefix . $model->getTableName());
         foreach ($foreignKeys as $tableForeignKey) {
@@ -73,11 +73,14 @@ class RelationProcessor implements ProcessorInterface
         }
 
         $tables = $schemaManager->listTables();
+        $names = [];
+        foreach ($tables as $table)
+            array_push($names, $table->getName());
+        //FARE CHECK SE NOMI TABELLA IN FOREIGN KEYS
         foreach ($tables as $table) {
             if ($table->getName() === $prefix . $model->getTableName()) {
                 continue;
             }
-
             $foreignKeys = $table->getForeignKeys();
             foreach ($foreignKeys as $name => $foreignKey) {
                 if ($foreignKey->getForeignTableName() === $prefix . $model->getTableName()) {
@@ -85,11 +88,11 @@ class RelationProcessor implements ProcessorInterface
                     if (count($localColumns) !== 1) {
                         continue;
                     }
-
-                    if (count($foreignKeys) === 2 && count($table->getColumns()) === 2) {
-                        $keys               = array_keys($foreignKeys);
-                        $key                = array_search($name, $keys) === 0 ? 1 : 0;
-                        $secondForeignKey   = $foreignKeys[$keys[$key]];
+                    $isTableNameARelationTableName = self::isTableNameARelationTableName($table->getName(), $names);
+                    if (count($foreignKeys) === 2 && ((count($table->getColumns()) === 2) || ((count($table->getColumns()) > 2 && $isTableNameARelationTableName)))) {
+                        $keys = array_keys($foreignKeys);
+                        $key = array_search($name, $keys) === 0 ? 1 : 0;
+                        $secondForeignKey = $foreignKeys[$keys[$key]];
                         $secondForeignTable = $this->removePrefix($prefix, $secondForeignKey->getForeignTableName());
 
                         $relation = new BelongsToMany(
@@ -102,9 +105,9 @@ class RelationProcessor implements ProcessorInterface
 
                         break;
                     } else {
-                        $tableName     = $this->removePrefix($prefix, $foreignKey->getLocalTableName());
+                        $tableName = $this->removePrefix($prefix, $foreignKey->getLocalTableName());
                         $foreignColumn = $localColumns[0];
-                        $localColumn   = $foreignKey->getForeignColumns()[0];
+                        $localColumn = $foreignKey->getForeignColumns()[0];
 
                         if ($this->isColumnUnique($table, $foreignColumn)) {
                             $relation = new HasOne($tableName, $foreignColumn, $localColumn);
@@ -118,6 +121,40 @@ class RelationProcessor implements ProcessorInterface
             }
         }
     }
+
+    private function isTableNameARelationTableName($tableName, $allTablesName)
+    {
+        $singol = [];
+        $containedInTableName = [];
+        $singolarizedCurrentTable = Str::singular($tableName);
+        foreach ($allTablesName as $p) {
+            $sin = Str::singular($p);
+            $singol[] = $sin;
+            if(strpos($tableName,$sin) !== false && $sin !== $singolarizedCurrentTable)
+                $containedInTableName[] = $sin;
+        }
+        $countContained = count($containedInTableName);
+        if($countContained < 2)
+            return false;
+        if($countContained > 1 && (count(array_intersect($containedInTableName, $singol)) == $countContained) )
+            return true;
+        return false;
+    }
+
+   /* public static function pluralize( $singular, $plural=null) {
+        if(!strlen($singular)) return $singular;
+        if($plural!==null) return $plural;
+
+        $last_letter = strtolower($singular[strlen($singular)-1]);
+        switch($last_letter) {
+            case 'y':
+                return substr($singular,0,-1).'ies';
+            case 's':
+                return $singular.'es';
+            default:
+                return $singular.'s';
+        }
+    }*/
 
     /**
      * @inheritdoc
@@ -157,22 +194,31 @@ class RelationProcessor implements ProcessorInterface
     {
         $relationClass = Str::singular(Str::studly($relation->getTableName()));
         if ($relation instanceof HasOne) {
-            $name     = Str::singular(Str::camel($relation->getTableName()));
+            $name = Str::singular(Str::camel($relation->getTableName()));
             $docBlock = sprintf('@return \%s', EloquentHasOne::class);
 
             $virtualPropertyType = $relationClass;
         } elseif ($relation instanceof HasMany) {
-            $name     = Str::plural(Str::camel($relation->getTableName()));
+            $name = Str::plural(Str::camel($relation->getTableName()));
             $docBlock = sprintf('@return \%s', EloquentHasMany::class);
 
             $virtualPropertyType = sprintf('%s[]', $relationClass);
         } elseif ($relation instanceof BelongsTo) {
-            $name     = Str::singular(Str::camel($relation->getTableName()));
+            $relationKey = $this->resolveArgument(
+                $relation->getForeignColumnName(),
+                $this->helper->getDefaultForeignColumnName($relation->getTableName()));
+            if(empty($relationKey))
+            $name = Str::singular(Str::camel($relation->getTableName()));
+            else {
+                if(ends_with($relationKey,"_id"))
+                    $relationKey = substr($relationKey,0,-3);
+                $name = Str::singular(Str::camel($relationKey));
+            }
             $docBlock = sprintf('@return \%s', EloquentBelongsTo::class);
 
             $virtualPropertyType = $relationClass;
         } elseif ($relation instanceof BelongsToMany) {
-            $name     = Str::plural(Str::camel($relation->getTableName()));
+            $name = Str::plural(Str::camel($relation->getTableName()));
             $docBlock = sprintf('@return \%s', EloquentBelongsToMany::class);
 
             $virtualPropertyType = sprintf('%s[]', $relationClass);
@@ -196,7 +242,7 @@ class RelationProcessor implements ProcessorInterface
     protected function createMethodBody(EloquentModel $model, Relation $relation)
     {
         $reflectionObject = new \ReflectionObject($relation);
-        $name             = Str::camel($reflectionObject->getShortName());
+        $name = Str::camel($reflectionObject->getShortName());
 
         $arguments = [
             $model->getNamespace()->getNamespace() . '\\' . Str::singular(Str::studly($relation->getTableName()))
@@ -207,10 +253,10 @@ class RelationProcessor implements ProcessorInterface
                 $model->getTableName(),
                 $relation->getTableName()
             );
-            $joinTableName        = $relation->getJoinTable() === $defaultJoinTableName
+            $joinTableName = $relation->getJoinTable() === $defaultJoinTableName
                 ? null
                 : $relation->getJoinTable();
-            $arguments[]          = $joinTableName;
+            $arguments[] = $joinTableName;
 
             $arguments[] = $this->resolveArgument(
                 $relation->getForeignColumnName(),
@@ -249,7 +295,7 @@ class RelationProcessor implements ProcessorInterface
      */
     protected function prepareArguments(array $array)
     {
-        $array     = array_reverse($array);
+        $array = array_reverse($array);
         $milestone = false;
         foreach ($array as $key => &$item) {
             if (!$milestone) {

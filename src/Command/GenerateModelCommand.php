@@ -4,11 +4,13 @@ namespace Krlove\EloquentModelGenerator\Command;
 
 use Illuminate\Config\Repository as AppConfig;
 use Illuminate\Console\Command;
+use Illuminate\Database\DatabaseManager;
 use Krlove\EloquentModelGenerator\Config;
 use Krlove\EloquentModelGenerator\Generator;
 use Krlove\EloquentModelGenerator\TypeRegistry;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
+use Illuminate\Support\Str;
 
 /**
  * Class GenerateModelCommand
@@ -32,16 +34,21 @@ class GenerateModelCommand extends Command
     protected $appConfig;
 
     /**
+     * @var DatabaseManager
+     */
+    protected $databaseManager;
+
+    /**
      * GenerateModelCommand constructor.
      * @param Generator $generator
      * @param AppConfig $appConfig
      */
-    public function __construct(Generator $generator, AppConfig $appConfig)
+    public function __construct(Generator $generator, AppConfig $appConfig, DatabaseManager $databaseManager)
     {
         parent::__construct();
-
         $this->generator = $generator;
         $this->appConfig = $appConfig;
+        $this->databaseManager = $databaseManager;
     }
 
     /**
@@ -51,9 +58,26 @@ class GenerateModelCommand extends Command
     {
         $config = $this->createConfig();
 
-        $model = $this->generator->generateModel($config);
-
-        $this->output->writeln(sprintf('Model %s generated', $model->getName()->getName()));
+        $schemaManager = $this->databaseManager->connection($config->get('connection'))->getDoctrineSchemaManager();
+        $prefix = $this->databaseManager->connection($config->get('connection'))->getTablePrefix();
+        //If argument is "all" we will create models for all tables
+        if (strtolower($config->get('class_name')) === 'all') {
+            $names = $schemaManager->listTableNames();
+            //tables for which not create models by configuration
+            $exceptTables = explode(",", strtolower($config->get('except-tables')));
+            foreach ($names as $name) {
+                //if table is from another schema and the one in connection it contains schema_name.table_name
+                $isAnotherSchemaTableName = count(explode('.', $name)) > 1;
+                if (!$isAnotherSchemaTableName && !in_array(strtolower($name), $exceptTables) && !$this->isTableNameARelationTableName($name, $names) && !ends_with($name, "_translations")) {
+                    $config->set("class_name", $this->getDefaultClassName($name));
+                    $model = $this->generator->generateModel($config);
+                    $this->output->writeln(sprintf('Model %s generated', $model->getName()->getName()));
+                }
+            }
+        } else {
+            $model = $this->generator->generateModel($config);
+            $this->output->writeln(sprintf('Model %s generated', $model->getName()->getName()));
+        }
     }
 
     /**
@@ -70,7 +94,6 @@ class GenerateModelCommand extends Command
     protected function createConfig()
     {
         $config = [];
-
         foreach ($this->getArguments() as $argument) {
             $config[$argument[0]] = $this->argument($argument[0]);
         }
@@ -110,6 +133,31 @@ class GenerateModelCommand extends Command
             ['no-timestamps', 'ts', InputOption::VALUE_NONE, 'Set timestamps property to false', null],
             ['date-format', 'df', InputOption::VALUE_OPTIONAL, 'dateFormat property', null],
             ['connection', 'cn', InputOption::VALUE_OPTIONAL, 'Connection property', null],
+            ['except-tables', 'et', InputOption::VALUE_OPTIONAL, 'Table to not process', null]
         ];
+    }
+
+    private function getDefaultClassName($tableName)
+    {
+        return Str::ucfirst(Str::camel(Str::singular($tableName)));
+    }
+
+    private function isTableNameARelationTableName($tableName, $allTablesName)
+    {
+        $singol = [];
+        $containedInTableName = [];
+        $singolarizedCurrentTable = Str::singular($tableName);
+        foreach ($allTablesName as $p) {
+            $sin = Str::singular($p);
+            $singol[] = $sin;
+            if (strpos($tableName, $sin) !== false && $sin !== $singolarizedCurrentTable)
+                $containedInTableName[] = $sin;
+        }
+        $countContained = count($containedInTableName);
+        if ($countContained < 2)
+            return false;
+        if ($countContained > 1 && (count(array_intersect($containedInTableName, $singol)) == $countContained))
+            return true;
+        return false;
     }
 }

@@ -48,6 +48,7 @@ class TableNameProcessor implements ProcessorInterface
             $property->setDocBlock(new DocBlockModel('The table associated with the model.', '', '@var string'));
             $model->addProperty($property);
         }
+
     }
 
     /**

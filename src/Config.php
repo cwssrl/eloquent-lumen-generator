@@ -49,6 +49,17 @@ class Config
     }
 
     /**
+     * @param string $key
+     * @param string $value
+     * @return null
+     */
+    public function set($key,$value)
+    {
+        $this->config[$key] = $value;
+    }
+
+
+    /**
      * @param array $high
      * @param array $low
      * @return array
