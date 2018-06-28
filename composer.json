@@ -1,7 +1,6 @@
 {
   "name": "cwssrl/eloquent-model-generator",
   "description": "Eloquent Model Generator",
-  "version": "1.2.9",
   "license": "MIT",
   "authors": [
     {
