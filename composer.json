@@ -1,16 +1,16 @@
 {
-  "name": "samsalvatico/eloquent-model-generator",
+  "name": "cwssrl/eloquent-model-generator",
   "description": "Eloquent Model Generator",
   "version": "1.2.6",
   "license": "MIT",
   "autoload": {
     "psr-4": {
-      "SamSalvatico\\EloquentModelGenerator\\": "src/"
+      "Cws\\EloquentModelGenerator\\": "src/"
     }
   },
   "require": {
     "laravel/framework": "^5.5",
     "doctrine/dbal": "^2.5",
-    "SamSalvatico/code-generator": "pgcustom"
+    "cwssrl/code-generator": "pgcustom"
   }
 }
