@@ -1,7 +1,7 @@
 {
   "name": "cwssrl/eloquent-model-generator",
   "description": "Eloquent Model Generator",
-  "version": "1.2.8",
+  "version": "1.2.9",
   "license": "MIT",
   "autoload": {
     "psr-4": {
