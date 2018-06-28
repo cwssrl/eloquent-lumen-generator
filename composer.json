@@ -13,7 +13,7 @@
       "email": "andrea.romanello@cws.it",
       "role": "Developer"
     }
-  ]
+  ],
   "autoload": {
     "psr-4": {
       "Cws\\EloquentModelGenerator\\": "src/"
