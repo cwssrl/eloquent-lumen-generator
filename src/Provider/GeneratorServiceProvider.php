@@ -21,6 +21,7 @@ use Cws\EloquentModelGenerator\Processor\TableNameProcessor;
 class GeneratorServiceProvider extends ServiceProvider
 {
     const PROCESSOR_TAG = 'eloquent_model_generator.processor';
+
     /**
      * {@inheritDoc}
      */
@@ -43,5 +44,12 @@ class GeneratorServiceProvider extends ServiceProvider
         $this->app->bind(EloquentModelBuilder::class, function (Application $app) {
             return new EloquentModelBuilder($app->tagged(self::PROCESSOR_TAG));
         });
+    }
+
+    public function boot()
+    {
+        $this->publishes([
+            __DIR__ . '/../Resources/eloquent_model_generator.php' => config_path('eloquent_model_generator.php')
+        ], 'config');
     }
 }
