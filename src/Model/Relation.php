@@ -1,10 +1,10 @@
 <?php
 
-namespace Krlove\EloquentModelGenerator\Model;
+namespace Cws\EloquentModelGenerator\Model;
 
 /**
  * Class Relation
- * @package Krlove\EloquentModelGenerator\Model
+ * @package Cws\EloquentModelGenerator\Model
  */
 abstract class Relation
 {

@@ -1,15 +1,15 @@
 <?php
 
-namespace Krlove\EloquentModelGenerator\Processor;
+namespace Cws\EloquentModelGenerator\Processor;
 
-use Krlove\CodeGenerator\Model\DocBlockModel;
-use Krlove\CodeGenerator\Model\PropertyModel;
-use Krlove\EloquentModelGenerator\Config;
-use Krlove\EloquentModelGenerator\Model\EloquentModel;
+use Cws\CodeGenerator\Model\DocBlockModel;
+use Cws\CodeGenerator\Model\PropertyModel;
+use Cws\EloquentModelGenerator\Config;
+use Cws\EloquentModelGenerator\Model\EloquentModel;
 
 /**
  * Class CustomPropertyProcessor
- * @package Krlove\EloquentModelGenerator\Processor
+ * @package Cws\EloquentModelGenerator\Processor
  */
 class CustomPropertyProcessor implements ProcessorInterface
 {

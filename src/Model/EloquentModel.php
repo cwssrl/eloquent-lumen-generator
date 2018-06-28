@@ -1,12 +1,12 @@
 <?php
 
-namespace Krlove\EloquentModelGenerator\Model;
+namespace Cws\EloquentModelGenerator\Model;
 
-use Krlove\CodeGenerator\Model\ClassModel;
+use Cws\CodeGenerator\Model\ClassModel;
 
 /**
  * Class EloquentModel
- * @package Krlove\EloquentModelGenerator\Model
+ * @package Cws\EloquentModelGenerator\Model
  */
 class EloquentModel extends ClassModel
 {

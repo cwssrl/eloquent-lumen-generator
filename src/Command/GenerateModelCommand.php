@@ -1,27 +1,27 @@
 <?php
 
-namespace Krlove\EloquentModelGenerator\Command;
+namespace Cws\EloquentModelGenerator\Command;
 
 use Illuminate\Config\Repository as AppConfig;
 use Illuminate\Console\Command;
 use Illuminate\Database\DatabaseManager;
-use Krlove\EloquentModelGenerator\Config;
-use Krlove\EloquentModelGenerator\Generator;
-use Krlove\EloquentModelGenerator\TypeRegistry;
+use Cws\EloquentModelGenerator\Config;
+use Cws\EloquentModelGenerator\Generator;
+use Cws\EloquentModelGenerator\TypeRegistry;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 use Illuminate\Support\Str;
 
 /**
  * Class GenerateModelCommand
- * @package Krlove\EloquentModelGenerator\Command
+ * @package Cws\EloquentModelGenerator\Command
  */
 class GenerateModelCommand extends Command
 {
     /**
      * @var string
      */
-    protected $name = 'krlove:generate:model';
+    protected $name = 'cws:generate:model';
 
     /**
      * @var Generator

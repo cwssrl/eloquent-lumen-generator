@@ -1,12 +1,12 @@
 <?php
 
-namespace Krlove\EloquentModelGenerator\Helper;
+namespace Cws\EloquentModelGenerator\Helper;
 
 use Illuminate\Support\Str;
 
 /**
  * Class EmgHelper
- * @package Krlove\EloquentModelGenerator\Helper
+ * @package Cws\EloquentModelGenerator\Helper
  */
 class EmgHelper
 {

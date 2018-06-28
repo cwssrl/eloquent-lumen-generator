@@ -1,18 +1,18 @@
 <?php
 
-namespace Krlove\EloquentModelGenerator\Processor;
+namespace Cws\EloquentModelGenerator\Processor;
 
-use Krlove\CodeGenerator\Model\ClassNameModel;
-use Krlove\CodeGenerator\Model\DocBlockModel;
-use Krlove\CodeGenerator\Model\PropertyModel;
-use Krlove\CodeGenerator\Model\UseClassModel;
-use Krlove\EloquentModelGenerator\Config;
-use Krlove\EloquentModelGenerator\Helper\EmgHelper;
-use Krlove\EloquentModelGenerator\Model\EloquentModel;
+use Cws\CodeGenerator\Model\ClassNameModel;
+use Cws\CodeGenerator\Model\DocBlockModel;
+use Cws\CodeGenerator\Model\PropertyModel;
+use Cws\CodeGenerator\Model\UseClassModel;
+use Cws\EloquentModelGenerator\Config;
+use Cws\EloquentModelGenerator\Helper\EmgHelper;
+use Cws\EloquentModelGenerator\Model\EloquentModel;
 
 /**
  * Class TableNameProcessor
- * @package Krlove\EloquentModelGenerator\Processor
+ * @package Cws\EloquentModelGenerator\Processor
  */
 class TableNameProcessor implements ProcessorInterface
 {

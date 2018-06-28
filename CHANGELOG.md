@@ -10,7 +10,7 @@ CHANGELOG
 
 2017-06-23, v1.2.4
 -----------------
-* Fixed issue [#25](https://github.com/krlove/eloquent-model-generator/issues/25)
+* Fixed issue [#25](https://github.com/Cws/eloquent-model-generator/issues/25)
 
 2016-08-20, v1.2.0
 -----------------

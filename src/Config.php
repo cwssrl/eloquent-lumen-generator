@@ -1,10 +1,10 @@
 <?php
 
-namespace Krlove\EloquentModelGenerator;
+namespace Cws\EloquentModelGenerator;
 
 /**
  * Class Config
- * @package Krlove\EloquentModelGenerator
+ * @package Cws\EloquentModelGenerator
  */
 class Config
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace Krlove\EloquentModelGenerator;
+namespace Cws\EloquentModelGenerator;
 
 use Doctrine\DBAL\Schema\AbstractSchemaManager;
 use Illuminate\Config\Repository as AppConfig;
@@ -8,7 +8,7 @@ use Illuminate\Database\DatabaseManager;
 
 /**
  * Class TypeRegistry
- * @package Krlove\EloquentModelGenerator
+ * @package Cws\EloquentModelGenerator
  */
 class TypeRegistry
 {

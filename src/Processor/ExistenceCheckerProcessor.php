@@ -1,16 +1,16 @@
 <?php
 
-namespace Krlove\EloquentModelGenerator\Processor;
+namespace Cws\EloquentModelGenerator\Processor;
 
 use Doctrine\DBAL\Schema\AbstractSchemaManager;
 use Illuminate\Database\DatabaseManager;
-use Krlove\EloquentModelGenerator\Config;
-use Krlove\EloquentModelGenerator\Exception\GeneratorException;
-use Krlove\EloquentModelGenerator\Model\EloquentModel;
+use Cws\EloquentModelGenerator\Config;
+use Cws\EloquentModelGenerator\Exception\GeneratorException;
+use Cws\EloquentModelGenerator\Model\EloquentModel;
 
 /**
  * Class ExistenceCheckerProcessor
- * @package Krlove\EloquentModelGenerator\Processor
+ * @package Cws\EloquentModelGenerator\Processor
  */
 class ExistenceCheckerProcessor implements ProcessorInterface
 {
