@@ -1,21 +1,21 @@
 <?php
 
-namespace Krlove\EloquentModelGenerator\Processor;
+namespace Cws\EloquentModelGenerator\Processor;
 
 use Doctrine\DBAL\Schema\Column;
 use Illuminate\Database\DatabaseManager;
-use Krlove\CodeGenerator\Model\DocBlockModel;
-use Krlove\CodeGenerator\Model\PropertyModel;
-use Krlove\CodeGenerator\Model\UseClassModel;
-use Krlove\CodeGenerator\Model\UseTraitModel;
-use Krlove\CodeGenerator\Model\VirtualPropertyModel;
-use Krlove\EloquentModelGenerator\Config;
-use Krlove\EloquentModelGenerator\Model\EloquentModel;
-use Krlove\EloquentModelGenerator\TypeRegistry;
+use Cws\CodeGenerator\Model\DocBlockModel;
+use Cws\CodeGenerator\Model\PropertyModel;
+use Cws\CodeGenerator\Model\UseClassModel;
+use Cws\CodeGenerator\Model\UseTraitModel;
+use Cws\CodeGenerator\Model\VirtualPropertyModel;
+use Cws\EloquentModelGenerator\Config;
+use Cws\EloquentModelGenerator\Model\EloquentModel;
+use Cws\EloquentModelGenerator\TypeRegistry;
 
 /**
  * Class FieldProcessor
- * @package Krlove\EloquentModelGenerator\Processor
+ * @package Cws\EloquentModelGenerator\Processor
  */
 class FieldProcessor implements ProcessorInterface
 {
