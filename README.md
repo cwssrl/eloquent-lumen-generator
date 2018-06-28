@@ -5,7 +5,7 @@ Eloquent Model Generator is a tool based on [Code Generator](https://github.com/
 ## Installation
 Step 1. Add Eloquent Model Generator to your project:
 ```
-composer require Cws/eloquent-model-generator --dev
+composer require cwssrl/eloquent-model-generator --dev
 ```
 Step 2. Register `GeneratorServiceProvider`:
 ```php
@@ -52,7 +52,7 @@ There are several useful options for defining several model's properties:
 - `date-format` - specifies `dateFormat` property of the model
 - `connection` - specifies connection name property of the model
 
-Instead of spcifying options each time when executing the command you can create a config file named `eloquent_model_generator.php` at project's `config` directory with your own default values. Generator already contains its own config file at `Resources/config.php` with following options:
+Instead of spcifying options each time when executing the command you can publish a config file named `eloquent_model_generator.php` at project's `config` directory with your own default values using `php artisan vendor:publish`. Generator already contains its own config file at `Resources/config.php` with following options:
 ```php
 <?php
 
