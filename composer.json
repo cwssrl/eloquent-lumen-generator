@@ -3,6 +3,18 @@
   "description": "Eloquent Model Generator",
   "version": "1.2.9",
   "license": "MIT",
+  "authors": [
+    {
+      "name": "Samuele Salvatico",
+      "email": "samuele.salvatico.social@gmail.com",
+      "role": "Developer"
+    },
+    {
+      "name": "Andrea Romanello",
+      "email": "andrea.romanello@cws.it",
+      "role": "Developer"
+    }
+  ]
   "autoload": {
     "psr-4": {
       "Cws\\EloquentModelGenerator\\": "src/"
