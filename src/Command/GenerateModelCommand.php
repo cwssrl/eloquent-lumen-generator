@@ -57,7 +57,6 @@ class GenerateModelCommand extends Command
     public function fire()
     {
         $config = $this->createConfig();
-
         $schemaManager = $this->databaseManager->connection($config->get('connection'))->getDoctrineSchemaManager();
         $prefix = $this->databaseManager->connection($config->get('connection'))->getTablePrefix();
         //If argument is "all" we will create models for all tables
@@ -72,11 +71,22 @@ class GenerateModelCommand extends Command
                     $config->set("class_name", $this->getDefaultClassName($name));
                     $model = $this->generator->generateModel($config);
                     $this->output->writeln(sprintf('Model %s generated', $model->getName()->getName()));
+                    $this->createControllerForModelIfNeeded($config, $model);
+
                 }
             }
         } else {
             $model = $this->generator->generateModel($config);
             $this->output->writeln(sprintf('Model %s generated', $model->getName()->getName()));
+            $this->createControllerForModelIfNeeded($config, $model);
+        }
+    }
+
+    private function createControllerForModelIfNeeded($config, $model)
+    {
+        if ($config->get("controller") !== false) {
+            exec("php artisan make:controller " . $config->get('controller_path') . "/" . $model->getName()->getName() . "Controller --resource");
+            $this->output->writeln(sprintf('Controller for %s generated', $model->getName()->getName()));
         }
     }
 
@@ -133,7 +143,10 @@ class GenerateModelCommand extends Command
             ['no-timestamps', 'ts', InputOption::VALUE_NONE, 'Set timestamps property to false', null],
             ['date-format', 'df', InputOption::VALUE_OPTIONAL, 'dateFormat property', null],
             ['connection', 'cn', InputOption::VALUE_OPTIONAL, 'Connection property', null],
-            ['except-tables', 'et', InputOption::VALUE_OPTIONAL, 'Table to not process', null]
+            ['except-tables', 'et', InputOption::VALUE_OPTIONAL, 'Table to not process', null],
+            ['controller', 'ct', InputOption::VALUE_OPTIONAL, 'If exists create controller too', false],
+            ['controller_namespace', 'ctn', InputOption::VALUE_OPTIONAL, 'Namespace of controllers', null],
+            ['controller_path', 'ctp', InputOption::VALUE_OPTIONAL, 'Path of controllers', null]
         ];
     }
 

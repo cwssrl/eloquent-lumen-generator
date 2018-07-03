@@ -10,5 +10,6 @@ return [
         'namespace'       => 'App\Models',
         'output_path'     => 'Models',
         'except-tables'   => 'migrations,users,password_resets',
+        'controller_path' => ''
     ],
 ];
