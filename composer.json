@@ -27,7 +27,7 @@
   "extra": {
     "laravel": {
       "providers": [
-        "Cws\\EloquentModelGenerator\\Provider\\GeneratorServiceProvider::class,"
+        "Cws\\EloquentModelGenerator\\Provider\\GeneratorServiceProvider"
       ]
     }
   }
