@@ -93,7 +93,6 @@ class GenerateModelCommand extends Command
     }
 
 
-
     /**
      * Add support for Laravel 5.5
      */
@@ -155,6 +154,7 @@ class GenerateModelCommand extends Command
             ['request_namespace', 'rn', InputOption::VALUE_OPTIONAL, 'Request namespace', null],
             ['request', 'rqs', InputOption::VALUE_OPTIONAL, 'Request too', false],
             ['request_path', 'rqsp', InputOption::VALUE_OPTIONAL, 'Request path', null],
+            ['api-resource', 'ar', InputOption::VALUE_OPTIONAL, 'Api resource too', false]
         ];
     }
 

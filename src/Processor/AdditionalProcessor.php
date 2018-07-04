@@ -24,6 +24,7 @@ class AdditionalProcessor implements ProcessorInterface
         $this->createControllerForModelIfNeeded($config, $model);
         $this->createRoutesForModelIfNeeded($config, $model);
         $this->createRequestsForModelIfNeeded($config, $model);
+        $this->createApiResourceForModelIfNeeded($config, $model);
         return $this;
     }
 
@@ -172,6 +173,20 @@ class AdditionalProcessor implements ProcessorInterface
             $first_files = array_merge($first_files, $this->recursiveGlob($dir . '/' . basename($pattern)));
         }
         return $first_files;
+    }
+
+    /**
+     * If controller key in config is not false creates the controller for current model
+     *
+     * @param Config $config
+     * @param EloquentModel $model
+     */
+    private function createApiResourceForModelIfNeeded(Config $config, EloquentModel $model)
+    {
+        if ($config->get("resource") !== false) {
+            //invoke the artisan command to create controller
+            exec("php artisan make:resource " . $model->getName()->getName());
+        }
     }
 
     /**
