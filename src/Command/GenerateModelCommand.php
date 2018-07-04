@@ -86,9 +86,6 @@ class GenerateModelCommand extends Command
         } else {
             $model = $this->generator->generateModel($config);
             $this->output->writeln(sprintf('Model %s generated', $model->getName()->getName()));
-            $this->createRequestsForModelIfNeeded($config, $model);
-            $this->createControllerForModelIfNeeded($config, $model);
-            $this->createRoutesForModelIfNeeded($config, $model);
         }
     }
 
