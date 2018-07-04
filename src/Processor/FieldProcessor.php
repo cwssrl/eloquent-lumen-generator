@@ -89,7 +89,7 @@ class FieldProcessor implements ProcessorInterface
         $model->addProperty($fillableProperty);
 
         $fillableProperty = new PropertyModel('rules');
-        $fillableProperty->setAccess('public')
+        $fillableProperty->setAccess('public')->setStatic(true)
             ->setValue($rules)
             ->setDocBlock(new DocBlockModel('@var array'));
         $model->addProperty($fillableProperty);

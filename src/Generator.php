@@ -4,6 +4,7 @@ namespace Cws\EloquentModelGenerator;
 
 use Cws\EloquentModelGenerator\Exception\GeneratorException;
 use Cws\CodeGenerator\Model\ClassModel;
+use Cws\EloquentModelGenerator\Model\EloquentModel;
 
 /**
  * Class Generator
@@ -37,14 +38,14 @@ class Generator
      * @return ClassModel
      * @throws GeneratorException
      */
-    public function generateModel(Config $config)
+    public function generateModel(Config $config, EloquentModel $model = null, string $keyName = "output_path", string $filename = null)
     {
         $this->registerUserTypes($config);
-
-        $model   = $this->builder->createModel($config);
+        if (empty($model))
+            $model = $this->builder->createModel($config);
         $content = $model->render();
 
-        $outputPath = $this->resolveOutputPath($config);
+        $outputPath = $this->resolveOutputPath($config, $keyName, $filename);
         file_put_contents($outputPath, $content);
 
         return $model;
@@ -55,9 +56,9 @@ class Generator
      * @return string
      * @throws GeneratorException
      */
-    protected function resolveOutputPath(Config $config)
+    protected function resolveOutputPath(Config $config, string $keyName = "output_path", string $filename = null)
     {
-        $path = $config->get('output_path');
+        $path = $config->get($keyName);
         if ($path === null || stripos($path, '/') !== 0) {
             $path = app_path($path);
         }
@@ -72,7 +73,9 @@ class Generator
             throw new GeneratorException(sprintf('%s is not writeable', $path));
         }
 
-        return $path . '/' . $config->get('class_name') . '.php';
+        if (empty($filename))
+            $filename = $config->get('class_name');
+        return $path . '/' . $filename . '.php';
     }
 
     /**

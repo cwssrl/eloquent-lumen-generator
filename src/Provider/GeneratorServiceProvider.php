@@ -2,6 +2,7 @@
 
 namespace Cws\EloquentModelGenerator\Provider;
 
+use Cws\EloquentModelGenerator\Processor\AdditionalProcessor;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\ServiceProvider;
 use Cws\EloquentModelGenerator\Command\GenerateModelCommand;
@@ -39,6 +40,7 @@ class GeneratorServiceProvider extends ServiceProvider
             CustomPropertyProcessor::class,
             TableNameProcessor::class,
             CustomPrimaryKeyProcessor::class,
+            AdditionalProcessor::class
         ], self::PROCESSOR_TAG);
 
         $this->app->bind(EloquentModelBuilder::class, function (Application $app) {

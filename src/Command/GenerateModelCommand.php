@@ -2,7 +2,14 @@
 
 namespace Cws\EloquentModelGenerator\Command;
 
+use App\Http\Requests\ClassName\RequestStub;
+use Cws\CodeGenerator\Model\BaseMethodModel;
 use Cws\CodeGenerator\Model\ClassModel;
+use Cws\CodeGenerator\Model\ClassNameModel;
+use Cws\CodeGenerator\Model\DocBlockModel;
+use Cws\CodeGenerator\Model\MethodModel;
+use Cws\CodeGenerator\Model\NamespaceModel;
+use Cws\CodeGenerator\Model\UseClassModel;
 use Cws\EloquentModelGenerator\Model\EloquentModel;
 use Illuminate\Config\Repository as AppConfig;
 use Illuminate\Console\Command;
@@ -73,41 +80,19 @@ class GenerateModelCommand extends Command
                     $config->set("class_name", $this->getDefaultClassName($name));
                     $model = $this->generator->generateModel($config);
                     $this->output->writeln(sprintf('Model %s generated', $model->getName()->getName()));
-                    $this->createControllerForModelIfNeeded($config, $model);
-                    $this->createRoutesForModelIfNeeded($config, $model);
+
                 }
             }
         } else {
             $model = $this->generator->generateModel($config);
             $this->output->writeln(sprintf('Model %s generated', $model->getName()->getName()));
+            $this->createRequestsForModelIfNeeded($config, $model);
             $this->createControllerForModelIfNeeded($config, $model);
+            $this->createRoutesForModelIfNeeded($config, $model);
         }
     }
 
-    private function createControllerForModelIfNeeded(Config $config, EloquentModel $model)
-    {
-        if ($config->get("controller") !== false) {
-            exec("php artisan make:controller " . $config->get('controller_path') . "/" . $model->getName()->getName() . "Controller --resource");
-            $this->output->writeln(sprintf('Controller for %s generated', $model->getName()->getName()));
-        }
-    }
 
-    private function createRoutesForModelIfNeeded(Config $config, EloquentModel $model)
-    {
-        if ($config->get("routes") !== false) {
-            $controllerPath = $config->get('controller_path');
-            $command = "Route::resource(\"" .
-                $model->getTableName() . "\", '" .
-                (empty($controllerPath) ? "" : ($controllerPath . "/"))
-                . $model->getName()->getName() . "Controller');";
-            $path = $config->get("routes_path");
-            $content = file_get_contents($path);
-            if (strpos($content, $command) === false) {
-                $content .= PHP_EOL . PHP_EOL . $command;
-                file_put_contents($path, $content);
-            }
-        }
-    }
 
     /**
      * Add support for Laravel 5.5
@@ -166,7 +151,10 @@ class GenerateModelCommand extends Command
             ['controller', 'ct', InputOption::VALUE_OPTIONAL, 'If exists create controller too', false],
             ['controller_path', 'ctp', InputOption::VALUE_OPTIONAL, 'Path of controllers', null],
             ['routes_path', 'rtp', InputOption::VALUE_OPTIONAL, 'Routes path', null],
-            ['routes', 'rt', InputOption::VALUE_OPTIONAL, 'Routes generation', false]
+            ['routes', 'rt', InputOption::VALUE_OPTIONAL, 'Routes generation', false],
+            ['request_namespace', 'rn', InputOption::VALUE_OPTIONAL, 'Request namespace', null],
+            ['request', 'rqs', InputOption::VALUE_OPTIONAL, 'Request too', false],
+            ['request_path', 'rqsp', InputOption::VALUE_OPTIONAL, 'Request path', null],
         ];
     }
 

@@ -141,21 +141,6 @@ class RelationProcessor implements ProcessorInterface
         return false;
     }
 
-   /* public static function pluralize( $singular, $plural=null) {
-        if(!strlen($singular)) return $singular;
-        if($plural!==null) return $plural;
-
-        $last_letter = strtolower($singular[strlen($singular)-1]);
-        switch($last_letter) {
-            case 'y':
-                return substr($singular,0,-1).'ies';
-            case 's':
-                return $singular.'es';
-            default:
-                return $singular.'s';
-        }
-    }*/
-
     /**
      * @inheritdoc
      */
@@ -208,7 +193,7 @@ class RelationProcessor implements ProcessorInterface
                 $relation->getForeignColumnName(),
                 $this->helper->getDefaultForeignColumnName($relation->getTableName()));
             if(empty($relationKey))
-            $name = Str::singular(Str::camel($relation->getTableName()));
+                $name = Str::singular(Str::camel($relation->getTableName()));
             else {
                 if(ends_with($relationKey,"_id"))
                     $relationKey = substr($relationKey,0,-3);
