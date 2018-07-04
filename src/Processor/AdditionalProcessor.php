@@ -23,6 +23,7 @@ class AdditionalProcessor implements ProcessorInterface
     {
         $this->createRoutesForModelIfNeeded($config, $model);
         $this->createApiResourceForModelIfNeeded($config, $model);
+        $this->createApiControllerForModelIfNeeded($config, $model);
         return $this;
     }
 
@@ -63,7 +64,28 @@ class AdditionalProcessor implements ProcessorInterface
     {
         if ($config->get("resource") !== false) {
             //invoke the artisan command to create controller
-            exec("php artisan make:resource " . $model->getName()->getName());
+            exec("php artisan make:resource " . $model->getName()->getName() . "Resource");
+        }
+    }
+
+    /**
+     * If controller key in config is not false creates the controller for current model
+     *
+     * @param Config $config
+     * @param EloquentModel $model
+     */
+    private function createApiControllerForModelIfNeeded(Config $config, EloquentModel $model)
+    {
+        if ($config->get("api-controller") !== false) {
+            $apiControllersFolder = app_path("Http/Controllers/API");
+            if (!is_dir($apiControllersFolder))
+                mkdir($apiControllersFolder);
+            $config->checkIfFileAlreadyExistsOrCopyIt($model, app_path("Http/Controllers/API"),
+                "APIBaseController.php",
+                __DIR__ . '/../Resources/Controllers', "ApiBaseController.stub");
+            $config->checkIfFileAlreadyExistsOrCopyIt($model, app_path("Http/Controllers/API"),
+                $model->getName()->getName() . "APIController.php",
+                __DIR__ . '/../Resources/Controllers', "ApiModelController.stub");
         }
     }
 

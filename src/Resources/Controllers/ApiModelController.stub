@@ -1,0 +1,88 @@
+<?php
+
+namespace $APP_NAME$Http\Controllers\API;
+
+use $APP_NAME$Http\Requests\Create$MODEL_NAME$Request;
+use $APP_NAME$Http\Requests\Update$MODEL_NAME$Request;
+use $APP_NAME$Http\Resources\$MODEL_NAME$Resource;
+use $MODEL_FULL_CLASS$;
+use $APP_NAME$Repositories\$MODEL_NAME$Repository;
+use Illuminate\Http\Request;
+use Response;
+
+/**
+ * @package $APP_NAME$Http\Controllers\API
+ */
+class $MODEL_NAME$APIController extends ApiBaseController
+{
+    /** @var  $MODEL_NAME$Repository */
+    private $$CAMEL_MODEL_NAME$Repository;
+
+    public function __construct($MODEL_NAME$Repository $$CAMEL_MODEL_NAME$Repository)
+    {
+        $this->$CAMEL_MODEL_NAME$Repository = $$CAMEL_MODEL_NAME$Repository;
+    }
+
+    public function index()
+    {
+
+        $$CAMEL_MODEL_NAME$s = $this->$CAMEL_MODEL_NAME$Repository->all();
+        return $this->sendResponse($MODEL_NAME$Resource::collection($$CAMEL_MODEL_NAME$s), '$MODEL_NAME$s retrieved successfully');
+    }
+
+
+    public function store(Create$MODEL_NAME$Request $request)
+    {
+        $input = $request->all();
+
+        $$CAMEL_MODEL_NAME$ = $this->$CAMEL_MODEL_NAME$Repository->create($input);
+
+        return $this->sendResponse($$CAMEL_MODEL_NAME$->toArray(), '$MODEL_NAME$ saved successfully');
+    }
+
+
+    public function show($id)
+    {
+        /** @var $MODEL_NAME$ $$CAMEL_MODEL_NAME$ */
+        $$CAMEL_MODEL_NAME$ = $this->$CAMEL_MODEL_NAME$Repository->findWithoutFail($id);
+
+        if (empty($$CAMEL_MODEL_NAME$)) {
+            return $this->sendError('$MODEL_NAME$ not found');
+        }
+
+        return $this->sendResponse(new $MODEL_NAME$Resource($$CAMEL_MODEL_NAME$), '$MODEL_NAME$ retrieved successfully');
+    }
+
+
+    public function update($id, Update$MODEL_NAME$Request $request)
+    {
+        $input = $request->all();
+
+        /** @var $MODEL_NAME$ $$CAMEL_MODEL_NAME$ */
+        $$CAMEL_MODEL_NAME$ = $this->$CAMEL_MODEL_NAME$Repository->findWithoutFail($id);
+
+        if (empty($$CAMEL_MODEL_NAME$)) {
+            return $this->sendError('$MODEL_NAME$ not found');
+        }
+
+        $$CAMEL_MODEL_NAME$ = $this->$CAMEL_MODEL_NAME$Repository->update($input, $id);
+
+        return $this->sendResponse($$CAMEL_MODEL_NAME$->toArray(), '$MODEL_NAME$ updated successfully');
+    }
+
+
+    public function destroy($id)
+    {
+        /** @var $MODEL_NAME$ $$CAMEL_MODEL_NAME$ */
+        $$CAMEL_MODEL_NAME$ = $this->$CAMEL_MODEL_NAME$Repository->findWithoutFail($id);
+
+        if (empty($$CAMEL_MODEL_NAME$)) {
+            return $this->sendError('$MODEL_NAME$ not found');
+        }
+
+        $$CAMEL_MODEL_NAME$->delete();
+
+        return $this->sendResponse($id, '$MODEL_NAME$ deleted successfully');
+    }
+
+}

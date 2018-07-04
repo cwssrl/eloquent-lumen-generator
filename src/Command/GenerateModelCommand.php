@@ -152,7 +152,8 @@ class GenerateModelCommand extends Command
             ['request', 'rqs', InputOption::VALUE_OPTIONAL, 'Request too', false],
             ['request_path', 'rqsp', InputOption::VALUE_OPTIONAL, 'Request path', null],
             ['api-resource', 'ar', InputOption::VALUE_OPTIONAL, 'Api resource too', false],
-            ['repository', 're', InputOption::VALUE_OPTIONAL, 'Repository too', false]
+            ['repository', 're', InputOption::VALUE_OPTIONAL, 'Repository too', false],
+            ['api-controller', 'ac', InputOption::VALUE_OPTIONAL, 'Api Controller too', false],
         ];
     }
 

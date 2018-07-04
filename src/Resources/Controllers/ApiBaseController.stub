@@ -1,0 +1,56 @@
+<?php
+
+namespace $APP_NAME$Http\Controllers\API;
+
+use Illuminate\Support\Facades\Response;
+
+class ApiBaseController extends Controller
+{
+    public function sendResponse($result, $message)
+    {
+        return Response::json(self::makeResponse($message, $result));
+    }
+
+    public function sendError($error, $code = 404)
+    {
+        return Response::json(self::makeError($error), $code);
+    }
+
+    /**
+     * @param string $message
+     * @param mixed $data
+     *
+     * @return array
+     */
+    private static function makeResponse($message, $data)
+    {
+        return [
+            'message' => $message,
+            'success' => true,
+            'data' => $data,
+        ];
+    }
+
+    /**
+     * @param string $message
+     * @param array $data
+     *
+     * @return array
+     */
+    private static function makeError($message, array $data = [])
+    {
+        $res = [
+            'message' => $message,
+            'success' => false,
+        ];
+
+        if (!empty($data)) {
+            $res['data'] = $data;
+        }
+
+        return $res;
+    }
+
+}
+
+

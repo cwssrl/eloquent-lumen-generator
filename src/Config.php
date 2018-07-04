@@ -1,6 +1,8 @@
 <?php
 
 namespace Cws\EloquentModelGenerator;
+use Cws\EloquentModelGenerator\Model\EloquentModel;
+use Illuminate\Support\Str;
 
 /**
  * Class Config
@@ -106,5 +108,33 @@ class Config
     protected function getBaseConfig()
     {
         return require __DIR__ . '/Resources/config.php';
+    }
+
+    public function checkIfFileAlreadyExistsOrCopyIt(EloquentModel $model, $directoryWhereSearchFor,
+                                                      $filenameToSearchFor,
+                                                      $directoryWhereGetFileToCopy,
+                                                      $filenameToCopy
+    )
+    {
+        if (!is_dir($directoryWhereSearchFor))
+            mkdir($directoryWhereSearchFor);
+        $filePath = $directoryWhereSearchFor . "/" . $filenameToSearchFor;
+        if (!file_exists($filePath)) {
+            copy($directoryWhereGetFileToCopy . "/" . $filenameToCopy, $filePath);
+        }
+        $content = file_get_contents($filePath);
+        $content = str_replace('$APP_NAME$', $this->getAppNamespace(), $content);
+        $content = str_replace('$MODEL_NAME$', $model->getName()->getName(), $content);
+        $content = str_replace('$CAMEL_MODEL_NAME$', Str::camel($model->getName()->getName()), $content);
+        $content = str_replace('$MODEL_FULL_CLASS$',
+            $model->getNamespace()->getNamespace() . "\\" . $model->getName()->getName(),
+            $content);
+        file_put_contents($filePath, $content);
+
+    }
+
+    private function getAppNamespace()
+    {
+        return \Illuminate\Container\Container::getInstance()->getNamespace();
     }
 }
