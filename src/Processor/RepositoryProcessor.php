@@ -9,6 +9,7 @@ use Cws\CodeGenerator\Model\NamespaceModel;
 use Cws\CodeGenerator\Model\UseClassModel;
 use Cws\EloquentModelGenerator\Config;
 use Cws\EloquentModelGenerator\Model\EloquentModel;
+use Illuminate\Support\Str;
 
 /**
  * Class NamespaceProcessor
@@ -35,37 +36,53 @@ class RepositoryProcessor implements ProcessorInterface
     {
         if ($config->get("repository") !== false) {
             $this->checkIfBaseFilesAlreadyExistsOtherwiseCreate($config, $model);
+            $repoResourceFolder = __DIR__ . '/../Resources/Repositories';
+            $modelName = $model->getName()->getName();
+            $this->checkIfFileAlreadyExistsOrCopyIt($model, app_path('Repositories/' . $modelName),
+                $modelName . "Contract.php",
+                $repoResourceFolder, "ModelContract.php");
+            $this->checkIfFileAlreadyExistsOrCopyIt($model, app_path('Repositories/' . $modelName),
+                "Eloquent" . $modelName . "Repository.php",
+                $repoResourceFolder, "EloquentModelRepository.php");
         }
     }
 
     private function checkIfBaseFilesAlreadyExistsOtherwiseCreate(Config $config, EloquentModel $model)
     {
         $repoResourceFolder = __DIR__ . '/../Resources/Repositories';
-        $this->checkIfFileAlreadyExistsOrCopyIt(app_path('Exceptions'), "GenericException.php",
-            $repoResourceFolder);
-        $this->checkIfFileAlreadyExistsOrCopyIt(app_path('Repositories'), "RepositoryContract.php",
-            $repoResourceFolder);
-        $this->checkIfFileAlreadyExistsOrCopyIt(app_path('Repositories'), "EloquentRepository.php",
-            $repoResourceFolder);
-        dd("");
+        $this->checkIfFileAlreadyExistsOrCopyIt($model, app_path('Exceptions'), "GenericException.php",
+            $repoResourceFolder, "GenericException.php");
+        $this->checkIfFileAlreadyExistsOrCopyIt($model, app_path('Repositories'), "RepositoryContract.php",
+            $repoResourceFolder, "RepositoryContract.php");
+        $this->checkIfFileAlreadyExistsOrCopyIt($model, app_path('Repositories'), "EloquentRepository.php",
+            $repoResourceFolder, "EloquentRepository.php");
     }
 
-    private function checkIfFileAlreadyExistsOrCopyIt($directoryWhereSearchFor,
+    private function checkIfFileAlreadyExistsOrCopyIt(EloquentModel $model, $directoryWhereSearchFor,
                                                       $filenameToSearchFor,
                                                       $directoryWhereGetFileToCopy,
-                                                      $updateNamespaceToo = true)
+                                                      $filenameToCopy
+    )
     {
         if (!is_dir($directoryWhereSearchFor))
             mkdir($directoryWhereSearchFor);
         $filePath = $directoryWhereSearchFor . "/" . $filenameToSearchFor;
         if (!file_exists($filePath)) {
-            copy($directoryWhereGetFileToCopy . "/" . $filenameToSearchFor, $filePath);
+            copy($directoryWhereGetFileToCopy . "/" . $filenameToCopy, $filePath);
         }
-        if ($updateNamespaceToo) {
-            $content = file_get_contents($filePath);
-            $content = str_replace('$APP_NAME$', \Illuminate\Container\Container::getInstance()->getNamespace(), $content);
-            file_put_contents($filePath, $content);
-        }
+        $content = file_get_contents($filePath);
+        $content = str_replace('$APP_NAME$', $this->getAppNamespace(), $content);
+        $content = str_replace('$MODEL_NAME$', $model->getName()->getName(), $content);
+        $content = str_replace('$MODEL_FULL_CLASS$',
+            $model->getNamespace()->getNamespace() . "\\" . $model->getName()->getName(),
+            $content);
+        file_put_contents($filePath, $content);
+
+    }
+
+    private function getAppNamespace()
+    {
+        return \Illuminate\Container\Container::getInstance()->getNamespace();
     }
 
     /**
