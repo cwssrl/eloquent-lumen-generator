@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Repositories;
+namespace $APP_NAME$Repositories;
 
-use App\Exceptions\GenericException;
+use $APP_NAME$Exceptions\GenericException;
 
 abstract class EloquentRepository implements RepositoryContract
 {

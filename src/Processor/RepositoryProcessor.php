@@ -51,13 +51,21 @@ class RepositoryProcessor implements ProcessorInterface
     }
 
     private function checkIfFileAlreadyExistsOrCopyIt($directoryWhereSearchFor,
-                                                      $filenameToSearchFor, $directoryWhereGetFileToCopy)
+                                                      $filenameToSearchFor,
+                                                      $directoryWhereGetFileToCopy,
+                                                      $updateNamespaceToo = true)
     {
         if (!is_dir($directoryWhereSearchFor))
             mkdir($directoryWhereSearchFor);
         $filePath = $directoryWhereSearchFor . "/" . $filenameToSearchFor;
-        if (!file_exists($filePath))
+        if (!file_exists($filePath)) {
             copy($directoryWhereGetFileToCopy . "/" . $filenameToSearchFor, $filePath);
+        }
+        if ($updateNamespaceToo) {
+            $content = file_get_contents($filePath);
+            $content = str_replace('$APP_NAME$', \Illuminate\Container\Container::getInstance()->getNamespace(), $content);
+            file_put_contents($filePath, $content);
+        }
     }
 
     /**

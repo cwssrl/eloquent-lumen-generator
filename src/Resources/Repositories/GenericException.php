@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Exceptions;
+namespace $APP_NAME$Exceptions;
 
 class GenericException extends \Exception
 {
