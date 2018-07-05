@@ -53,7 +53,7 @@ class Generator
         $outputPath = $this->resolveOutputPath($config, $keyName, $filename);
         file_put_contents($outputPath, $content);
 
-        if($generateControllerAndRequest) {
+        if ($generateControllerAndRequest) {
             $this->createControllerForModelIfNeeded($config, $model);
             $this->createRequestsForModelIfNeeded($config, $model);
         }
@@ -113,6 +113,10 @@ class Generator
     private function createControllerForModelIfNeeded(Config $config, EloquentModel $model)
     {
         if ($config->get("controller") !== false) {
+            $config->checkIfFileAlreadyExistsOrCopyIt($model, app_path("Http/Controllers"),
+                "Controller.php",
+                __DIR__ . '/Resources/Controllers', "BaseController.stub");
+
             $modelFullPath = "\\" . $model->getNamespace()->getNamespace() . "\\" . $model->getName()->getName();
             //invoke the artisan command to create controller
             dump(exec("php artisan make:controller " . $config->get('controller_path') . "/" . $model->getName()->getName() . "Controller --model=$modelFullPath"));
