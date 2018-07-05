@@ -1,10 +1,15 @@
 <?php
 
 return [
-    'namespace'       => 'App',
     'base_class_name' => \Illuminate\Database\Eloquent\Model::class,
-    'output_path'     => null,
     'no_timestamps'   => null,
     'date_format'     => null,
     'connection'      => null,
+    'namespace' => 'App\Models',
+    'output_path' => 'Models',
+    'except-tables' => 'migrations,users,password_resets',
+    'controller_path' => '',
+    'routes_path' => 'routes/web.php',
+    'request_namespace' => 'App\Http\Requests',
+    'request_path' => 'Http/Requests',
 ];
