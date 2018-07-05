@@ -6,7 +6,7 @@ use $APP_NAME$Http\Requests\Create$MODEL_NAME$Request;
 use $APP_NAME$Http\Requests\Update$MODEL_NAME$Request;
 use $APP_NAME$Http\Resources\$MODEL_NAME$Resource;
 use $MODEL_FULL_CLASS$;
-use $APP_NAME$Repositories\Eloquent$MODEL_NAME$Repository;
+use $APP_NAME$Repositories\$MODEL_NAME$\Eloquent$MODEL_NAME$Repository;
 use Illuminate\Http\Request;
 use Response;
 
