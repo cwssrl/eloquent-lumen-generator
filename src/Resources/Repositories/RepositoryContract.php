@@ -98,5 +98,5 @@ interface RepositoryContract
      * @param null $modelId
      * @return mixed
      */
-    public function update(array $input, $model = null, $modelId = null);
+    public function update(array $input, $modelId = null, $model = null);
 }

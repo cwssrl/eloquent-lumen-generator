@@ -88,7 +88,7 @@ abstract class EloquentRepository implements RepositoryContract
         return $this->model->save($input);
     }
 
-    public function update(array $input, $model = null, $modelId = null)
+    public function update(array $input, $modelId = null, $model = null)
     {
         $this->model = empty($model) ? $this->findWithTrashedOrThrowException($modelId) : $model;
         return $this->model->update($input);
