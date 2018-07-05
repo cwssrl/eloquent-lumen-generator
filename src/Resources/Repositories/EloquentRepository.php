@@ -33,6 +33,11 @@ abstract class EloquentRepository implements RepositoryContract
         return $this->model->newQuery();
     }
 
+    public function find($id)
+    {
+        return $this->newQuery()->find($id);
+    }
+
     public function findOrThrowException($id)
     {
         $result = $this->newQuery()->find($id);
@@ -76,5 +81,16 @@ abstract class EloquentRepository implements RepositoryContract
     public function getFields($fields)
     {
         return $this->newQuery()->select($fields)->get();
+    }
+
+    public function create(array $input)
+    {
+        return $this->model->save($input);
+    }
+
+    public function update(array $input, $model = null, $modelId = null)
+    {
+        $this->model = empty($model) ? $this->findWithTrashedOrThrowException($modelId) : $model;
+        return $this->model->update($input);
     }
 }

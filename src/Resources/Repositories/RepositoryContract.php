@@ -17,6 +17,15 @@ interface RepositoryContract
 
     /**
      * Get element by id
+     *
+     * @param integer $id Id of element researched
+     * @return mixed element with id = $id
+     * @throws \App\Exceptions\GenericException if element not found
+     */
+    public function find($id);
+
+    /**
+     * Get element by id
      * If not found throw exception
      *
      * @param integer $id Id of element researched
@@ -72,4 +81,22 @@ interface RepositoryContract
      * @return \Illuminate\Database\Eloquent\Collection of items with requested fields
      */
     public function getFields($fields);
+
+    /**
+     * Create a new model on database
+     *
+     * @param array $input
+     * @return mixed
+     */
+    public function create(array $input);
+
+    /**
+     * Update a model on database
+     *
+     * @param array $input
+     * @param null $model
+     * @param null $modelId
+     * @return mixed
+     */
+    public function update(array $input, $model = null, $modelId = null);
 }

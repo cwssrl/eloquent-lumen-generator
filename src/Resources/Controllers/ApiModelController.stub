@@ -26,7 +26,7 @@ class $MODEL_NAME$APIController extends ApiBaseController
     public function index()
     {
 
-        $$CAMEL_MODEL_NAME$s = $this->$CAMEL_MODEL_NAME$Repository->all();
+        $$CAMEL_MODEL_NAME$s = $this->$CAMEL_MODEL_NAME$Repository->getAll();
         return $this->sendResponse($MODEL_NAME$Resource::collection($$CAMEL_MODEL_NAME$s), '$MODEL_NAME$s retrieved successfully');
     }
 
@@ -37,14 +37,14 @@ class $MODEL_NAME$APIController extends ApiBaseController
 
         $$CAMEL_MODEL_NAME$ = $this->$CAMEL_MODEL_NAME$Repository->create($input);
 
-        return $this->sendResponse($$CAMEL_MODEL_NAME$->toArray(), '$MODEL_NAME$ saved successfully');
+        return $this->sendResponse(new $MODEL_NAME$Resource($$CAMEL_MODEL_NAME$), '$MODEL_NAME$ saved successfully');
     }
 
 
     public function show($id)
     {
         /** @var $MODEL_NAME$ $$CAMEL_MODEL_NAME$ */
-        $$CAMEL_MODEL_NAME$ = $this->$CAMEL_MODEL_NAME$Repository->findWithoutFail($id);
+        $$CAMEL_MODEL_NAME$ = $this->$CAMEL_MODEL_NAME$Repository->find($id);
 
         if (empty($$CAMEL_MODEL_NAME$)) {
             return $this->sendError('$MODEL_NAME$ not found');
@@ -59,7 +59,7 @@ class $MODEL_NAME$APIController extends ApiBaseController
         $input = $request->all();
 
         /** @var $MODEL_NAME$ $$CAMEL_MODEL_NAME$ */
-        $$CAMEL_MODEL_NAME$ = $this->$CAMEL_MODEL_NAME$Repository->findWithoutFail($id);
+        $$CAMEL_MODEL_NAME$ = $this->$CAMEL_MODEL_NAME$Repository->find($id);
 
         if (empty($$CAMEL_MODEL_NAME$)) {
             return $this->sendError('$MODEL_NAME$ not found');
@@ -74,7 +74,7 @@ class $MODEL_NAME$APIController extends ApiBaseController
     public function destroy($id)
     {
         /** @var $MODEL_NAME$ $$CAMEL_MODEL_NAME$ */
-        $$CAMEL_MODEL_NAME$ = $this->$CAMEL_MODEL_NAME$Repository->findWithoutFail($id);
+        $$CAMEL_MODEL_NAME$ = $this->$CAMEL_MODEL_NAME$Repository->find($id);
 
         if (empty($$CAMEL_MODEL_NAME$)) {
             return $this->sendError('$MODEL_NAME$ not found');
