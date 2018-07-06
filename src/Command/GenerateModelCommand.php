@@ -154,6 +154,8 @@ class GenerateModelCommand extends Command
             ['api-resource', 'ar', InputOption::VALUE_OPTIONAL, 'Api resource too', false],
             ['repository', 're', InputOption::VALUE_OPTIONAL, 'Repository too', false],
             ['api-controller', 'ac', InputOption::VALUE_OPTIONAL, 'Api Controller too', false],
+            ['api_routes', 'arou', InputOption::VALUE_OPTIONAL, 'Api Routes too', false],
+            ['api_routes_path', 'arp', InputOption::VALUE_OPTIONAL, 'Api routes path', null],
         ];
     }
 

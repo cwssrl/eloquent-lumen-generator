@@ -3,6 +3,7 @@
 namespace $APP_NAME$Http\Controllers\API;
 
 use Illuminate\Support\Facades\Response;
+use $APP_NAME$Http\Controllers\Controller;
 
 class ApiBaseController extends Controller
 {

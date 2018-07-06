@@ -22,6 +22,7 @@ class AdditionalProcessor implements ProcessorInterface
     public function process(EloquentModel $model, Config $config)
     {
         $this->createRoutesForModelIfNeeded($config, $model);
+        $this->createRoutesForModelIfNeeded($config, $model, true);
         $this->createApiResourceForModelIfNeeded($config, $model);
         $this->createApiControllerForModelIfNeeded($config, $model);
         return $this;
@@ -33,18 +34,19 @@ class AdditionalProcessor implements ProcessorInterface
      * @param Config $config
      * @param EloquentModel $model
      */
-    private function createRoutesForModelIfNeeded(Config $config, EloquentModel $model)
+    private function createRoutesForModelIfNeeded(Config $config, EloquentModel $model, bool $isApi = false)
     {
-        if ($config->get("routes") !== false) {
+        if ((!$isApi && $config->get("routes") !== false) || ($isApi && $config->get("api_routes") !== false)) {
             $controllerPath = $config->get('controller_path');
+            if ($isApi)
+                $controllerPath .= (empty($controllerPath) ? "API" : "\API");
 
             //build the route line that we need to add to routes file looking for the controller path
             $command = "Route::resource(\"" .
                 $model->getTableName() . "\", '" .
-                (empty($controllerPath) ? "" : ($controllerPath . "/"))
-                . $model->getName()->getName() . "Controller');";
-            $path = $config->get("routes_path");
-
+                (empty($controllerPath) ? "" : ($controllerPath . "\\"))
+                . $model->getName()->getName() . ($isApi ? "API" : "") . "Controller');";
+            $path = $isApi ? $config->get("api_routes_path") : $config->get("routes_path");
             //get the route file content and check if our line does not already exist
             $content = file_get_contents($path);
             if (strpos($content, $command) === false) {

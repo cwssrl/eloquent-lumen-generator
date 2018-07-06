@@ -12,4 +12,5 @@ return [
     'routes_path' => 'routes/web.php',
     'request_namespace' => 'App\Http\Requests',
     'request_path' => 'Http/Requests',
+    'api_routes_path' => 'routes/api.php'
 ];
