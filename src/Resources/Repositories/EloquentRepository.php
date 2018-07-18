@@ -85,7 +85,8 @@ abstract class EloquentRepository implements RepositoryContract
 
     public function create(array $input)
     {
-        return $this->model->save($input);
+        $this->model = $this->model->fill($input);
+        return $this->model->save();
     }
 
     public function update(array $input, $modelId = null, $model = null)
