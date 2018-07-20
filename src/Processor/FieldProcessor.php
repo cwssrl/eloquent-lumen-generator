@@ -64,7 +64,7 @@ class FieldProcessor implements ProcessorInterface
 
         $model->addProperty($fillableProperty);
 
-        //$this->processTranslation($model, $schemaManager);
+        $this->processTranslation($model, $schemaManager);
 
         foreach ($tableDetails->getColumns() as $column) {
             $columnName = $column->getName();
