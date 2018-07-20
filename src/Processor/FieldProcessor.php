@@ -2,7 +2,9 @@
 
 namespace Cws\EloquentModelGenerator\Processor;
 
+use Doctrine\DBAL\Schema\AbstractSchemaManager;
 use Doctrine\DBAL\Schema\Column;
+use Doctrine\DBAL\Schema\Table;
 use Illuminate\Database\DatabaseManager;
 use Cws\CodeGenerator\Model\DocBlockModel;
 use Cws\CodeGenerator\Model\PropertyModel;
@@ -12,6 +14,7 @@ use Cws\CodeGenerator\Model\VirtualPropertyModel;
 use Cws\EloquentModelGenerator\Config;
 use Cws\EloquentModelGenerator\Model\EloquentModel;
 use Cws\EloquentModelGenerator\TypeRegistry;
+use Illuminate\Support\Str;
 
 /**
  * Class FieldProcessor
@@ -55,10 +58,14 @@ class FieldProcessor implements ProcessorInterface
         $columnNames = [];
         $mappings = [];
         $rules = [];
+
         $fillableProperty = new PropertyModel('table', 'protected', $prefix . $model->getTableName());
         $fillableProperty->setDocBlock(new DocBlockModel('@var string'));
 
         $model->addProperty($fillableProperty);
+
+        //$this->processTranslation($model, $schemaManager);
+
         foreach ($tableDetails->getColumns() as $column) {
             $columnName = $column->getName();
             $model->addProperty(new VirtualPropertyModel(
@@ -69,7 +76,7 @@ class FieldProcessor implements ProcessorInterface
             if (!in_array($columnName, $primaryColumnNames) && !in_array($columnName, $timestampsColumns)) {
                 $columnNames[] = $columnName;
                 $mappings[$columnName] = $this->getValidMappingFromColumnType($column->getType()->getName());
-                $rules[$columnName] = $this->getRules($column,$mappings[$columnName]);
+                $rules[$columnName] = $this->getRules($column, $mappings[$columnName]);
             } else {
                 if (in_array($columnName, $timestampsColumns))
                     $timestampsCounter++;
@@ -179,5 +186,47 @@ class FieldProcessor implements ProcessorInterface
     public function getPriority()
     {
         return 5;
+    }
+
+    private function processTranslation(EloquentModel &$model, AbstractSchemaManager $schemaManager)
+    {
+        $translationTable = $this->checkIfHasTranslation($model, $schemaManager);
+        if (!empty($translationTable)) {
+            $this->getTranslatedAttributes($model, $translationTable);
+            $model->addUses(new UseClassModel("Dimsav\Translatable\Translatable;"));
+            $model->addTrait(new UseTraitModel("Translatable"));
+        }
+    }
+
+    private function checkIfHasTranslation(EloquentModel $model, AbstractSchemaManager $schemaManager)
+    {
+        $translationTableName = Str::singular($model->getTableName()) . "_translations";
+        if ($schemaManager->tablesExist([$translationTableName]))
+            return $schemaManager->listTableDetails($translationTableName);
+    }
+
+    private function getTranslatedAttributes(EloquentModel &$model, Table $translationTable)
+    {
+        $columns = [];
+        $primaryColumnNames = $translationTable->getPrimaryKey() ? $translationTable->getPrimaryKey()->getColumns() : [];
+        $foreignKeys = ($translationTable->getForeignKeys());
+        if (count($foreignKeys)) {
+            foreach ($foreignKeys as $fk) {
+                $tableForeignColumns = $fk->getColumns();
+                foreach ($tableForeignColumns as $columnName)
+                    array_push($primaryColumnNames, $columnName);
+            }
+        }
+
+        array_push($primaryColumnNames, "locale");
+        foreach ($translationTable->getColumns() as $column) {
+            if (!in_array($column->getName(), $primaryColumnNames))
+                array_push($columns, $column->getName());
+        }
+        $fillableProperty = new PropertyModel('translatedAttributes');
+        $fillableProperty->setAccess('public')
+            ->setValue($columns)
+            ->setDocBlock(new DocBlockModel('@var array'));
+        $model->addProperty($fillableProperty);
     }
 }

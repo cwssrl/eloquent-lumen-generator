@@ -1,8 +1,9 @@
 <?php
 
-namespace $APP_NAME$Repositories;
+namespace App\Repositories;
 
-use $APP_NAME$Exceptions\GenericException;
+use App\Exceptions\GenericException;
+use App\Utils\Utils;
 
 abstract class EloquentRepository implements RepositoryContract
 {
@@ -85,7 +86,11 @@ abstract class EloquentRepository implements RepositoryContract
 
     public function create(array $input)
     {
+        $transAttr = isset($this->model->translatedAttributes) ? $this->model->translatedAttributes : null;
+        if (is_array($transAttr) && count($transAttr))
+            $input = self::flipTranslationArray($input, $transAttr);
         $this->model = $this->model->fill($input);
+
         return $this->model->save();
     }
 
@@ -93,5 +98,65 @@ abstract class EloquentRepository implements RepositoryContract
     {
         $this->model = empty($model) ? $this->findWithTrashedOrThrowException($modelId) : $model;
         return $this->model->update($input);
+    }
+
+    /**
+     * Used to flip the translation array from form to a format useful for translatable saving
+     *
+     * @param array $inputArray
+     * @param array|null $fieldNamesToFlip
+     * @return array
+     */
+    public static function flipTranslationArray(array $inputArray, array $fieldNamesToFlip = null)
+    {
+        /*** Input Example **/
+        /*$inputArray = [
+            "title" => [
+                "it" => "ciao",
+                "en" => "hi",
+            ],
+            "content" => [
+                "it" => "ita",
+                "en" => "eng",
+                "pt" => "pts"
+            ],
+            "district_id" => "1"
+        ];
+        $fieldNamesToFlip = ["title", "content"];*/
+        /*** End input Example **/
+
+        foreach ($inputArray as $fieldName => $translations) {
+            if ((empty($fieldNamesToFlip) || in_array($fieldName, $fieldNamesToFlip)) && is_array($translations)) {
+                foreach ($translations as $lang => $translatedValue) {
+                    if (isset($inputArray[$lang])) {
+                        $inputArray[$lang] = array_merge($inputArray[$lang], [$fieldName => $translatedValue]);
+                    } else {
+                        $inputArray[$lang] = [$fieldName => $translatedValue];
+                    }
+                }
+                unset($inputArray[$fieldName]);
+            }
+        }
+
+        /*** Output Example ***/
+        /*
+        array:4 [▼
+            "district_id" => "1"
+            "it" => array:2 [▼
+                "title" => "ciao"
+                "content" => "ita"
+            ]
+            "en" => array:2 [▼
+                "title" => "hi"
+                "content" => "eng"
+            ]
+            "pt" => array:1 [▼
+                "content" => "pts"
+            ]
+        ]
+        */
+        /*** End Output Example ***/
+
+        return $inputArray;
     }
 }

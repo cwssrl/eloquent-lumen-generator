@@ -76,7 +76,7 @@ class GenerateModelCommand extends Command
             foreach ($names as $name) {
                 //if table is from another schema and the one in connection it contains schema_name.table_name
                 $isAnotherSchemaTableName = count(explode('.', $name)) > 1;
-                if (!$isAnotherSchemaTableName && !in_array(strtolower($name), $exceptTables) && !$this->isTableNameARelationTableName($name, $names) && !ends_with($name, "_translations")) {
+                if (!$isAnotherSchemaTableName && !in_array(strtolower($name), $exceptTables) && !$this->isTableNameARelationTableName($name, $names)) {
                     $config->set("class_name", $this->getDefaultClassName($name));
                     $model = $this->generator->generateModel($config,null,"output_path",null,true);
                     $this->output->writeln(sprintf('Model %s generated', $model->getName()->getName()));

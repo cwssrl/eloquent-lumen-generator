@@ -21,10 +21,12 @@ class AdditionalProcessor implements ProcessorInterface
      */
     public function process(EloquentModel $model, Config $config)
     {
-        $this->createRoutesForModelIfNeeded($config, $model);
-        $this->createRoutesForModelIfNeeded($config, $model, true);
-        $this->createApiResourceForModelIfNeeded($config, $model);
-        $this->createApiControllerForModelIfNeeded($config, $model);
+        if(!ends_with($model->getTableName(),"_translations")) {
+            $this->createRoutesForModelIfNeeded($config, $model);
+            $this->createRoutesForModelIfNeeded($config, $model, true);
+            $this->createApiResourceForModelIfNeeded($config, $model);
+            $this->createApiControllerForModelIfNeeded($config, $model);
+        }
         return $this;
     }
 

@@ -54,68 +54,71 @@ class RelationProcessor implements ProcessorInterface
      */
     public function process(EloquentModel $model, Config $config)
     {
-        $schemaManager = $this->databaseManager->connection($config->get('connection'))->getDoctrineSchemaManager();
-        $prefix = $this->databaseManager->connection($config->get('connection'))->getTablePrefix();
+        if(!ends_with($model->getTableName(),"_translations")) {
 
-        $foreignKeys = $schemaManager->listTableForeignKeys($prefix . $model->getTableName());
-        foreach ($foreignKeys as $tableForeignKey) {
-            $tableForeignColumns = $tableForeignKey->getForeignColumns();
-            if (count($tableForeignColumns) !== 1) {
-                continue;
+            $schemaManager = $this->databaseManager->connection($config->get('connection'))->getDoctrineSchemaManager();
+            $prefix = $this->databaseManager->connection($config->get('connection'))->getTablePrefix();
+
+            $foreignKeys = $schemaManager->listTableForeignKeys($prefix . $model->getTableName());
+            foreach ($foreignKeys as $tableForeignKey) {
+                $tableForeignColumns = $tableForeignKey->getForeignColumns();
+                if (count($tableForeignColumns) !== 1) {
+                    continue;
+                }
+
+                $relation = new BelongsTo(
+                    $this->removePrefix($prefix, $tableForeignKey->getForeignTableName()),
+                    $tableForeignKey->getLocalColumns()[0],
+                    $tableForeignColumns[0]
+                );
+                $this->addRelation($model, $relation);
             }
 
-            $relation = new BelongsTo(
-                $this->removePrefix($prefix, $tableForeignKey->getForeignTableName()),
-                $tableForeignKey->getLocalColumns()[0],
-                $tableForeignColumns[0]
-            );
-            $this->addRelation($model, $relation);
-        }
-
-        $tables = $schemaManager->listTables();
-        $names = [];
-        foreach ($tables as $table)
-            array_push($names, $table->getName());
-        //FARE CHECK SE NOMI TABELLA IN FOREIGN KEYS
-        foreach ($tables as $table) {
-            if ($table->getName() === $prefix . $model->getTableName()) {
-                continue;
-            }
-            $foreignKeys = $table->getForeignKeys();
-            foreach ($foreignKeys as $name => $foreignKey) {
-                if ($foreignKey->getForeignTableName() === $prefix . $model->getTableName()) {
-                    $localColumns = $foreignKey->getLocalColumns();
-                    if (count($localColumns) !== 1) {
-                        continue;
-                    }
-                    $isTableNameARelationTableName = self::isTableNameARelationTableName($table->getName(), $names);
-                    if (count($foreignKeys) === 2 && ((count($table->getColumns()) === 2) || ((count($table->getColumns()) > 2 && $isTableNameARelationTableName)))) {
-                        $keys = array_keys($foreignKeys);
-                        $key = array_search($name, $keys) === 0 ? 1 : 0;
-                        $secondForeignKey = $foreignKeys[$keys[$key]];
-                        $secondForeignTable = $this->removePrefix($prefix, $secondForeignKey->getForeignTableName());
-
-                        $relation = new BelongsToMany(
-                            $secondForeignTable,
-                            $this->removePrefix($prefix, $table->getName()),
-                            $localColumns[0],
-                            $secondForeignKey->getLocalColumns()[0]
-                        );
-                        $this->addRelation($model, $relation);
-
-                        break;
-                    } else {
-                        $tableName = $this->removePrefix($prefix, $foreignKey->getLocalTableName());
-                        $foreignColumn = $localColumns[0];
-                        $localColumn = $foreignKey->getForeignColumns()[0];
-
-                        if ($this->isColumnUnique($table, $foreignColumn)) {
-                            $relation = new HasOne($tableName, $foreignColumn, $localColumn);
-                        } else {
-                            $relation = new HasMany($tableName, $foreignColumn, $localColumn);
+            $tables = $schemaManager->listTables();
+            $names = [];
+            foreach ($tables as $table)
+                array_push($names, $table->getName());
+            //FARE CHECK SE NOMI TABELLA IN FOREIGN KEYS
+            foreach ($tables as $table) {
+                if ($table->getName() === $prefix . $model->getTableName()) {
+                    continue;
+                }
+                $foreignKeys = $table->getForeignKeys();
+                foreach ($foreignKeys as $name => $foreignKey) {
+                    if ($foreignKey->getForeignTableName() === $prefix . $model->getTableName()) {
+                        $localColumns = $foreignKey->getLocalColumns();
+                        if (count($localColumns) !== 1) {
+                            continue;
                         }
+                        $isTableNameARelationTableName = self::isTableNameARelationTableName($table->getName(), $names);
+                        if (count($foreignKeys) === 2 && ((count($table->getColumns()) === 2) || ((count($table->getColumns()) > 2 && $isTableNameARelationTableName)))) {
+                            $keys = array_keys($foreignKeys);
+                            $key = array_search($name, $keys) === 0 ? 1 : 0;
+                            $secondForeignKey = $foreignKeys[$keys[$key]];
+                            $secondForeignTable = $this->removePrefix($prefix, $secondForeignKey->getForeignTableName());
 
-                        $this->addRelation($model, $relation);
+                            $relation = new BelongsToMany(
+                                $secondForeignTable,
+                                $this->removePrefix($prefix, $table->getName()),
+                                $localColumns[0],
+                                $secondForeignKey->getLocalColumns()[0]
+                            );
+                            $this->addRelation($model, $relation);
+
+                            break;
+                        } else {
+                            $tableName = $this->removePrefix($prefix, $foreignKey->getLocalTableName());
+                            $foreignColumn = $localColumns[0];
+                            $localColumn = $foreignKey->getForeignColumns()[0];
+
+                            if ($this->isColumnUnique($table, $foreignColumn)) {
+                                $relation = new HasOne($tableName, $foreignColumn, $localColumn);
+                            } else {
+                                $relation = new HasMany($tableName, $foreignColumn, $localColumn);
+                            }
+
+                            $this->addRelation($model, $relation);
+                        }
                     }
                 }
             }

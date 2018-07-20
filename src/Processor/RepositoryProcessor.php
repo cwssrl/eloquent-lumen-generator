@@ -22,7 +22,8 @@ class RepositoryProcessor implements ProcessorInterface
      */
     public function process(EloquentModel $model, Config $config)
     {
-        $this->createRepositoryForModelIfNeeded($config, $model);
+        if (!ends_with($model->getTableName(), "_translations"))
+            $this->createRepositoryForModelIfNeeded($config, $model);
         return $this;
     }
 
