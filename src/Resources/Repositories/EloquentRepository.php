@@ -91,7 +91,8 @@ abstract class EloquentRepository implements RepositoryContract
             $input = self::flipTranslationArray($input, $transAttr);
         $this->model = $this->model->fill($input);
 
-        return $this->model->save();
+        if($this->model->save())
+            return $this->model;
     }
 
     public function update(array $input, $modelId = null, $model = null)
