@@ -27,7 +27,7 @@ trait RestExceptionHandlerTrait
                 $retval = $this->badRequest($e->getMessage(), 400, $e->errors());
                 break;
             default:
-                $retval = $this->badRequest("Server error", 500);
+                $retval = $this->badRequest($e->getMessage(), 500);
         }
 
         return $retval;
