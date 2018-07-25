@@ -25,6 +25,7 @@ class RestResourceCollection extends ResourceCollection
             $response->header('first', $this->appendPaginate($this->resource->url(1)));
             $response->header('last', $this->appendPaginate($this->resource->url($this->resource->lastPage())));
             $response->header('self', $this->appendPaginate($this->resource->url($this->resource->currentPage())));
+            $response->header('total', $this->resource->total());
         }
     }
 }

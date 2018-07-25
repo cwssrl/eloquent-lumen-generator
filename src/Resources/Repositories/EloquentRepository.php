@@ -69,20 +69,20 @@ abstract class EloquentRepository implements RepositoryContract
         throw new GenericException(trans('exceptions.no-element'));
     }
 
-    public function getAll($order_by = 'id', $sort = 'asc')
+    public function getAll($order = 'asc', $sort = 'id')
     {
-        return $this->newQuery()->orderBy($order_by, $sort)->get();
+        return $this->newQuery()->orderBy($sort, $order)->get();
     }
 
-    public function getPaginated($per_page, $order_by = 'id', $sort = 'asc')
+    public function getPaginated($per_page, $order = 'asc', $sort = 'id')
     {
-        return $this->newQuery()->orderBy($order_by, $sort)->paginate($per_page);
+        return $this->newQuery()->orderBy($sort, $order)->paginate($per_page);
     }
 
     public function getByRequest(Request $request)
     {
-        $orderBy = $request->has('order_by') ? $request['order_by'] : 'id';
-        $sort = $request->has('sort') ? $request['sort'] : 'asc';
+        $orderBy = $request->has('order') ? $request['order'] : 'asc';
+        $sort = $request->has('sort') ? $request['sort'] : 'id';
         $paginate = $request->has('paginate') ? $request['paginate'] : null;
         return empty($paginate) ? $this->getAll($orderBy, $sort) : $this->getPaginated($paginate, $orderBy, $sort);
     }
