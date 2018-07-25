@@ -6,6 +6,8 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Validation\ValidationException;
+use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 trait RestExceptionHandlerTrait
 {
@@ -25,6 +27,12 @@ trait RestExceptionHandlerTrait
                 break;
             case $this->isValidationException($e):
                 $retval = $this->badRequest($e->getMessage(), 400, $e->errors());
+                break;
+            case $this->isNotFoundHttpException($e):
+                $retval = $this->badRequest("Route doesn't exist", 404);
+                break;
+            case $this->isNotAllowedException($e):
+                $retval = $this->badRequest("Method not allowed", 405);
                 break;
             default:
                 $retval = $this->badRequest($e->getMessage(), 500);
@@ -95,6 +103,28 @@ trait RestExceptionHandlerTrait
     protected function isValidationException(Exception $e)
     {
         return $e instanceof ValidationException;
+    }
+
+    /**
+     * Determines if the given exception is a not found http exception.
+     *
+     * @param Exception $e
+     * @return bool
+     */
+    protected function isNotFoundHttpException(Exception $e)
+    {
+        return $e instanceof NotFoundHttpException;
+    }
+
+    /**
+     * Determines if the given exception is a not allowed http exception.
+     *
+     * @param Exception $e
+     * @return bool
+     */
+    protected function isNotAllowedException(Exception $e)
+    {
+        return $e instanceof MethodNotAllowedHttpException;
     }
 
 }
