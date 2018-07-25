@@ -5,6 +5,7 @@ namespace $APP_NAME$Http\Controllers\API;
 use $APP_NAME$Http\Requests\Create$MODEL_NAME$Request;
 use $APP_NAME$Http\Requests\Update$MODEL_NAME$Request;
 use $APP_NAME$Http\Resources\$MODEL_NAME$Resource;
+use $APP_NAME$Http\Resources\$MODEL_NAME$CollectionResource;
 use $MODEL_FULL_CLASS$;
 use $APP_NAME$Repositories\$MODEL_NAME$\Eloquent$MODEL_NAME$Repository;
 use Illuminate\Http\Request;
@@ -23,11 +24,10 @@ class $MODEL_NAME$APIController extends ApiBaseController
         $this->$CAMEL_MODEL_NAME$Repository = $$CAMEL_MODEL_NAME$Repository;
     }
 
-    public function index()
+    public function index(Request $request)
     {
-
-        $$CAMEL_MODEL_NAME$s = $this->$CAMEL_MODEL_NAME$Repository->getAll();
-        return $this->sendResponse($MODEL_NAME$Resource::collection($$CAMEL_MODEL_NAME$s), '$MODEL_NAME$s retrieved successfully');
+        $$CAMEL_MODEL_NAME$s = $this->$CAMEL_MODEL_NAME$Repository->getByRequest($request);
+        return $this->sendResponse(new $MODEL_NAME$CollectionResource($$CAMEL_MODEL_NAME$s));
     }
 
 
@@ -37,7 +37,7 @@ class $MODEL_NAME$APIController extends ApiBaseController
 
         $$CAMEL_MODEL_NAME$ = $this->$CAMEL_MODEL_NAME$Repository->create($input);
 
-        return $this->sendResponse(new $MODEL_NAME$Resource($$CAMEL_MODEL_NAME$), '$MODEL_NAME$ saved successfully');
+        return $this->sendResponse(new $MODEL_NAME$Resource($$CAMEL_MODEL_NAME$));
     }
 
 
@@ -50,7 +50,7 @@ class $MODEL_NAME$APIController extends ApiBaseController
             return $this->sendError('$MODEL_NAME$ not found');
         }
 
-        return $this->sendResponse(new $MODEL_NAME$Resource($$CAMEL_MODEL_NAME$), '$MODEL_NAME$ retrieved successfully');
+        return $this->sendResponse(new $MODEL_NAME$Resource($$CAMEL_MODEL_NAME$));
     }
 
 
@@ -67,7 +67,7 @@ class $MODEL_NAME$APIController extends ApiBaseController
 
         $$CAMEL_MODEL_NAME$ = $this->$CAMEL_MODEL_NAME$Repository->update($input, $id);
 
-        return $this->sendResponse($$CAMEL_MODEL_NAME$->toArray(), '$MODEL_NAME$ updated successfully');
+        return $this->sendResponse($$CAMEL_MODEL_NAME$->toArray());
     }
 
 
@@ -82,7 +82,7 @@ class $MODEL_NAME$APIController extends ApiBaseController
 
         $$CAMEL_MODEL_NAME$->delete();
 
-        return $this->sendResponse($id, '$MODEL_NAME$ deleted successfully');
+        return $this->sendResponse($id);
     }
 
 }

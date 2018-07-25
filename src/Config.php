@@ -113,13 +113,18 @@ class Config
     public function checkIfFileAlreadyExistsOrCopyIt(EloquentModel $model, $directoryWhereSearchFor,
                                                       $filenameToSearchFor,
                                                       $directoryWhereGetFileToCopy,
-                                                      $filenameToCopy
+                                                      $filenameToCopy, $overwrite = false
     )
     {
         if (!is_dir($directoryWhereSearchFor))
             mkdir($directoryWhereSearchFor);
         $filePath = $directoryWhereSearchFor . "/" . $filenameToSearchFor;
         if (!file_exists($filePath)) {
+            copy($directoryWhereGetFileToCopy . "/" . $filenameToCopy, $filePath);
+        }
+        else if($overwrite)
+        {
+            unlink($filePath);
             copy($directoryWhereGetFileToCopy . "/" . $filenameToCopy, $filePath);
         }
         $content = file_get_contents($filePath);

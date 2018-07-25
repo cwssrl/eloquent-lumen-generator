@@ -1,0 +1,30 @@
+<?php
+
+namespace $APP_NAME$Http\Resources;
+
+use Illuminate\Http\Resources\Json\ResourceCollection;
+use Illuminate\Pagination\LengthAwarePaginator;
+
+class RestResourceCollection extends ResourceCollection
+{
+    private function appendPaginate($urlToFormat)
+    {
+        if (!empty($urlToFormat) && $this->perPage() !== null) {
+            $parsed = parse_url($urlToFormat);
+            $separator = empty($parsed['query']) ? '?' : '&';
+            $urlToFormat .= $separator . "paginate=" . $this->perPage();
+        }
+        return $urlToFormat;
+    }
+
+    public function withResponse($request, $response)
+    {
+        if ($this->resource instanceof LengthAwarePaginator) {
+            $response->header('previous', $this->appendPaginate($this->resource->previousPageUrl()));
+            $response->header('next', $this->appendPaginate($this->resource->nextPageUrl()));
+            $response->header('first', $this->appendPaginate($this->resource->url(1)));
+            $response->header('last', $this->appendPaginate($this->resource->url($this->resource->lastPage())));
+            $response->header('self', $this->appendPaginate($this->resource->url($this->resource->currentPage())));
+        }
+    }
+}

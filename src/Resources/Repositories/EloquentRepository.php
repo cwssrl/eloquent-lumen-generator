@@ -3,7 +3,7 @@
 namespace App\Repositories;
 
 use App\Exceptions\GenericException;
-use App\Utils\Utils;
+use Illuminate\Http\Request;
 
 abstract class EloquentRepository implements RepositoryContract
 {
@@ -79,6 +79,14 @@ abstract class EloquentRepository implements RepositoryContract
         return $this->newQuery()->orderBy($order_by, $sort)->paginate($per_page);
     }
 
+    public function getByRequest(Request $request)
+    {
+        $orderBy = $request->has('order_by') ? $request['order_by'] : 'id';
+        $sort = $request->has('sort') ? $request['sort'] : 'asc';
+        $paginate = $request->has('paginate') ? $request['paginate'] : null;
+        return empty($paginate) ? $this->getAll($orderBy, $sort) : $this->getPaginated($paginate, $orderBy, $sort);
+    }
+
     public function getFields($fields)
     {
         return $this->newQuery()->select($fields)->get();
@@ -86,12 +94,16 @@ abstract class EloquentRepository implements RepositoryContract
 
     public function create(array $input)
     {
+        $classOf = get_class($this->model);
+        $this->model = new $classOf();
+
         $transAttr = isset($this->model->translatedAttributes) ? $this->model->translatedAttributes : null;
         if (is_array($transAttr) && count($transAttr))
             $input = self::flipTranslationArray($input, $transAttr);
+
         $this->model = $this->model->fill($input);
 
-        if($this->model->save())
+        if ($this->model->save())
             return $this->model;
     }
 
@@ -101,7 +113,7 @@ abstract class EloquentRepository implements RepositoryContract
         if (is_array($transAttr) && count($transAttr))
             $input = self::flipTranslationArray($input, $transAttr);
         $this->model = empty($model) ? $this->findWithTrashedOrThrowException($modelId) : $model;
-        if($this->model->update($input))
+        if ($this->model->update($input))
             return $this->model;
     }
 
@@ -129,14 +141,22 @@ abstract class EloquentRepository implements RepositoryContract
         ];
         $fieldNamesToFlip = ["title", "content"];*/
         /*** End input Example **/
-
         foreach ($inputArray as $fieldName => $translations) {
-            if ((empty($fieldNamesToFlip) || in_array($fieldName, $fieldNamesToFlip)) && is_array($translations)) {
-                foreach ($translations as $lang => $translatedValue) {
-                    if (isset($inputArray[$lang])) {
-                        $inputArray[$lang] = array_merge($inputArray[$lang], [$fieldName => $translatedValue]);
+            if ((empty($fieldNamesToFlip) || in_array($fieldName, $fieldNamesToFlip))) {
+                if (is_array($translations))
+                    foreach ($translations as $lang => $translatedValue) {
+                        if (isset($inputArray[$lang])) {
+                            $inputArray[$lang] = array_merge($inputArray[$lang], [$fieldName => $translatedValue]);
+                        } else {
+                            $inputArray[$lang] = [$fieldName => $translatedValue];
+                        }
+                    }
+                else {
+                    $defLocale = config('translatable.locale');
+                    if (isset($inputArray[$defLocale])) {
+                        $inputArray[$defLocale] = array_merge($inputArray[$defLocale], [$fieldName => $translations]);
                     } else {
-                        $inputArray[$lang] = [$fieldName => $translatedValue];
+                        $inputArray[$defLocale] = [$fieldName => $translations];
                     }
                 }
                 unset($inputArray[$fieldName]);

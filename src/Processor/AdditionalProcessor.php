@@ -21,7 +21,7 @@ class AdditionalProcessor implements ProcessorInterface
      */
     public function process(EloquentModel $model, Config $config)
     {
-        if(!ends_with($model->getTableName(),"_translations")) {
+        if (!ends_with($model->getTableName(), "_translations")) {
             $this->createRoutesForModelIfNeeded($config, $model);
             $this->createRoutesForModelIfNeeded($config, $model, true);
             $this->createApiResourceForModelIfNeeded($config, $model);
@@ -69,6 +69,14 @@ class AdditionalProcessor implements ProcessorInterface
         if ($config->get("resource") !== false) {
             //invoke the artisan command to create controller
             exec("php artisan make:resource " . $model->getName()->getName() . "Resource");
+            $config->checkIfFileAlreadyExistsOrCopyIt($model, app_path("Http/Resources"),
+                "RestResourceCollection.php",
+                __DIR__ . '/../Resources/Api', "RestResourceCollection.php.stub");
+            exec("php artisan make:resource " . $model->getName()->getName() . "CollectionResource --collection");
+            $collectionContent = file_get_contents(app_path("Http/Resources/" . $model->getName()->getName() . "CollectionResource.php"));
+            $collectionContent = str_replace("use Illuminate\Http\Resources\Json\ResourceCollection;", "", $collectionContent);
+            $collectionContent = str_replace("extends ResourceCollection", "extends RestResourceCollection", $collectionContent);
+            file_put_contents(app_path("Http/Resources/" . $model->getName()->getName() . "CollectionResource.php"), $collectionContent);
         }
     }
 
@@ -90,6 +98,19 @@ class AdditionalProcessor implements ProcessorInterface
             $config->checkIfFileAlreadyExistsOrCopyIt($model, app_path("Http/Controllers/API"),
                 $model->getName()->getName() . "APIController.php",
                 __DIR__ . '/../Resources/Controllers', "ApiModelController.stub");
+            $traitsFolder = app_path("Traits");
+            if (!is_dir($traitsFolder))
+                mkdir($traitsFolder);
+            $config->checkIfFileAlreadyExistsOrCopyIt($model, $traitsFolder,
+                "RestExceptionHandlerTrait.php",
+                __DIR__ . '/../Resources/Traits', "RestExceptionHandlerTrait.php.stub");
+            $config->checkIfFileAlreadyExistsOrCopyIt($model, $traitsFolder,
+                "RestTrait.php",
+                __DIR__ . '/../Resources/Traits', "RestTrait.php.stub");
+            $config->checkIfFileAlreadyExistsOrCopyIt($model, app_path("Exceptions"),
+                "Handler.php",
+                __DIR__ . '/../Resources/Traits', "Handler.php.stub", true);
+
         }
     }
 

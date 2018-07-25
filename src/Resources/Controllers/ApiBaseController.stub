@@ -7,50 +7,51 @@ use $APP_NAME$Http\Controllers\Controller;
 
 class ApiBaseController extends Controller
 {
-    public function sendResponse($result, $message)
+    public function sendResponse($result)
     {
-        return Response::json(self::makeResponse($message, $result));
+        if (method_exists($result, 'response'))
+                    return Response::json(self::makeResponse($result), 200, $result->response()->headers->all());
+                else
+                    return Response::json(self::makeResponse($result));
     }
 
     public function sendError($error, $code = 404)
-    {
-        return Response::json(self::makeError($error), $code);
-    }
-
-    /**
-     * @param string $message
-     * @param mixed $data
-     *
-     * @return array
-     */
-    private static function makeResponse($message, $data)
-    {
-        return [
-            'message' => $message,
-            'success' => true,
-            'data' => $data,
-        ];
-    }
-
-    /**
-     * @param string $message
-     * @param array $data
-     *
-     * @return array
-     */
-    private static function makeError($message, array $data = [])
-    {
-        $res = [
-            'message' => $message,
-            'success' => false,
-        ];
-
-        if (!empty($data)) {
-            $res['data'] = $data;
+        {
+            return Response::json(self::makeError($error), $code);
         }
 
-        return $res;
-    }
+        /**
+         * @param string $message
+         * @param mixed $data
+         *
+         * @return array
+         */
+        private static function makeResponse($data)
+        {
+            return [
+                /*'message' => $message,*/
+                'data' => $data,
+            ];
+        }
+
+        /**
+         * @param string $message
+         * @param array $data
+         *
+         * @return array
+         */
+        private static function makeError($message, array $data = [])
+        {
+            $res = [
+                'message' => $message,
+            ];
+
+            if (!empty($data)) {
+                $res['errors'] = $data;
+            }
+
+            return $res;
+        }
 
 }
 
