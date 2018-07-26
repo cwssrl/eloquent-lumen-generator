@@ -89,6 +89,12 @@ abstract class EloquentRepository implements RepositoryContract
             return $query->orderBy($sort, $order)->paginate($per_page);
     }
 
+    /**
+     * Get Items by request parameters
+     *
+     * @param Request $request
+     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator|\Illuminate\Database\Eloquent\Collection|mixed|static[]
+     */
     public function getByRequest(Request $request)
     {
         $allFieldsQuery = $order = $sort = $paginate = $trashed = $queries = $queryableFields = $queryType = null;
@@ -102,6 +108,15 @@ abstract class EloquentRepository implements RepositoryContract
             $this->getPaginated($paginate, $order, $sort, $query, $trashed);
     }
 
+    /**
+     * Build query by request parameters
+     *
+     * @param array $queryableFields
+     * @param $queryType
+     * @param null $allFieldQueries
+     * @param array $queries
+     * @return EloquentRepository|Builder
+     */
     private function buildQueryByRequestFields(array $queryableFields, $queryType, $allFieldQueries = null, array $queries = [])
     {
         /** @var Builder $query */
@@ -118,6 +133,15 @@ abstract class EloquentRepository implements RepositoryContract
         return $query;
     }
 
+    /**
+     * Build a query with where on fields specified by queries
+     *
+     * @param Builder $query
+     * @param $queryType
+     * @param $queries
+     * @param array $casts
+     * @return $this|Builder|static
+     */
     private function loadFieldsSpecificQuery(Builder $query, $queryType, $queries, array $casts)
     {
         if (empty($queries) || !count($queries))
@@ -131,6 +155,15 @@ abstract class EloquentRepository implements RepositoryContract
         return $query;
     }
 
+    /**
+     * Build a query for all queryable fields
+     *
+     * @param $query
+     * @param $allFieldQueries
+     * @param array $queryableFields
+     * @param $casts
+     * @return Builder|static
+     */
     private function loadAllFieldQuery($query, $allFieldQueries, array $queryableFields, $casts)
     {
         $query = empty($query) ? $this->newQuery() : $query;
@@ -138,6 +171,7 @@ abstract class EloquentRepository implements RepositoryContract
         $booleanValue = filter_var($allFieldQueries, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
         $numericValue = filter_var($allFieldQueries, FILTER_VALIDATE_FLOAT, FILTER_NULL_ON_FAILURE);
         $isValidTimestamp = (is_numeric($allFieldQueries) && (int)$allFieldQueries == $allFieldQueries);
+        //for each different type we need to check if allfieldqueries has a valid value
         foreach ($queryableFields as $currentField) {
             if (isset($casts[$currentField])) {
                 switch ($casts[$currentField]) {
@@ -183,23 +217,26 @@ abstract class EloquentRepository implements RepositoryContract
     }
 
     /**
+     * Get all parameters of request
+     *
      * @param Request $request
-     * @param $allFieldsQuery
-     * @param $order
-     * @param $sort
-     * @param $paginate
-     * @param $trashed
-     * @return array|null
+     * @param $allFieldsQuery query to perform to all fields
+     * @param $order asc or desc
+     * @param $sort fields which by sort
+     * @param $paginate number of elements in paging
+     * @param $trashed if true trashed will be included in results too
+     * @param $queryableFields model queryable fields
+     * @param $queryType "or" or "and"
+     * @return array|null queries for specific fields
      */
-    private
-    function getQueryStringValues(Request $request,
-                                  &$allFieldsQuery,
-                                  &$order,
-                                  &$sort,
-                                  &$paginate,
-                                  &$trashed,
-                                  &$queryableFields,
-                                  &$queryType)
+    private function getQueryStringValues(Request $request,
+                                          &$allFieldsQuery,
+                                          &$order,
+                                          &$sort,
+                                          &$paginate,
+                                          &$trashed,
+                                          &$queryableFields,
+                                          &$queryType)
     {
         $order = $request->has('order') ? $request['order'] : 'asc';
         $sort = $request->has('sort') ? $request['sort'] : 'id';
@@ -207,6 +244,7 @@ abstract class EloquentRepository implements RepositoryContract
         $trashed = $request->has('trashed') ? !empty($request['trashed']) : false;
         $queryType = $request->has('query_type') ? !empty($request['query_type']) : "or";
         $allFieldsQuery = null;
+        //get all queryable fields in model merging fillable and translatedAttributes
         $queryableFields = (isset($this->model->translatedAttributes) && !empty($this->model->translatedAttributes)) ?
             array_merge($this->model->translatedAttributes, $this->model->getFillable()) :
             $this->model->getFillable();
@@ -230,14 +268,24 @@ abstract class EloquentRepository implements RepositoryContract
 
     }
 
-    public
-    function getFields($fields)
+    /**
+     * Get all items including only selected fields
+     *
+     * @param mixed $fields
+     * @return \Illuminate\Database\Eloquent\Collection|static[]
+     */
+    public function getFields($fields)
     {
         return $this->newQuery()->select($fields)->get();
     }
 
-    public
-    function create(array $input)
+    /**
+     * Create new model by input
+     *
+     * @param array $input
+     * @return mixed
+     */
+    public function create(array $input)
     {
         $classOf = get_class($this->model);
         $this->model = new $classOf();
@@ -252,8 +300,15 @@ abstract class EloquentRepository implements RepositoryContract
             return $this->model;
     }
 
-    public
-    function update(array $input, $modelId = null, $model = null)
+    /**
+     * Updates an existing model
+     *
+     * @param array $input
+     * @param null $modelId
+     * @param null $model
+     * @return mixed|null
+     */
+    public function update(array $input, $modelId = null, $model = null)
     {
         $transAttr = isset($this->model->translatedAttributes) ? $this->model->translatedAttributes : null;
         if (is_array($transAttr) && count($transAttr))
@@ -270,8 +325,7 @@ abstract class EloquentRepository implements RepositoryContract
      * @param array|null $fieldNamesToFlip
      * @return array
      */
-    public
-    static function flipTranslationArray(array $inputArray, array $fieldNamesToFlip = null)
+    public static function flipTranslationArray(array $inputArray, array $fieldNamesToFlip = null)
     {
         /*** Input Example **/
         /*$inputArray = [
@@ -332,8 +386,14 @@ abstract class EloquentRepository implements RepositoryContract
         return $inputArray;
     }
 
-    private
-    static function isValidDate(string $date, string $format = "d/m/Y H:i:s")
+    /**
+     * Check if date is a valid one
+     *
+     * @param string $date
+     * @param string $format
+     * @return bool
+     */
+    private static function isValidDate(string $date, string $format = "d/m/Y H:i:s")
     {
         try {
             Carbon::createFromFormat($format, $date);
