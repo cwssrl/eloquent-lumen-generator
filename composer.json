@@ -22,7 +22,8 @@
   "require": {
     "laravel/framework": "^5.5",
     "doctrine/dbal": "^2.5",
-    "cwssrl/code-generator": "^1.0.1"
+    "cwssrl/code-generator": "^1.0.1",
+	"dimsav/laravel-translatable": "8.*",
   },
   "extra": {
     "laravel": {
