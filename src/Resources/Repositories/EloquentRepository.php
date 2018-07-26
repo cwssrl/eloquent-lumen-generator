@@ -149,8 +149,12 @@ abstract class EloquentRepository implements RepositoryContract
 
         foreach ($queries as $field => $value) {
             $operator = (isset($casts[$field]) && $casts[$field] === 'string') ? "ilike" : "=";
-            $query = $queryType === 'or' ? $query->orWhere($field, $operator, $value) :
-                $query->where($field, $operator, $value);
+            if (!isset($casts[$field]) && in_array($field, $this->model->translatedAttributes))
+                $query = $queryType === 'or' ? $query->orWhereTranslationLike($field, $value) :
+                    $query->whereTranslationLike($field, $value);
+            else
+                $query = $queryType === 'or' ? $query->orWhere($field, $operator, $value) :
+                    $query->where($field, $operator, $value);
         }
         return $query;
     }
@@ -211,7 +215,8 @@ abstract class EloquentRepository implements RepositoryContract
                         $query = $query->orWhere($currentField, 'ilike', $allFieldQueries);
                         break;
                 }
-            }
+            } elseif (in_array($currentField, $this->model->translatedAttributes))
+                $query = $query->orWhereTranslationLike($currentField, $allFieldQueries);
         }
         return $query;
     }
@@ -242,7 +247,7 @@ abstract class EloquentRepository implements RepositoryContract
         $sort = $request->has('sort') ? $request['sort'] : 'id';
         $paginate = $request->has('paginate') ? $request['paginate'] : null;
         $trashed = $request->has('trashed') ? !empty($request['trashed']) : false;
-        $queryType = $request->has('query_type') ? !empty($request['query_type']) : "or";
+        $queryType = $request->has('query_type') ? $request['query_type'] : "or";
         $allFieldsQuery = null;
         //get all queryable fields in model merging fillable and translatedAttributes
         $queryableFields = (isset($this->model->translatedAttributes) && !empty($this->model->translatedAttributes)) ?
