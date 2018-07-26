@@ -3,6 +3,8 @@
 namespace App\Repositories;
 
 use App\Exceptions\GenericException;
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 
 abstract class EloquentRepository implements RepositoryContract
@@ -69,30 +71,173 @@ abstract class EloquentRepository implements RepositoryContract
         throw new GenericException(trans('exceptions.no-element'));
     }
 
-    public function getAll($order = 'asc', $sort = 'id')
+    public function getAll($order = 'asc', $sort = 'id', Builder $query = null, $trashed = false)
     {
-        return $this->newQuery()->orderBy($sort, $order)->get();
+        $query = empty($query) ? $this->newQuery() : $query;
+        if ($trashed)
+            return $query->withTrashed()->orderBy($sort, $order)->get();
+        else
+            return $query->orderBy($sort, $order)->get();
     }
 
-    public function getPaginated($per_page, $order = 'asc', $sort = 'id')
+    public function getPaginated($per_page, $order = 'asc', $sort = 'id', Builder $query = null, $trashed = false)
     {
-        return $this->newQuery()->orderBy($sort, $order)->paginate($per_page);
+        $query = empty($query) ? $this->newQuery() : $query;
+        if ($trashed)
+            return $query->withTrashed()->orderBy($sort, $order)->paginate($per_page);
+        else
+            return $query->orderBy($sort, $order)->paginate($per_page);
     }
 
     public function getByRequest(Request $request)
     {
-        $orderBy = $request->has('order') ? $request['order'] : 'asc';
-        $sort = $request->has('sort') ? $request['sort'] : 'id';
-        $paginate = $request->has('paginate') ? $request['paginate'] : null;
-        return empty($paginate) ? $this->getAll($orderBy, $sort) : $this->getPaginated($paginate, $orderBy, $sort);
+        $allFieldsQuery = $order = $sort = $paginate = $trashed = $queries = $queryableFields = $queryType = null;
+
+        $queries = $this->getQueryStringValues($request, $allFieldsQuery,
+            $order, $sort, $paginate,
+            $trashed, $queryableFields, $queryType);
+        $queries = empty($queries) ? [] : $queries;
+        $query = $this->buildQueryByRequestFields($queryableFields, $queryType, $allFieldsQuery, $queries);
+        return empty($paginate) ? $this->getAll($order, $sort, $query, $trashed) :
+            $this->getPaginated($paginate, $order, $sort, $query, $trashed);
     }
 
-    public function getFields($fields)
+    private function buildQueryByRequestFields(array $queryableFields, $queryType, $allFieldQueries = null, array $queries = [])
+    {
+        /** @var Builder $query */
+        $query = $this->newQuery();
+
+        if (empty($queryableFields) || (empty($allFieldQueries) && !count($queries)))
+            return $query;
+        $casts = $this->model->getCasts();
+        if (!empty($allFieldQueries))
+            $query = $this->loadAllFieldQuery($query, $allFieldQueries, $queryableFields, $casts);
+        else {
+            $query = $this->loadFieldsSpecificQuery($query, $queryType, $queries, $casts);
+        }
+        return $query;
+    }
+
+    private function loadFieldsSpecificQuery(Builder $query, $queryType, $queries, array $casts)
+    {
+        if (empty($queries) || !count($queries))
+            return $query;
+
+        foreach ($queries as $field => $value) {
+            $operator = (isset($casts[$field]) && $casts[$field] === 'string') ? "ilike" : "=";
+            $query = $queryType === 'or' ? $query->orWhere($field, $operator, $value) :
+                $query->where($field, $operator, $value);
+        }
+        return $query;
+    }
+
+    private function loadAllFieldQuery($query, $allFieldQueries, array $queryableFields, $casts)
+    {
+        $query = empty($query) ? $this->newQuery() : $query;
+        $isValueValidDatetime = self::isValidDate($allFieldQueries);
+        $booleanValue = filter_var($allFieldQueries, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
+        $numericValue = filter_var($allFieldQueries, FILTER_VALIDATE_FLOAT, FILTER_NULL_ON_FAILURE);
+        $isValidTimestamp = (is_numeric($allFieldQueries) && (int)$allFieldQueries == $allFieldQueries);
+        foreach ($queryableFields as $currentField) {
+            if (isset($casts[$currentField])) {
+                switch ($casts[$currentField]) {
+                    case "integer":
+                        if ($numericValue !== null)
+                            $query = $query->orWhere($currentField, "=", $numericValue);
+                        break;
+                    case "datetime":
+                        if ($isValueValidDatetime)
+                            $query = $query->orWhere($currentField, "=", $allFieldQueries);
+                        break;
+                    case "float":
+                        if ($numericValue !== null)
+                            $query = $query->orWhere($currentField, "=", $numericValue);
+                        break;
+                    case "real":
+                        if ($numericValue !== null)
+                            $query = $query->orWhere($currentField, "=", $numericValue);
+                        break;
+                    case "double":
+                        if ($numericValue !== null)
+                            $query = $query->orWhere($currentField, "=", $numericValue);
+                        break;
+                    case "date":
+                        if ($isValueValidDatetime)
+                            $query = $query->orWhere($currentField, "=", $allFieldQueries);
+                        break;
+                    case "boolean":
+                        if ($booleanValue !== null)
+                            $query = $query->orWhere($currentField, "=", $booleanValue);
+                        break;
+                    case "timestamp":
+                        if ($isValidTimestamp)
+                            $query = $query->orWhere($currentField, "=", $allFieldQueries);
+                        break;
+                    default:
+                        $query = $query->orWhere($currentField, 'ilike', $allFieldQueries);
+                        break;
+                }
+            }
+        }
+        return $query;
+    }
+
+    /**
+     * @param Request $request
+     * @param $allFieldsQuery
+     * @param $order
+     * @param $sort
+     * @param $paginate
+     * @param $trashed
+     * @return array|null
+     */
+    private
+    function getQueryStringValues(Request $request,
+                                  &$allFieldsQuery,
+                                  &$order,
+                                  &$sort,
+                                  &$paginate,
+                                  &$trashed,
+                                  &$queryableFields,
+                                  &$queryType)
+    {
+        $order = $request->has('order') ? $request['order'] : 'asc';
+        $sort = $request->has('sort') ? $request['sort'] : 'id';
+        $paginate = $request->has('paginate') ? $request['paginate'] : null;
+        $trashed = $request->has('trashed') ? !empty($request['trashed']) : false;
+        $queryType = $request->has('query_type') ? !empty($request['query_type']) : "or";
+        $allFieldsQuery = null;
+        $queryableFields = (isset($this->model->translatedAttributes) && !empty($this->model->translatedAttributes)) ?
+            array_merge($this->model->translatedAttributes, $this->model->getFillable()) :
+            $this->model->getFillable();
+        if ($this->model->timestamps)
+            $queryableFields = array_merge($queryableFields, ['created_at', 'updated_at']);
+        // check if we need to make a query for all fields
+        if ($request->has('all_fields')) {
+            $allFieldsQuery = $request['all_fields'];
+            return null;
+        } else {
+            //load fields specific queries
+            $queries = [];
+            $queryableFields = array_flip($queryableFields);
+
+            foreach ($request->keys() as $key) {
+                if (array_key_exists($key, $queryableFields))
+                    $queries[$key] = $request[$key];
+            }
+            return $queries;
+        }
+
+    }
+
+    public
+    function getFields($fields)
     {
         return $this->newQuery()->select($fields)->get();
     }
 
-    public function create(array $input)
+    public
+    function create(array $input)
     {
         $classOf = get_class($this->model);
         $this->model = new $classOf();
@@ -107,7 +252,8 @@ abstract class EloquentRepository implements RepositoryContract
             return $this->model;
     }
 
-    public function update(array $input, $modelId = null, $model = null)
+    public
+    function update(array $input, $modelId = null, $model = null)
     {
         $transAttr = isset($this->model->translatedAttributes) ? $this->model->translatedAttributes : null;
         if (is_array($transAttr) && count($transAttr))
@@ -124,7 +270,8 @@ abstract class EloquentRepository implements RepositoryContract
      * @param array|null $fieldNamesToFlip
      * @return array
      */
-    public static function flipTranslationArray(array $inputArray, array $fieldNamesToFlip = null)
+    public
+    static function flipTranslationArray(array $inputArray, array $fieldNamesToFlip = null)
     {
         /*** Input Example **/
         /*$inputArray = [
@@ -183,5 +330,16 @@ abstract class EloquentRepository implements RepositoryContract
         /*** End Output Example ***/
 
         return $inputArray;
+    }
+
+    private
+    static function isValidDate(string $date, string $format = "d/m/Y H:i:s")
+    {
+        try {
+            Carbon::createFromFormat($format, $date);
+            return true;
+        } catch (\Exception $e) {
+            return false;
+        }
     }
 }

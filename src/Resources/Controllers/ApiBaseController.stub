@@ -28,10 +28,7 @@ class ApiBaseController extends Controller
          */
         private static function makeResponse($data)
         {
-            return [
-                /*'message' => $message,*/
-                'data' => $data,
-            ];
+            return $data;
         }
 
         /**
