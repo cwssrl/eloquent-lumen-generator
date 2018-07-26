@@ -53,8 +53,10 @@ abstract class EloquentRepository implements RepositoryContract
 
     public function findWithTrashedOrThrowException($id)
     {
-        $result = $this->newQuery()->withTrashed()->where('id', $id)->first();
-
+        if (in_array('Illuminate\Database\Eloquent\SoftDeletes', class_uses($this->model)))
+            $result = $this->newQuery()->withTrashed()->where('id', $id)->first();
+        else
+            $result = $this->newQuery()->where('id', $id)->first();
         if (!is_null($result))
             return $result;
 
@@ -74,7 +76,7 @@ abstract class EloquentRepository implements RepositoryContract
     public function getAll($order = 'asc', $sort = 'id', Builder $query = null, $trashed = false)
     {
         $query = empty($query) ? $this->newQuery() : $query;
-        if ($trashed)
+        if ($trashed && (in_array('Illuminate\Database\Eloquent\SoftDeletes', class_uses($this->model))))
             return $query->withTrashed()->orderBy($sort, $order)->get();
         else
             return $query->orderBy($sort, $order)->get();
@@ -83,7 +85,7 @@ abstract class EloquentRepository implements RepositoryContract
     public function getPaginated($per_page, $order = 'asc', $sort = 'id', Builder $query = null, $trashed = false)
     {
         $query = empty($query) ? $this->newQuery() : $query;
-        if ($trashed)
+        if ($trashed && (in_array('Illuminate\Database\Eloquent\SoftDeletes', class_uses($this->model))))
             return $query->withTrashed()->orderBy($sort, $order)->paginate($per_page);
         else
             return $query->orderBy($sort, $order)->paginate($per_page);
@@ -175,6 +177,8 @@ abstract class EloquentRepository implements RepositoryContract
         $booleanValue = filter_var($allFieldQueries, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
         $numericValue = filter_var($allFieldQueries, FILTER_VALIDATE_FLOAT, FILTER_NULL_ON_FAILURE);
         $isValidTimestamp = (is_numeric($allFieldQueries) && (int)$allFieldQueries == $allFieldQueries);
+        $translatedAttributes = (isset($this->model->translatedAttributes) && !empty($this->model->translatedAttributes))
+            ? $this->model->translatedAttributes : [];
         //for each different type we need to check if allfieldqueries has a valid value
         foreach ($queryableFields as $currentField) {
             if (isset($casts[$currentField])) {
@@ -215,7 +219,7 @@ abstract class EloquentRepository implements RepositoryContract
                         $query = $query->orWhere($currentField, 'ilike', $allFieldQueries);
                         break;
                 }
-            } elseif (in_array($currentField, $this->model->translatedAttributes))
+            } elseif (in_array($currentField, $translatedAttributes))
                 $query = $query->orWhereTranslationLike($currentField, $allFieldQueries);
         }
         return $query;
