@@ -7,24 +7,24 @@ use Illuminate\Pagination\LengthAwarePaginator;
 
 class RestResourceCollection extends ResourceCollection
 {
-    private function appendPaginate($urlToFormat)
-    {
-        if (!empty($urlToFormat) && $this->perPage() !== null) {
-            $parsed = parse_url($urlToFormat);
-            $separator = empty($parsed['query']) ? '?' : '&';
-            $urlToFormat .= $separator . "paginate=" . $this->perPage();
-        }
-        return $urlToFormat;
-    }
-
     public function withResponse($request, $response)
     {
         if ($this->resource instanceof LengthAwarePaginator) {
-            $response->header('previous', $this->appendPaginate($this->resource->previousPageUrl()));
-            $response->header('next', $this->appendPaginate($this->resource->nextPageUrl()));
-            $response->header('first', $this->appendPaginate($this->resource->url(1)));
-            $response->header('last', $this->appendPaginate($this->resource->url($this->resource->lastPage())));
-            $response->header('self', $this->appendPaginate($this->resource->url($this->resource->currentPage())));
+            $baseQueryString = $request->query;
+            $baseUrl = $request->url() . "?";
+            foreach ($baseQueryString as $q => $value)
+                if ($q !== "page")
+                    $baseUrl .= $q . "=" . $value . "&";
+            $currentPage = $this->resource->currentPage();
+            $lastPage = $this->resource->lastPage();
+            $previousPage = $this->resource->onFirstPage() ? null : ($currentPage - 1);
+            $nextPage = ($currentPage < $lastPage) ? ($currentPage + 1) : null;
+
+            $response->header('previous', empty($previousPage) ? null : ($baseUrl . "page=" . $previousPage));
+            $response->header('next', empty($nextPage) ? null : ($baseUrl . "page=" . $nextPage));
+            $response->header('first', ($baseUrl . "page=1"));
+            $response->header('last', ($baseUrl . "page=" . $lastPage));
+            $response->header('self', ($baseUrl . "page=" . $currentPage));
             $response->header('total', $this->resource->total());
         }
     }
