@@ -150,7 +150,7 @@ abstract class EloquentRepository implements RepositoryContract
             return $query;
 
         foreach ($queries as $field => $value) {
-            $operator = (isset($casts[$field]) && $casts[$field] === 'string') ? "ilike" : "=";
+            $operator = (isset($casts[$field]) && $casts[$field] === 'string') ? (config('database.default') === 'pgsql' ? "ilike" : "like") : "=";
             if (!isset($casts[$field]) && in_array($field, $this->model->translatedAttributes))
                 $query = $queryType === 'or' ? $query->orWhereTranslationLike($field, $value) :
                     $query->whereTranslationLike($field, $value);
@@ -180,6 +180,7 @@ abstract class EloquentRepository implements RepositoryContract
         $translatedAttributes = (isset($this->model->translatedAttributes) && !empty($this->model->translatedAttributes))
             ? $this->model->translatedAttributes : [];
         //for each different type we need to check if allfieldqueries has a valid value
+        $likeOperator = (config('database.default') === 'pgsql' ? "ilike" : "like");
         foreach ($queryableFields as $currentField) {
             if (isset($casts[$currentField])) {
                 switch ($casts[$currentField]) {
@@ -216,7 +217,7 @@ abstract class EloquentRepository implements RepositoryContract
                             $query = $query->orWhere($currentField, "=", $allFieldQueries);
                         break;
                     default:
-                        $query = $query->orWhere($currentField, 'ilike', $allFieldQueries);
+                        $query = $query->orWhere($currentField, $likeOperator, $allFieldQueries);
                         break;
                 }
             } elseif (in_array($currentField, $translatedAttributes))
