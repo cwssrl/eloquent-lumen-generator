@@ -14,15 +14,29 @@ class BelongsToMany extends Relation
     protected $joinTable;
 
     /**
+     * @var boolean
+     */
+    protected $withTimestamps;
+
+    /**
+     * @var array
+     */
+    protected $pivots;
+
+    /**
      * BelongsToMany constructor.
      * @param string $tableName
      * @param string $joinTable
      * @param string $foreignColumnName
      * @param string $localColumnName
+     * @param boolean $withTimestamps
+     * @param array $pivots
      */
-    public function __construct($tableName, $joinTable, $foreignColumnName, $localColumnName)
+    public function __construct($tableName, $joinTable, $foreignColumnName, $localColumnName, $withTimestamps, array $pivots = [])
     {
         $this->joinTable = $joinTable;
+        $this->withTimestamps = $withTimestamps;
+        $this->pivots = $pivots;
         parent::__construct($tableName, $foreignColumnName, $localColumnName);
     }
 
@@ -52,5 +66,20 @@ class BelongsToMany extends Relation
         $this->joinTable = $joinTable;
 
         return $this;
+    }
+
+    public function getWithTimestamps()
+    {
+        return $this->withTimestamps;
+    }
+
+    public function getPivotsAsString()
+    {
+        if (!count($this->pivots))
+            return null;
+        $outputVal = "";
+        foreach ($this->pivots as $pivot)
+            $outputVal .= ("'" . $pivot . "',");
+        return rtrim($outputVal, ",");
     }
 }

@@ -54,7 +54,7 @@ class RelationProcessor implements ProcessorInterface
      */
     public function process(EloquentModel $model, Config $config)
     {
-        if(!ends_with($model->getTableName(),"_translations")) {
+        if (!ends_with($model->getTableName(), "_translations")) {
 
             $schemaManager = $this->databaseManager->connection($config->get('connection'))->getDoctrineSchemaManager();
             $prefix = $this->databaseManager->connection($config->get('connection'))->getTablePrefix();
@@ -78,7 +78,7 @@ class RelationProcessor implements ProcessorInterface
             $names = [];
             foreach ($tables as $table)
                 array_push($names, $table->getName());
-            //FARE CHECK SE NOMI TABELLA IN FOREIGN KEYS
+
             foreach ($tables as $table) {
                 if ($table->getName() === $prefix . $model->getTableName()) {
                     continue;
@@ -96,12 +96,16 @@ class RelationProcessor implements ProcessorInterface
                             $key = array_search($name, $keys) === 0 ? 1 : 0;
                             $secondForeignKey = $foreignKeys[$keys[$key]];
                             $secondForeignTable = $this->removePrefix($prefix, $secondForeignKey->getForeignTableName());
-
+                            $pivots = array_diff(array_keys($table->getColumns()),
+                                ['created_at','updated_at',$secondForeignKey->getLocalColumns()[0],$localColumns[0]]);
                             $relation = new BelongsToMany(
                                 $secondForeignTable,
                                 $this->removePrefix($prefix, $table->getName()),
                                 $localColumns[0],
-                                $secondForeignKey->getLocalColumns()[0]
+                                $secondForeignKey->getLocalColumns()[0],
+                                ($table->hasColumn('created_at') && $table->hasColumn('updated_at')),
+                                $pivots
+
                             );
                             $this->addRelation($model, $relation);
 
@@ -133,13 +137,13 @@ class RelationProcessor implements ProcessorInterface
         foreach ($allTablesName as $p) {
             $sin = Str::singular($p);
             $singol[] = $sin;
-            if(strpos($tableName,$sin) !== false && $sin !== $singolarizedCurrentTable)
+            if (strpos($tableName, $sin) !== false && $sin !== $singolarizedCurrentTable)
                 $containedInTableName[] = $sin;
         }
         $countContained = count($containedInTableName);
-        if($countContained < 2)
+        if ($countContained < 2)
             return false;
-        if($countContained > 1 && (count(array_intersect($containedInTableName, $singol)) == $countContained) )
+        if ($countContained > 1 && (count(array_intersect($containedInTableName, $singol)) == $countContained))
             return true;
         return false;
     }
@@ -195,11 +199,11 @@ class RelationProcessor implements ProcessorInterface
             $relationKey = $this->resolveArgument(
                 $relation->getForeignColumnName(),
                 $this->helper->getDefaultForeignColumnName($relation->getTableName()));
-            if(empty($relationKey))
+            if (empty($relationKey))
                 $name = Str::singular(Str::camel($relation->getTableName()));
             else {
-                if(ends_with($relationKey,"_id"))
-                    $relationKey = substr($relationKey,0,-3);
+                if (ends_with($relationKey, "_id"))
+                    $relationKey = substr($relationKey, 0, -3);
                 $name = Str::singular(Str::camel($relationKey));
             }
             $docBlock = sprintf('@return \%s', EloquentBelongsTo::class);
@@ -235,8 +239,11 @@ class RelationProcessor implements ProcessorInterface
         $arguments = [
             $model->getNamespace()->getNamespace() . '\\' . Str::singular(Str::studly($relation->getTableName()))
         ];
-
+        $timestamps = false;
+        $pivots = null;
         if ($relation instanceof BelongsToMany) {
+            $timestamps = $relation->getWithTimestamps();
+            $pivots = $relation->getPivotsAsString();
             $defaultJoinTableName = $this->helper->getDefaultJoinTableName(
                 $model->getTableName(),
                 $relation->getTableName()
@@ -274,7 +281,11 @@ class RelationProcessor implements ProcessorInterface
             );
         }
 
-        return sprintf('return $this->%s(%s);', $name, $this->prepareArguments($arguments));
+        return sprintf('return $this->%s(%s)%s%s;', $name,
+            $this->prepareArguments($arguments),
+            $timestamps ? "->withTimestamps()" : "",
+            empty($pivots) ? "" : ("->withPivot(" . $pivots . ")"));
+
     }
 
     /**
