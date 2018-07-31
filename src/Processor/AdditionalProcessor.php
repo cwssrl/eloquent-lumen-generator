@@ -90,6 +90,10 @@ class AdditionalProcessor implements ProcessorInterface
     private function createApiControllerForModelIfNeeded(Config $config, EloquentModel $model)
     {
         if ($config->get("api-controller") !== false) {
+            $config->checkIfFileAlreadyExistsOrCopyIt($model, app_path("Http/Controllers"),
+                "Controller.php",
+                __DIR__ . '/../Resources/Controllers', "BaseController.stub");
+
             $apiControllersFolder = app_path("Http/Controllers/API");
             if (!is_dir($apiControllersFolder))
                 mkdir($apiControllersFolder);

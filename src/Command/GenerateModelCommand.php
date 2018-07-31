@@ -116,6 +116,11 @@ class GenerateModelCommand extends Command
         }
 
         $config['db_types'] = $this->appConfig->get('eloquent_model_generator.db_types');
+        if(isset($config['all']) && $config['all'] !== false)
+            $config['controller'] = $config['routes'] = $config['request'] = $config['repository'] = true;
+        if(isset($config['api-all']) && $config['api-all'] !== false)
+            $config['api-controller'] = $config['api-routes'] = $config['request'] = $config['repository'] = $config['api-resource'] = true;
+
 
         return new Config($config, $this->appConfig->get('eloquent_model_generator.model_defaults'));
     }
@@ -145,17 +150,19 @@ class GenerateModelCommand extends Command
             ['connection', 'cn', InputOption::VALUE_OPTIONAL, 'Connection property', null],
             ['except-tables', 'et', InputOption::VALUE_OPTIONAL, 'Table to not process', null],
             ['controller', 'ct', InputOption::VALUE_OPTIONAL, 'If exists create controller too', false],
-            ['controller_path', 'ctp', InputOption::VALUE_OPTIONAL, 'Path of controllers', null],
-            ['routes_path', 'rtp', InputOption::VALUE_OPTIONAL, 'Routes path', null],
+            ['controller-path', 'ctp', InputOption::VALUE_OPTIONAL, 'Path of controllers', null],
+            ['routes-path', 'rtp', InputOption::VALUE_OPTIONAL, 'Routes path', null],
             ['routes', 'rt', InputOption::VALUE_OPTIONAL, 'Routes generation', false],
             ['request_namespace', 'rn', InputOption::VALUE_OPTIONAL, 'Request namespace', null],
             ['request', 'rqs', InputOption::VALUE_OPTIONAL, 'Request too', false],
-            ['request_path', 'rqsp', InputOption::VALUE_OPTIONAL, 'Request path', null],
+            ['request-path', 'rqsp', InputOption::VALUE_OPTIONAL, 'Request path', null],
             ['api-resource', 'ar', InputOption::VALUE_OPTIONAL, 'Api resource too', false],
             ['repository', 're', InputOption::VALUE_OPTIONAL, 'Repository too', false],
             ['api-controller', 'ac', InputOption::VALUE_OPTIONAL, 'Api Controller too', false],
-            ['api_routes', 'arou', InputOption::VALUE_OPTIONAL, 'Api Routes too', false],
-            ['api_routes_path', 'arp', InputOption::VALUE_OPTIONAL, 'Api routes path', null],
+            ['api-routes', 'arou', InputOption::VALUE_OPTIONAL, 'Api Routes too', false],
+            ['api-routes-path', 'arp', InputOption::VALUE_OPTIONAL, 'Api routes path', null],
+            ['all', 'all', InputOption::VALUE_OPTIONAL, "If true creates all items", false],
+            ['all-api', 'api', InputOption::VALUE_OPTIONAL, "If true creates all api items", false],
         ];
     }
 
