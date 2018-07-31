@@ -78,13 +78,13 @@ class GenerateModelCommand extends Command
                 $isAnotherSchemaTableName = count(explode('.', $name)) > 1;
                 if (!$isAnotherSchemaTableName && !in_array(strtolower($name), $exceptTables) && !$this->isTableNameARelationTableName($name, $names)) {
                     $config->set("class_name", $this->getDefaultClassName($name));
-                    $model = $this->generator->generateModel($config,null,"output_path",null,true);
+                    $model = $this->generator->generateModel($config, null, "output_path", null, true);
                     $this->output->writeln(sprintf('Model %s generated', $model->getName()->getName()));
 
                 }
             }
         } else {
-            $model = $this->generator->generateModel($config,null,"output_path",null,true);
+            $model = $this->generator->generateModel($config, null, "output_path", null, true);
             $this->output->writeln(sprintf('Model %s generated', $model->getName()->getName()));
         }
     }
@@ -175,11 +175,16 @@ class GenerateModelCommand extends Command
             if (strpos($tableName, $sin) !== false && $sin !== $singolarizedCurrentTable)
                 $containedInTableName[] = $sin;
         }
+
         $countContained = count($containedInTableName);
         if ($countContained < 2)
             return false;
-        if ($countContained > 1 && (count(array_intersect($containedInTableName, $singol)) == $countContained))
-            return true;
+        if ($countContained > 1 && (count(array_intersect($containedInTableName, $singol)) == $countContained)) {
+            $first = explode("_", $containedInTableName[0]);
+            $second = explode("_", $containedInTableName[1]);
+            if (empty(array_intersect($first, $second)) && empty(array_intersect($second, $first)))
+                return true;
+        }
         return false;
     }
 }

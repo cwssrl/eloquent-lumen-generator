@@ -97,7 +97,7 @@ class RelationProcessor implements ProcessorInterface
                             $secondForeignKey = $foreignKeys[$keys[$key]];
                             $secondForeignTable = $this->removePrefix($prefix, $secondForeignKey->getForeignTableName());
                             $pivots = array_diff(array_keys($table->getColumns()),
-                                ['created_at','updated_at',$secondForeignKey->getLocalColumns()[0],$localColumns[0]]);
+                                ['created_at', 'updated_at', $secondForeignKey->getLocalColumns()[0], $localColumns[0]]);
                             $relation = new BelongsToMany(
                                 $secondForeignTable,
                                 $this->removePrefix($prefix, $table->getName()),
@@ -143,8 +143,12 @@ class RelationProcessor implements ProcessorInterface
         $countContained = count($containedInTableName);
         if ($countContained < 2)
             return false;
-        if ($countContained > 1 && (count(array_intersect($containedInTableName, $singol)) == $countContained))
-            return true;
+        if ($countContained > 1 && (count(array_intersect($containedInTableName, $singol)) == $countContained)) {
+            $first = explode("_", $containedInTableName[0]);
+            $second = explode("_", $containedInTableName[1]);
+            if (empty(array_intersect($first, $second)) && empty(array_intersect($second, $first)))
+                return true;
+        }
         return false;
     }
 
@@ -191,7 +195,7 @@ class RelationProcessor implements ProcessorInterface
 
             $virtualPropertyType = $relationClass;
         } elseif ($relation instanceof HasMany) {
-            $name = Str::plural(Str::camel($relation->getTableName()));
+            $name = $this->getValidMethodNameForHasMany($model, $relation); // Str::plural(Str::camel($relation->getTableName()));
             $docBlock = sprintf('@return \%s', EloquentHasMany::class);
 
             $virtualPropertyType = sprintf('%s[]', $relationClass);
@@ -219,11 +223,26 @@ class RelationProcessor implements ProcessorInterface
         }
 
         $method = new MethodModel($name);
+
         $method->setBody($this->createMethodBody($model, $relation));
         $method->setDocBlock(new DocBlockModel($docBlock));
-
         $model->addMethod($method);
         $model->addProperty(new VirtualPropertyModel($name, $virtualPropertyType));
+    }
+
+    private function getValidMethodNameForHasMany(EloquentModel $model, Relation $relation)
+    {
+        $name = Str::plural(Str::camel($relation->getTableName()));
+        $thisModelName = Str::snake($model->getName()->getName());
+        $foreignColumnName = $relation->getForeignColumnName();
+        if (($thisModelName . "_id") === $foreignColumnName)
+            if (!in_array($name, $model->getMethodNames()))
+                return $name;
+            else
+                return ("HasMany" . $name);
+        $foreignColumnName = Str::singular($relation->getTableName()) .
+            Str::plural(Str::ucfirst((ends_with($foreignColumnName, "_id") ? substr($foreignColumnName, 0, -3) : $foreignColumnName)));
+        return Str::plural(Str::camel($foreignColumnName));
     }
 
     /**
