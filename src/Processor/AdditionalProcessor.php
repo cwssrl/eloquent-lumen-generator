@@ -106,6 +106,7 @@ class AdditionalProcessor implements ProcessorInterface
             $traitsFolder = app_path("Traits");
             if (!is_dir($traitsFolder))
                 mkdir($traitsFolder);
+
             $config->checkIfFileAlreadyExistsOrCopyIt($model, $traitsFolder,
                 "RestExceptionHandlerTrait.php",
                 __DIR__ . '/../Resources/Traits', "RestExceptionHandlerTrait.php.stub");

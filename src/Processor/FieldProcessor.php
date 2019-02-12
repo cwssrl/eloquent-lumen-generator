@@ -68,18 +68,22 @@ class FieldProcessor implements ProcessorInterface
 
         foreach ($tableDetails->getColumns() as $column) {
             $columnName = $column->getName();
+            $columnTypeName = $column->getType()->getName();
             $model->addProperty(new VirtualPropertyModel(
                 $columnName,
-                $this->typeRegistry->resolveType($column->getType()->getName())
+                $this->typeRegistry->resolveType($columnTypeName)
             ));
-
             if (!in_array($columnName, $primaryColumnNames) && !in_array($columnName, $timestampsColumns)) {
                 $columnNames[] = $columnName;
-                $mappings[$columnName] = $this->getValidMappingFromColumnType($column->getType()->getName());
+                $mappings[$columnName] = $this->getValidMappingFromColumnType($columnTypeName);
                 $rules[$columnName] = $this->getRules($column, $mappings[$columnName]);
             } else {
                 if (in_array($columnName, $timestampsColumns))
                     $timestampsCounter++;
+                else
+                {
+                    $mappings[$columnName] = $this->getValidMappingFromColumnType($columnTypeName);
+                }
             }
         }
 

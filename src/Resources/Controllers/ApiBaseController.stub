@@ -1,55 +1,56 @@
 <?php
 
-namespace $APP_NAME$Http\Controllers\API;
+namespace App\Http\Controllers\API;
 
 use Illuminate\Support\Facades\Response;
-use $APP_NAME$Http\Controllers\Controller;
+use App\Http\Controllers\Controller;
 
 class ApiBaseController extends Controller
 {
-    public function sendResponse($result)
+    public function sendResponse($result, $code = 200)
     {
         if (method_exists($result, 'response'))
-                    return Response::json(self::makeResponse($result), 200, $result->response()->headers->all());
-                else
-                    return Response::json(self::makeResponse($result));
+            return Response::json(self::makeResponse($result), $code, $result->response()->headers->all(), JSON_UNESCAPED_UNICODE);
+        else
+            return Response::json(self::makeResponse($result), $code, [], JSON_UNESCAPED_UNICODE);
     }
 
     public function sendError($error, $code = 404)
-        {
-            return Response::json(self::makeError($error), $code);
-        }
+    {
+        return Response::json(self::makeError($error), $code, [], JSON_UNESCAPED_UNICODE);
+    }
 
-        /**
-         * @param string $message
-         * @param mixed $data
-         *
-         * @return array
-         */
-        private static function makeResponse($data)
-        {
-            return $data;
-        }
-
-        /**
-         * @param string $message
-         * @param array $data
-         *
-         * @return array
-         */
-        private static function makeError($message, array $data = [])
-        {
-            $res = [
+    /**
+     * @param string $message
+     * @param mixed $data
+     *
+     * @return array
+     */
+    private static function makeResponse($data)
+    {
+        return $data;/* [
                 'message' => $message,
-            ];
+                'data' => $data,
+            ];*/
+    }
 
-            if (!empty($data)) {
-                $res['errors'] = $data;
-            }
+    /**
+     * @param string $message
+     * @param array $data
+     *
+     * @return array
+     */
+    private static function makeError($message, array $data = [])
+    {
+        $res = [
+            'message' => $message,
+        ];
 
-            return $res;
+        if (!empty($data)) {
+            $res['errors'] = $data;
         }
+
+        return $res;
+    }
 
 }
-
-

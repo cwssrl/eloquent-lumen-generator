@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'base_class_name' => \Illuminate\Database\Eloquent\Model::class,
+    'base_class_name' => 'App\Models\BaseModel',
     'no_timestamps'   => null,
     'date_format'     => null,
     'connection'      => null,

@@ -40,7 +40,9 @@ class EloquentModelBuilder
         foreach ($this->processors as $processor) {
             $processor->process($model, $config);
         }
-
+        $config->checkIfFileAlreadyExistsOrCopyIt($model, app_path("Models"),
+            "BaseModel.php",
+            __DIR__ . '/Resources/Models', "BaseModel.php");
         return $model;
     }
 

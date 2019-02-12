@@ -116,12 +116,13 @@ class GenerateModelCommand extends Command
         }
 
         $config['db_types'] = $this->appConfig->get('eloquent_model_generator.db_types');
-        if(isset($config['all']) && $config['all'] !== false)
-            $config['controller'] = $config['routes'] = $config['request'] = $config['repository'] = true;
-        if(isset($config['api-all']) && $config['api-all'] !== false)
-            $config['api-controller'] = $config['api-routes'] = $config['request'] = $config['repository'] = $config['api-resource'] = true;
-
-
+        if (array_key_exists('all', $config) && $config['all'] !== false) {
+            $config = array_merge($config, array_fill_keys(["controller", "routes", "request", "repository"], true));
+        }
+        if (array_key_exists('all-api', $config) && $config['all-api'] !== false) {
+            $config = array_merge($config, array_fill_keys(["api-controller", "api-routes", "request", "repository", "api-resource"], true));
+        }
+        
         return new Config($config, $this->appConfig->get('eloquent_model_generator.model_defaults'));
     }
 

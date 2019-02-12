@@ -1,8 +1,9 @@
 <?php
 
-namespace $APP_NAME$Traits;
+namespace App\Traits;
 
 use Exception;
+use Illuminate\Auth\AuthenticationException;
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Validation\ValidationException;
@@ -26,13 +27,16 @@ trait RestExceptionHandlerTrait
                 $retval = $this->modelNotFound();
                 break;
             case $this->isValidationException($e):
-                $retval = $this->badRequest($e->getMessage(), 400, $e->errors());
+                $retval = $this->badRequest("I dati non sono validi", 400, $e->errors());
                 break;
             case $this->isNotFoundHttpException($e):
                 $retval = $this->badRequest("Route doesn't exist", 404);
                 break;
             case $this->isNotAllowedException($e):
                 $retval = $this->badRequest("Method not allowed", 405);
+                break;
+            case $this->isAuthenticationException($e):
+                $retval = $this->badRequest("Unauthenticated", 401);
                 break;
             default:
                 $retval = $this->badRequest($e->getMessage(), 500);
@@ -127,4 +131,14 @@ trait RestExceptionHandlerTrait
         return $e instanceof MethodNotAllowedHttpException;
     }
 
+    /**
+     * Determines if the given exception is auth http exception.
+     *
+     * @param Exception $e
+     * @return bool
+     */
+    protected function isAuthenticationException(Exception $e)
+    {
+        return $e instanceof AuthenticationException;
+    }
 }
