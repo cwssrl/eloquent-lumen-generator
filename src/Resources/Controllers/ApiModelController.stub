@@ -27,7 +27,7 @@ class $MODEL_NAME$APIController extends ApiBaseController
     public function index(Request $request)
     {
         $$CAMEL_MODEL_NAME$s = $this->$CAMEL_MODEL_NAME$Repository->getByRequest($request);
-        return $this->sendResponse(new $MODEL_NAME$CollectionResource($$CAMEL_MODEL_NAME$s));
+        return $this->sendResponse(new $MODEL_NAME$CollectionResource($MODEL_NAME$Resource::collection($$CAMEL_MODEL_NAME$s)->resource()));
     }
 
 
@@ -82,7 +82,7 @@ class $MODEL_NAME$APIController extends ApiBaseController
 
         $$CAMEL_MODEL_NAME$->delete();
 
-        return $this->sendResponse($id);
+        return $this->sendResponse(["id" => $id]);
     }
 
 }
