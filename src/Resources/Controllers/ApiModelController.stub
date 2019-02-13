@@ -27,7 +27,7 @@ class $MODEL_NAME$APIController extends ApiBaseController
     public function index(Request $request)
     {
         $$CAMEL_MODEL_NAME$s = $this->$CAMEL_MODEL_NAME$Repository->getByRequest($request);
-        return $this->sendResponse(new $MODEL_NAME$CollectionResource($MODEL_NAME$Resource::collection($$CAMEL_MODEL_NAME$s)->resource()));
+        return $this->sendResponse(new $MODEL_NAME$CollectionResource($MODEL_NAME$Resource::collection($$CAMEL_MODEL_NAME$s)->resource));
     }
 
 
