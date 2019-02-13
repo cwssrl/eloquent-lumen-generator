@@ -87,6 +87,18 @@ class FieldProcessor implements ProcessorInterface
             }
         }
 
+        $fillableProperty = new PropertyModel("blockingRelations");
+        $fillableProperty->setAccess('public')
+            ->setValue([])
+            ->setDocBlock(new DocBlockModel('@var array'));
+        $model->addProperty($fillableProperty);
+
+        $fillableProperty = new PropertyModel("touches");
+        $fillableProperty->setAccess('protected')
+            ->setValue([])
+            ->setDocBlock(new DocBlockModel('@var array'));
+        $model->addProperty($fillableProperty);
+
         $fillableProperty = new PropertyModel('fillable');
         $fillableProperty->setAccess('protected')
             ->setValue($columnNames)
