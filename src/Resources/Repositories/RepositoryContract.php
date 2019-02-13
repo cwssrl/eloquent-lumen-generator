@@ -1,6 +1,6 @@
 <?php
 
-namespace $APP_NAME$Repositories;
+namespace App\Repositories;
 
 /**
  * Interface RepositoryContract
