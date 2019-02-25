@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Traits;
+namespace $APP_NAME$Traits;
 
 use Exception;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -38,6 +39,9 @@ trait RestExceptionHandlerTrait
             case $this->isAuthenticationException($e):
                 $retval = $this->badRequest("Unauthenticated", 401);
                 break;
+            case $this->isAuthorizationException($e):
+                $retval = $this->badRequest($e->getMessage(), 403);
+            break;
             default:
                 $retval = $this->badRequest($e->getMessage(), 500);
         }
@@ -140,5 +144,16 @@ trait RestExceptionHandlerTrait
     protected function isAuthenticationException(Exception $e)
     {
         return $e instanceof AuthenticationException;
+    }
+
+    /**
+    * Determines if the given exception is authR http exception.
+    *
+    * @param Exception $e
+    * @return bool
+    */
+    protected function isAuthorizationException(Exception $e)
+    {
+        return $e instanceof AuthorizationException;
     }
 }
