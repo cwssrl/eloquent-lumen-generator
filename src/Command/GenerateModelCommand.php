@@ -3,23 +3,14 @@
 namespace Cws\EloquentModelGenerator\Command;
 
 use App\Http\Requests\ClassName\RequestStub;
-use Cws\CodeGenerator\Model\BaseMethodModel;
-use Cws\CodeGenerator\Model\ClassModel;
-use Cws\CodeGenerator\Model\ClassNameModel;
-use Cws\CodeGenerator\Model\DocBlockModel;
-use Cws\CodeGenerator\Model\MethodModel;
-use Cws\CodeGenerator\Model\NamespaceModel;
-use Cws\CodeGenerator\Model\UseClassModel;
-use Cws\EloquentModelGenerator\Model\EloquentModel;
+use Cws\EloquentModelGenerator\Config;
+use Cws\EloquentModelGenerator\Generator;
 use Illuminate\Config\Repository as AppConfig;
 use Illuminate\Console\Command;
 use Illuminate\Database\DatabaseManager;
-use Cws\EloquentModelGenerator\Config;
-use Cws\EloquentModelGenerator\Generator;
-use Cws\EloquentModelGenerator\TypeRegistry;
+use Illuminate\Support\Str;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
-use Illuminate\Support\Str;
 
 /**
  * Class GenerateModelCommand
@@ -61,6 +52,14 @@ class GenerateModelCommand extends Command
     }
 
     /**
+     * Add support for Laravel 5.5
+     */
+    public function handle()
+    {
+        $this->fire();
+    }
+
+    /**
      * Executes the command
      */
     public function fire()
@@ -77,7 +76,9 @@ class GenerateModelCommand extends Command
                 //if table is from another schema and the one in connection it contains schema_name.table_name
                 $isAnotherSchemaTableName = count(explode('.', $name)) > 1;
                 if (!$isAnotherSchemaTableName && !in_array(strtolower($name), $exceptTables) && !$this->isTableNameARelationTableName($name, $names)) {
+                    dump($name . " " . $this->getDefaultClassName($name));
                     $config->set("class_name", $this->getDefaultClassName($name));
+                    $config->set("table_name", $name);
                     $model = $this->generator->generateModel($config, null, "output_path", null, true);
                     $this->output->writeln(sprintf('Model %s generated', $model->getName()->getName()));
 
@@ -87,15 +88,6 @@ class GenerateModelCommand extends Command
             $model = $this->generator->generateModel($config, null, "output_path", null, true);
             $this->output->writeln(sprintf('Model %s generated', $model->getName()->getName()));
         }
-    }
-
-
-    /**
-     * Add support for Laravel 5.5
-     */
-    public function handle()
-    {
-        $this->fire();
     }
 
     /**
@@ -122,7 +114,7 @@ class GenerateModelCommand extends Command
         if (array_key_exists('all-api', $config) && $config['all-api'] !== false) {
             $config = array_merge($config, array_fill_keys(["api-controller", "api-routes", "request", "repository", "api-resource"], true));
         }
-        
+
         return new Config($config, $this->appConfig->get('eloquent_model_generator.model_defaults'));
     }
 
@@ -167,11 +159,6 @@ class GenerateModelCommand extends Command
         ];
     }
 
-    private function getDefaultClassName($tableName)
-    {
-        return Str::ucfirst(Str::camel(Str::singular($tableName)));
-    }
-
     private function isTableNameARelationTableName($tableName, $allTablesName)
     {
         $singol = [];
@@ -194,5 +181,10 @@ class GenerateModelCommand extends Command
                 return true;
         }
         return false;
+    }
+
+    private function getDefaultClassName($tableName)
+    {
+        return Str::ucfirst(Str::camel(Str::singular($tableName)));
     }
 }

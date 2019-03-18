@@ -34,7 +34,6 @@ class EloquentModelBuilder
     public function createModel(Config $config)
     {
         $model = new EloquentModel();
-
         $this->prepareProcessors();
 
         foreach ($this->processors as $processor) {
@@ -51,6 +50,17 @@ class EloquentModelBuilder
      */
     protected function prepareProcessors()
     {
+        $temp = [];
+        $current = null;
+        if(!is_array($this->processors)) {
+            $iterator = $this->processors->getIterator();
+            while (!empty($current = $iterator->current())) {
+                array_push($temp, $current);
+                $iterator->next();
+
+            }
+            $this->processors = $temp;
+        }
         usort($this->processors, function (ProcessorInterface $one, ProcessorInterface $two) {
             if ($one->getPriority() == $two->getPriority()) {
                 return 0;
