@@ -274,9 +274,14 @@ abstract class EloquentRepository implements RepositoryContract
     {
         $lastField = array_pop($explodedFieldName);
         $name = implode("->'", $explodedFieldName);
-        if (count($explodedFieldName) > 1)
+        if (count($explodedFieldName) > 1) {
             $name .= "'";
-        $name .= "#>> '{{$lastField}}'";
+            $name .= "#>> '{{$lastField}}' ";
+        }
+        else
+        {
+            $name .= "{$lastField} #>> '{}' ";
+        }
         return $name;
     }
 

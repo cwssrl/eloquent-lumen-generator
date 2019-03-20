@@ -1,4 +1,12 @@
 CHANGELOG
+
+=========
+2019-03-20, v1.8.2
+* Fixed query for json array with no nesting level in eloquent repo
+
+-----------------
+* Add Laravel 5.5 support
+
 =========
 2017-07-19, v1.2.6
 -----------------
