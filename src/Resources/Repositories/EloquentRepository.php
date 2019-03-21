@@ -286,6 +286,23 @@ abstract class EloquentRepository implements RepositoryContract
     }
 
     /**
+     * Process the input translated fields returning it in a processable format by translatable
+     *
+     * @param array $input
+     */
+    protected function processTransInput(array &$input)
+    {
+        $transAttr = isset($this->model->translatedAttributes) ? $this->model->translatedAttributes : null;
+        if (is_array($transAttr) && count($transAttr)) {
+            if (isset($input['translations']))
+                $input = self::flipTranslationMap($input, $transAttr);
+            else {
+                $input = self::flipTranslationArray($input, $transAttr);
+            }
+        }
+    }
+
+    /**
      * Build a query for all queryable fields
      *
      * @param $query

@@ -1,5 +1,9 @@
 CHANGELOG
 
+2019-03-21, v1.8.3
+-----------------
+* Fixed missing method in repo
+
 2019-03-20, v1.8.2
 -----------------
 * Fixed query for json array with no nesting level in eloquent repo
