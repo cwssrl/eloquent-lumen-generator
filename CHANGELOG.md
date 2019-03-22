@@ -1,5 +1,9 @@
 CHANGELOG
 
+2019-03-22, v1.8.4
+-----------------
+* Updated base date format in base model
+
 2019-03-21, v1.8.3
 -----------------
 * Fixed missing method in repo

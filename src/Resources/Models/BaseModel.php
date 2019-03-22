@@ -8,9 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class BaseModel extends Model
 {
-    protected $dateFormat = "Y-m-d\TH:i:s.u\Z";
+    protected $dateFormat = "Y-m-d H:i:s";
 
-    private $secondaryDateFormat = ["Y-m-d H:i:s", "Y-m-d H:i:sZ", "Y-m-d\TH:i:sZ", "Y-m-d\TH:i:s"];
+    private $secondaryDateFormat = ["Y-m-d\TH:i:s.u\Z","Y-m-d H:i:s", "Y-m-d H:i:sZ", "Y-m-d\TH:i:sZ", "Y-m-d\TH:i:s"];
 
     protected function asDateTime($value)
     {
@@ -26,7 +26,7 @@ class BaseModel extends Model
         // when checking the field. We will just return the DateTime right away.
         if ($value instanceof DateTimeInterface) {
             return new Carbon(
-                $value->format('Y-m-d H:i:s.u'), $value->getTimezone()
+                $value->format('Y-m-d H:i:s'), $value->getTimezone()
             );
         }
 
