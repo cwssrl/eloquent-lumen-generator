@@ -1,5 +1,9 @@
 CHANGELOG
 
+2019-03-22, v1.8.5
+-----------------
+* Added logical search in url queries
+
 2019-03-22, v1.8.4
 -----------------
 * Updated base date format in base model
