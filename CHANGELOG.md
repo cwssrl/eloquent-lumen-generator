@@ -1,5 +1,9 @@
 CHANGELOG
 
+2019-03-22, v1.8.6
+-----------------
+* Changed make:resource to use stub
+
 2019-03-22, v1.8.5
 -----------------
 * Added logical search in url queries

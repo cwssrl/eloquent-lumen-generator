@@ -4,7 +4,6 @@ namespace Cws\EloquentModelGenerator\Provider;
 
 use Cws\EloquentModelGenerator\Processor\AdditionalProcessor;
 use Cws\EloquentModelGenerator\Processor\RepositoryProcessor;
-use Illuminate\Foundation\Application;
 use Illuminate\Support\ServiceProvider;
 use Cws\EloquentModelGenerator\Command\GenerateModelCommand;
 use Cws\EloquentModelGenerator\EloquentModelBuilder;
@@ -46,7 +45,7 @@ class GeneratorServiceProvider extends ServiceProvider
         ], self::PROCESSOR_TAG);
 
 
-        $this->app->bind(EloquentModelBuilder::class, function (Application $app) {
+        $this->app->bind(EloquentModelBuilder::class, function ($app) {
             return new EloquentModelBuilder($app->tagged(self::PROCESSOR_TAG));
         });
     }

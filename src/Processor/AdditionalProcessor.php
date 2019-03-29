@@ -69,11 +69,17 @@ class AdditionalProcessor implements ProcessorInterface
     {
         if ($config->get("resource") !== false) {
             //invoke the artisan command to create controller
-            exec("php artisan make:resource " . $model->getName()->getName() . "Resource");
+            $config->checkIfFileAlreadyExistsOrCopyIt($model, app_path("Http/Resources"),
+                $model->getName()->getName() . "Resource.php",
+                __DIR__ . '/../Resources/Resources', "Resource.stub");
+
             $config->checkIfFileAlreadyExistsOrCopyIt($model, app_path("Http/Resources"),
                 "RestResourceCollection.php",
                 __DIR__ . '/../Resources/Api', "RestResourceCollection.php.stub");
-            exec("php artisan make:resource " . $model->getName()->getName() . "CollectionResource --collection");
+            $config->checkIfFileAlreadyExistsOrCopyIt($model, app_path("Http/Resources"),
+                $model->getName()->getName() . "ResourceCollection.php",
+                __DIR__ . '/../Resources/Resources', "ResourceCollection.stub");
+
             $collectionContent = file_get_contents(app_path("Http/Resources/" . $model->getName()->getName() . "CollectionResource.php"));
             $collectionContent = str_replace("use Illuminate\Http\Resources\Json\ResourceCollection;", "", $collectionContent);
             $collectionContent = str_replace("extends ResourceCollection", "extends RestResourceCollection", $collectionContent);
