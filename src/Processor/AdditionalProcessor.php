@@ -77,7 +77,7 @@ class AdditionalProcessor implements ProcessorInterface
                 "RestResourceCollection.php",
                 __DIR__ . '/../Resources/Api', "RestResourceCollection.php.stub");
             $config->checkIfFileAlreadyExistsOrCopyIt($model, app_path("Http/Resources"),
-                $model->getName()->getName() . "ResourceCollection.php",
+                $model->getName()->getName() . "CollectionResource.php",
                 __DIR__ . '/../Resources/Resources', "ResourceCollection.stub");
 
             $collectionContent = file_get_contents(app_path("Http/Resources/" . $model->getName()->getName() . "CollectionResource.php"));

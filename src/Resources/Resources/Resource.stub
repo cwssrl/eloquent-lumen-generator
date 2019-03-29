@@ -1,10 +1,10 @@
 <?php
 
-namespace $APP_NAME$Http\Resources
+namespace $APP_NAME$Http\Resources;
 
 use Illuminate\Http\Resources\Json\Resource;
 
-class $MODEL_NAME$CollectionResource extends Resource
+class $MODEL_NAME$Resource extends Resource
 {
     /**
      * Transform the resource into an array.
