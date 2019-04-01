@@ -467,6 +467,10 @@ abstract class EloquentRepository implements RepositoryContract
             $output["field_name"] = $explodedFieldName[1];
             $output["is_or_query"] = (strtolower($explodedFieldName[0]) === "or");
         }
+        else
+        {
+            $output["field_name"] = $explodedFieldName[0];
+        }
 
         $isLikeQuery = starts_with($inputValue, "??");
         $isNotQuery = starts_with($inputValue, "!!");
