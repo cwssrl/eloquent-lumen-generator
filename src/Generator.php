@@ -71,7 +71,7 @@ class Generator
     {
         $path = $config->get($keyName);
         if ($path === null || stripos($path, '/') !== 0) {
-            $path = app_path($path);
+            $path = Misc::appPath($path);
         }
 
         if (!is_dir($path)) {
@@ -113,7 +113,7 @@ class Generator
     private function createControllerForModelIfNeeded(Config $config, EloquentModel $model)
     {
         if ($config->get("controller") !== false) {
-            $config->checkIfFileAlreadyExistsOrCopyIt($model, app_path("Http/Controllers"),
+            $config->checkIfFileAlreadyExistsOrCopyIt($model, Misc::appPath("Http/Controllers"),
                 "Controller.php",
                 __DIR__ . '/Resources/Controllers', "BaseController.stub");
 
@@ -191,7 +191,7 @@ class Generator
      */
     private function updateControllerFile($modelName, $requestNamePrefix, $requestFullClassPath)
     {
-        $pattern = app_path() . "/" . $modelName . "Controller.php";
+        $pattern = Misc::appPath() . "/" . $modelName . "Controller.php";
         $controllersFiles = $this->recursiveGlob($pattern);
         if (count($controllersFiles)) {
             $stringToSearch = $stringToReplaceWith = null;

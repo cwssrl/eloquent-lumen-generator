@@ -2,11 +2,7 @@
 
 namespace Cws\EloquentModelGenerator\Processor;
 
-use Cws\CodeGenerator\Model\ClassNameModel;
-use Cws\CodeGenerator\Model\DocBlockModel;
-use Cws\CodeGenerator\Model\MethodModel;
-use Cws\CodeGenerator\Model\NamespaceModel;
-use Cws\CodeGenerator\Model\UseClassModel;
+use Cws\EloquentModelGenerator\Misc;
 use Cws\EloquentModelGenerator\Config;
 use Cws\EloquentModelGenerator\Model\EloquentModel;
 
@@ -21,7 +17,7 @@ class AdditionalProcessor implements ProcessorInterface
      */
     public function process(EloquentModel $model, Config $config)
     {
-        if (!ends_with($model->getTableName(), "_translations")) {
+        if (!Misc::endsWith($model->getTableName(), "_translations")) {
             $this->createRoutesForModelIfNeeded($config, $model);
             $this->createRoutesForModelIfNeeded($config, $model, true);
             $this->createApiResourceForModelIfNeeded($config, $model);
@@ -69,21 +65,21 @@ class AdditionalProcessor implements ProcessorInterface
     {
         if ($config->get("resource") !== false) {
             //invoke the artisan command to create controller
-            $config->checkIfFileAlreadyExistsOrCopyIt($model, app_path("Http/Resources"),
+            $config->checkIfFileAlreadyExistsOrCopyIt($model, Misc::appPath("Http/Resources"),
                 $model->getName()->getName() . "Resource.php",
                 __DIR__ . '/../Resources/Resources', "Resource.stub");
 
-            $config->checkIfFileAlreadyExistsOrCopyIt($model, app_path("Http/Resources"),
+            $config->checkIfFileAlreadyExistsOrCopyIt($model, Misc::appPath("Http/Resources"),
                 "RestResourceCollection.php",
                 __DIR__ . '/../Resources/Api', "RestResourceCollection.php.stub");
-            $config->checkIfFileAlreadyExistsOrCopyIt($model, app_path("Http/Resources"),
+            $config->checkIfFileAlreadyExistsOrCopyIt($model, Misc::appPath("Http/Resources"),
                 $model->getName()->getName() . "CollectionResource.php",
                 __DIR__ . '/../Resources/Resources', "ResourceCollection.stub");
 
-            $collectionContent = file_get_contents(app_path("Http/Resources/" . $model->getName()->getName() . "CollectionResource.php"));
+            $collectionContent = file_get_contents(Misc::appPath("Http/Resources/" . $model->getName()->getName() . "CollectionResource.php"));
             $collectionContent = str_replace("use Illuminate\Http\Resources\Json\ResourceCollection;", "", $collectionContent);
             $collectionContent = str_replace("extends ResourceCollection", "extends RestResourceCollection", $collectionContent);
-            file_put_contents(app_path("Http/Resources/" . $model->getName()->getName() . "CollectionResource.php"), $collectionContent);
+            file_put_contents(Misc::appPath("Http/Resources/" . $model->getName()->getName() . "CollectionResource.php"), $collectionContent);
         }
     }
 
@@ -96,20 +92,20 @@ class AdditionalProcessor implements ProcessorInterface
     private function createApiControllerForModelIfNeeded(Config $config, EloquentModel $model)
     {
         if ($config->get("api-controller") !== false) {
-            $config->checkIfFileAlreadyExistsOrCopyIt($model, app_path("Http/Controllers"),
+            $config->checkIfFileAlreadyExistsOrCopyIt($model, Misc::appPath("Http/Controllers"),
                 "Controller.php",
                 __DIR__ . '/../Resources/Controllers', "BaseController.stub");
 
-            $apiControllersFolder = app_path("Http/Controllers/API");
+            $apiControllersFolder = Misc::appPath("Http/Controllers/API");
             if (!is_dir($apiControllersFolder))
                 mkdir($apiControllersFolder);
-            $config->checkIfFileAlreadyExistsOrCopyIt($model, app_path("Http/Controllers/API"),
+            $config->checkIfFileAlreadyExistsOrCopyIt($model, Misc::appPath("Http/Controllers/API"),
                 "APIBaseController.php",
                 __DIR__ . '/../Resources/Controllers', "ApiBaseController.stub");
-            $config->checkIfFileAlreadyExistsOrCopyIt($model, app_path("Http/Controllers/API"),
+            $config->checkIfFileAlreadyExistsOrCopyIt($model, Misc::appPath("Http/Controllers/API"),
                 $model->getName()->getName() . "APIController.php",
                 __DIR__ . '/../Resources/Controllers', "ApiModelController.stub");
-            $traitsFolder = app_path("Traits");
+            $traitsFolder = Misc::appPath("Traits");
             if (!is_dir($traitsFolder))
                 mkdir($traitsFolder);
 
@@ -119,7 +115,7 @@ class AdditionalProcessor implements ProcessorInterface
             $config->checkIfFileAlreadyExistsOrCopyIt($model, $traitsFolder,
                 "RestTrait.php",
                 __DIR__ . '/../Resources/Traits', "RestTrait.php.stub");
-            $config->checkIfFileAlreadyExistsOrCopyIt($model, app_path("Exceptions"),
+            $config->checkIfFileAlreadyExistsOrCopyIt($model, Misc::appPath("Exceptions"),
                 "Handler.php",
                 __DIR__ . '/../Resources/Traits', "Handler.php.stub", true);
 

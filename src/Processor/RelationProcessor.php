@@ -21,6 +21,7 @@ use Cws\EloquentModelGenerator\Model\EloquentModel;
 use Cws\EloquentModelGenerator\Model\HasMany;
 use Cws\EloquentModelGenerator\Model\HasOne;
 use Cws\EloquentModelGenerator\Model\Relation;
+use Cws\EloquentModelGenerator\Misc;
 
 /**
  * Class RelationProcessor
@@ -54,7 +55,7 @@ class RelationProcessor implements ProcessorInterface
      */
     public function process(EloquentModel $model, Config $config)
     {
-        if (!ends_with($model->getTableName(), "_translations")) {
+        if (!Misc::endsWith($model->getTableName(), "_translations")) {
 
             $schemaManager = $this->databaseManager->connection($config->get('connection'))->getDoctrineSchemaManager();
             $prefix = $this->databaseManager->connection($config->get('connection'))->getTablePrefix();
@@ -206,7 +207,7 @@ class RelationProcessor implements ProcessorInterface
             if (empty($relationKey))
                 $name = Str::singular(Str::camel($relation->getTableName()));
             else {
-                if (ends_with($relationKey, "_id"))
+                if (Misc::endsWith($relationKey, "_id"))
                     $relationKey = substr($relationKey, 0, -3);
                 $name = Str::singular(Str::camel($relationKey));
             }
@@ -241,7 +242,7 @@ class RelationProcessor implements ProcessorInterface
             else
                 return ("HasMany" . $name);
         $foreignColumnName = Str::singular($relation->getTableName()) .
-            Str::plural(Str::ucfirst((ends_with($foreignColumnName, "_id") ? substr($foreignColumnName, 0, -3) : $foreignColumnName)));
+            Str::plural(Str::ucfirst((Misc::endsWith($foreignColumnName, "_id") ? substr($foreignColumnName, 0, -3) : $foreignColumnName)));
         return Str::plural(Str::camel($foreignColumnName));
     }
 

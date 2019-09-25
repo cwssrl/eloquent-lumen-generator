@@ -44,7 +44,6 @@ class GeneratorServiceProvider extends ServiceProvider
             RepositoryProcessor::class
         ], self::PROCESSOR_TAG);
 
-
         $this->app->bind(EloquentModelBuilder::class, function ($app) {
             return new EloquentModelBuilder($app->tagged(self::PROCESSOR_TAG));
         });
@@ -52,8 +51,12 @@ class GeneratorServiceProvider extends ServiceProvider
 
     public function boot()
     {
+        $configFolderPath = base_path() . "/config";
+        if (!file_exists($configFolderPath)) {
+            mkdir($configFolderPath);
+        }
         $this->publishes([
-            __DIR__ . '/../Resources/eloquent_model_generator.php' => config_path('eloquent_model_generator.php')
+            __DIR__ . '/../Resources/eloquent_model_generator.php' => ($configFolderPath . '/eloquent_model_generator.php')
         ], 'config');
     }
 }

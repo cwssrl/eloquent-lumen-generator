@@ -3,8 +3,10 @@
 namespace Cws\EloquentModelGenerator\Command;
 
 use App\Http\Requests\ClassName\RequestStub;
+use Astrotomic\Translatable\Translatable;
 use Cws\EloquentModelGenerator\Config;
 use Cws\EloquentModelGenerator\Generator;
+use Cws\EloquentModelGenerator\Misc;
 use Illuminate\Config\Repository as AppConfig;
 use Illuminate\Console\Command;
 use Illuminate\Database\DatabaseManager;
@@ -21,7 +23,7 @@ class GenerateModelCommand extends Command
     /**
      * @var string
      */
-    protected $name = 'cws:generate:model';
+    protected $name = 'cws:generate';
 
     /**
      * @var Generator
@@ -77,6 +79,7 @@ class GenerateModelCommand extends Command
                 $isAnotherSchemaTableName = count(explode('.', $name)) > 1;
                 if (!$isAnotherSchemaTableName && !in_array(strtolower($name), $exceptTables) && !$this->isTableNameARelationTableName($name, $names)) {
                     dump($name . " " . $this->getDefaultClassName($name));
+                    $this->checkIfTableIsATranslationOneAndIfTranslatableIsInstalled($name);
                     $config->set("class_name", $this->getDefaultClassName($name));
                     $config->set("table_name", $name);
                     $model = $this->generator->generateModel($config, null, "output_path", null, true);
@@ -87,6 +90,14 @@ class GenerateModelCommand extends Command
         } else {
             $model = $this->generator->generateModel($config, null, "output_path", null, true);
             $this->output->writeln(sprintf('Model %s generated', $model->getName()->getName()));
+        }
+    }
+
+    private function checkIfTableIsATranslationOneAndIfTranslatableIsInstalled($tableName)
+    {
+        if(Misc::endsWith($tableName,"_translations") && !class_exists("Astrotomic\Translatable\Locales",true))
+        {
+            $this->warn("Be careful, to manage translation tables you need to require Astrotomic/laravel-translatable");
         }
     }
 

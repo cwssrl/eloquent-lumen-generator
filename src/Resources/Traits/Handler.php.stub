@@ -3,7 +3,7 @@
 namespace $APP_NAME$Exceptions;
 
 use Exception;
-use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Laravel\Lumen\Exceptions\Handler as ExceptionHandler;
 use $APP_NAME$Traits\RestTrait;
 use $APP_NAME$Traits\RestExceptionHandlerTrait;
 
