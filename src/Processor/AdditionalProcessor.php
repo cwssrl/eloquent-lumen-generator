@@ -36,8 +36,9 @@ class AdditionalProcessor implements ProcessorInterface
     {
         if ((!$isApi && $config->get("routes") !== false) || ($isApi && $config->get("api_routes") !== false)) {
             $controllerPath = $config->get('controller_path');
-            if ($isApi)
+            if ($isApi) {
                 $controllerPath .= (empty($controllerPath) ? "API" : "\API");
+            }
 
             //build the route line that we need to add to routes file looking for the controller path
             $resType = $isApi ? "Route::apiResource(\"" : "Route::resource(\"";

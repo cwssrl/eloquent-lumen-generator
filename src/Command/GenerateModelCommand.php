@@ -125,7 +125,6 @@ class GenerateModelCommand extends Command
         if (array_key_exists('all-api', $config) && $config['all-api'] !== false) {
             $config = array_merge($config, array_fill_keys(["api-controller", "api-routes", "request", "repository", "api-resource"], true));
         }
-
         return new Config($config, $this->appConfig->get('eloquent_model_generator.model_defaults'));
     }
 

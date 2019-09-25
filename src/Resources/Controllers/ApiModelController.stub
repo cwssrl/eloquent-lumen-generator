@@ -7,7 +7,7 @@ use $APP_NAME$Http\Requests\Update$MODEL_NAME$Request;
 use $APP_NAME$Http\Resources\$MODEL_NAME$Resource;
 use $APP_NAME$Http\Resources\$MODEL_NAME$CollectionResource;
 use $MODEL_FULL_CLASS$;
-use $APP_NAME$Repositories\$MODEL_NAME$\Eloquent$MODEL_NAME$Repository;
+use $APP_NAME$Repositories\$MODEL_NAME$\$MODEL_NAME$Contract;
 use Illuminate\Http\Request;
 use Response;
 
@@ -16,10 +16,10 @@ use Response;
  */
 class $MODEL_NAME$APIController extends ApiBaseController
 {
-    /** @var  Eloquent$MODEL_NAME$Repository */
+    /** @var  $MODEL_NAME$Contract */
     private $$CAMEL_MODEL_NAME$Repository;
 
-    public function __construct(Eloquent$MODEL_NAME$Repository $$CAMEL_MODEL_NAME$Repository)
+    public function __construct($MODEL_NAME$Contract $$CAMEL_MODEL_NAME$Repository)
     {
         $this->$CAMEL_MODEL_NAME$Repository = $$CAMEL_MODEL_NAME$Repository;
     }
@@ -67,7 +67,7 @@ class $MODEL_NAME$APIController extends ApiBaseController
 
         $$CAMEL_MODEL_NAME$ = $this->$CAMEL_MODEL_NAME$Repository->update($input, $id);
 
-        return $this->sendResponse($$CAMEL_MODEL_NAME$->toArray());
+        return $this->sendResponse(new $MODEL_NAME$Resource($$CAMEL_MODEL_NAME$));
     }
 
 

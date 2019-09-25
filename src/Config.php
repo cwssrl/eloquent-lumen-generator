@@ -1,6 +1,7 @@
 <?php
 
 namespace Cws\EloquentModelGenerator;
+
 use Cws\EloquentModelGenerator\Model\EloquentModel;
 use Illuminate\Support\Str;
 
@@ -32,7 +33,7 @@ class Config
     }
 
     /**
-     * @param string     $key
+     * @param string $key
      * @param mixed|null $default
      * @return mixed|null
      */
@@ -55,7 +56,7 @@ class Config
      * @param string $value
      * @return null
      */
-    public function set($key,$value)
+    public function set($key, $value)
     {
         $this->config[$key] = $value;
     }
@@ -68,8 +69,7 @@ class Config
      */
     protected function merge(array $high, array $low)
     {
-        foreach ($high as $key => $value)
-        {
+        foreach ($high as $key => $value) {
             if ($value !== null) {
                 $low[$key] = $value;
             }
@@ -107,13 +107,16 @@ class Config
      */
     protected function getBaseConfig()
     {
-        return require __DIR__ . '/Resources/config.php';
+        return require((file_exists(base_path("config/eloquent_model_generator.php"))) ?
+            base_path("config/eloquent_model_generator.php") :
+            (__DIR__ . '/Resources/config.php'));
+
     }
 
     public function checkIfFileAlreadyExistsOrCopyIt(EloquentModel $model, $directoryWhereSearchFor,
-                                                      $filenameToSearchFor,
-                                                      $directoryWhereGetFileToCopy,
-                                                      $filenameToCopy, $overwrite = false
+                                                     $filenameToSearchFor,
+                                                     $directoryWhereGetFileToCopy,
+                                                     $filenameToCopy, $overwrite = false
     )
     {
         if (!is_dir($directoryWhereSearchFor))
@@ -121,9 +124,7 @@ class Config
         $filePath = $directoryWhereSearchFor . "/" . $filenameToSearchFor;
         if (!file_exists($filePath)) {
             copy($directoryWhereGetFileToCopy . "/" . $filenameToCopy, $filePath);
-        }
-        else if($overwrite)
-        {
+        } else if ($overwrite) {
             unlink($filePath);
             copy($directoryWhereGetFileToCopy . "/" . $filenameToCopy, $filePath);
         }

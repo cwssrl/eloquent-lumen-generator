@@ -40,6 +40,7 @@ class RepositoryProcessor implements ProcessorInterface
             $config->checkIfFileAlreadyExistsOrCopyIt($model, Misc::appPath('Repositories/' . $modelName),
                 "Eloquent" . $modelName . "Repository.php",
                 $repoResourceFolder, "EloquentModelRepository.php");
+
         }
     }
 
