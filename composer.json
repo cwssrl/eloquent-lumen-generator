@@ -1,6 +1,6 @@
 {
-  "name": "cwssrl/eloquent-model-generator",
-  "description": "Eloquent Model Generator",
+  "name": "cwssrl/eloquent-lumen-generator",
+  "description": "Eloquent Lumen Generator",
   "license": "MIT",
   "authors": [
     {
@@ -20,10 +20,12 @@
     }
   },
   "require": {
-    "laravel/framework": "^5.8",
+    "laravel/lumen-framework": "^6.0",
     "doctrine/dbal": "^2.5",
-    "cwssrl/code-generator": "^1.0.2",
-	"dimsav/laravel-translatable": "9.*"
+    "cwssrl/code-generator": "^1.0.4"
+  },
+  "suggest": {
+    "Astrotomic/laravel-translatable": "Allows to configure translation tables"
   },
   "extra": {
     "laravel": {
