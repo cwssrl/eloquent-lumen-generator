@@ -33,6 +33,8 @@ class $MODEL_NAME$APIController extends ApiBaseController
 
     public function store(Create$MODEL_NAME$Request $request)
     {
+        $this->requestValidate($request);
+
         $input = $request->all();
 
         $$CAMEL_MODEL_NAME$ = $this->$CAMEL_MODEL_NAME$Repository->create($input);
@@ -56,6 +58,8 @@ class $MODEL_NAME$APIController extends ApiBaseController
 
     public function update($id, Update$MODEL_NAME$Request $request)
     {
+        $this->requestValidate($request);
+
         $input = $request->all();
 
         /** @var $MODEL_NAME$ $$CAMEL_MODEL_NAME$ */

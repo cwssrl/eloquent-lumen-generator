@@ -153,11 +153,11 @@ class Generator
         $a->setNamespace(new NamespaceModel($config->get("request_namespace")));
 
         //add uses to our request
-        $a->addUses(new UseClassModel("Illuminate\Foundation\Http\FormRequest"));
+        $a->addUses(new UseClassModel("Illuminate\Http\Request;"));
         $a->addUses(new UseClassModel($model->getNamespace()->getNamespace() . "\\" . $modelName));
 
         $requestName = $requestNamePrefix . $modelName . "Request";
-        $a->setName(new ClassNameModel($requestName, "FormRequest"));
+        $a->setName(new ClassNameModel($requestName, "Request"));
 
         //add the authorize method to our request
         $method = new MethodModel("authorize");

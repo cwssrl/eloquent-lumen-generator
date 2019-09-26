@@ -466,14 +466,12 @@ abstract class EloquentRepository implements RepositoryContract
         if (count($explodedFieldName) > 1) {
             $output["field_name"] = $explodedFieldName[1];
             $output["is_or_query"] = (strtolower($explodedFieldName[0]) === "or");
-        }
-        else
-        {
+        } else {
             $output["field_name"] = $explodedFieldName[0];
         }
 
-        $isLikeQuery = starts_with($inputValue, "??");
-        $isNotQuery = starts_with($inputValue, "!!");
+        $isLikeQuery = $this->startsWith($inputValue, "??");
+        $isNotQuery = $this->startsWith($inputValue, "!!");
         if ($isLikeQuery || $isNotQuery) {
             $inputValue = substr($inputValue, 2);
         }
@@ -792,5 +790,20 @@ abstract class EloquentRepository implements RepositoryContract
                 $model->deleteTranslations(array_keys($toRemove));
             }
         }
+    }
+
+    private function endsWith(string $searchInto, string $stringToLookFor)
+    {
+        $len = strlen($stringToLookFor);
+        if ($len == 0) {
+            return true;
+        }
+        return (substr($searchInto, -$len) === $stringToLookFor);
+    }
+
+    private function startsWith($string, $startString)
+    {
+        $len = strlen($startString);
+        return (substr($string, 0, $len) === $startString);
     }
 }

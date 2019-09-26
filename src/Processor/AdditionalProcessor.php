@@ -81,7 +81,7 @@ class AdditionalProcessor implements ProcessorInterface
                 ["verb" => "get", "param" => "/{id}", "name" => "show", "method" => "show"],
                 ["verb" => "put", "param" => "/{id}", "name" => "update", "method" => "update"],
                 ["verb" => "patch", "param" => "/{id}", "name" => "patch", "method" => "update"],
-                ["verb" => "post", "param" => "", "name" => "create", "method" => "create"],
+                ["verb" => "post", "param" => "", "name" => "store", "method" => "store"],
                 ["verb" => "delete", "param" => "/{id}", "name" => "delete", "method" => "destroy"],
             ];
             $tableName = $model->getTableName();

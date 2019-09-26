@@ -2,11 +2,19 @@
 
 namespace App\Http\Controllers\API;
 
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Response;
 use App\Http\Controllers\Controller;
 
 class ApiBaseController extends Controller
 {
+
+    public function requestValidate(Request $request)
+    {
+        $rules = method_exists($request, "rules") ? $request->rules() : [];
+        $this->validate($request, $rules);
+    }
+
     public function sendResponse($result, $code = 200)
     {
         if (method_exists($result, 'response'))

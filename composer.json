@@ -22,7 +22,8 @@
   "require": {
     "laravel/lumen-framework": "^6.0",
     "doctrine/dbal": "^2.5",
-    "cwssrl/code-generator": "^1.0.4"
+    "cwssrl/code-generator": "^1.0.4",
+    "illuminate/routing": "^6.0"
   },
   "suggest": {
     "Astrotomic/laravel-translatable": "Allows to configure translation tables"
