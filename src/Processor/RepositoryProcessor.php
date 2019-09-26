@@ -40,7 +40,24 @@ class RepositoryProcessor implements ProcessorInterface
             $config->checkIfFileAlreadyExistsOrCopyIt($model, Misc::appPath('Repositories/' . $modelName),
                 "Eloquent" . $modelName . "Repository.php",
                 $repoResourceFolder, "EloquentModelRepository.php");
+            $contractPath = $config->getAppNamespace() . "Repositories\\$modelName\\" . $modelName . "Contract";
+            $repoPath = $config->getAppNamespace() . "Repositories\\$modelName\\Eloquent" . $modelName . "Repository";
+            $this->bindOnAppFile($contractPath, $repoPath);
+        }
+    }
 
+    private function bindOnAppFile($contractName, $repoName)
+    {
+        $appPath = base_path("bootstrap/app.php");
+        //\App\Repositories\Contracts\CommunityContentNewsContract
+        //\App\Repositories\Traits\EloquentCommunityContentNewsRepository
+        $stringToWrite = "\$app->bind($contractName::class,$repoName::class);";
+        $content = file_get_contents($appPath);
+        if (strpos($content, $stringToWrite) === false) {
+            $content = str_replace('return $app;', "", $content);
+            $content .= PHP_EOL . $stringToWrite . PHP_EOL;
+            $content .= PHP_EOL . 'return $app;';
+            file_put_contents($appPath, $content);
         }
     }
 

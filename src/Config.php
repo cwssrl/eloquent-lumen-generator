@@ -139,7 +139,7 @@ class Config
 
     }
 
-    private function getAppNamespace()
+    public function getAppNamespace()
     {
         return \Illuminate\Container\Container::getInstance()->getNamespace();
     }
