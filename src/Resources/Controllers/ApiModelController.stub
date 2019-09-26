@@ -2,8 +2,6 @@
 
 namespace $APP_NAME$Http\Controllers\API;
 
-use $APP_NAME$Http\Requests\Create$MODEL_NAME$Request;
-use $APP_NAME$Http\Requests\Update$MODEL_NAME$Request;
 use $APP_NAME$Http\Resources\$MODEL_NAME$Resource;
 use $APP_NAME$Http\Resources\$MODEL_NAME$CollectionResource;
 use $MODEL_FULL_CLASS$;
@@ -31,9 +29,9 @@ class $MODEL_NAME$APIController extends ApiBaseController
     }
 
 
-    public function store(Create$MODEL_NAME$Request $request)
+    public function store(Request $request)
     {
-        $this->requestValidate($request);
+        $this->validate($request,$MODEL_NAME$::$rules);
 
         $input = $request->all();
 
@@ -56,9 +54,9 @@ class $MODEL_NAME$APIController extends ApiBaseController
     }
 
 
-    public function update($id, Update$MODEL_NAME$Request $request)
+    public function update($id, Request $request)
     {
-        $this->requestValidate($request);
+        $this->validate($request,$MODEL_NAME$::$rules);
 
         $input = $request->all();
 
