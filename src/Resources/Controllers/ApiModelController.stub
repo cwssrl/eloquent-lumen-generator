@@ -12,7 +12,7 @@ use Response;
 /**
  * @package $APP_NAME$Http\Controllers\API
  */
-class $MODEL_NAME$APIController extends ApiBaseController
+class $MODEL_NAME$APIController extends APIBaseController
 {
     /** @var  $MODEL_NAME$Contract */
     private $$CAMEL_MODEL_NAME$Repository;

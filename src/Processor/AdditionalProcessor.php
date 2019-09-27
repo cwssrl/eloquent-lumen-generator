@@ -140,7 +140,7 @@ class AdditionalProcessor implements ProcessorInterface
                 mkdir($apiControllersFolder);
             $config->checkIfFileAlreadyExistsOrCopyIt($model, Misc::appPath("Http/Controllers/API"),
                 "APIBaseController.php",
-                __DIR__ . '/../Resources/Controllers', "ApiBaseController.stub");
+                __DIR__ . '/../Resources/Controllers', "APIBaseController.stub");
             $config->checkIfFileAlreadyExistsOrCopyIt($model, Misc::appPath("Http/Controllers/API"),
                 $model->getName()->getName() . "APIController.php",
                 __DIR__ . '/../Resources/Controllers', "ApiModelController.stub");
@@ -158,6 +158,28 @@ class AdditionalProcessor implements ProcessorInterface
                 "Handler.php",
                 __DIR__ . '/../Resources/Traits', "Handler.php.stub", true);
 
+            $this->addResponseFactoryOnAppFile();
+        }
+
+    }
+
+    private function addResponseFactoryOnAppFile()
+    {
+        $appPath = base_path("bootstrap/app.php");
+        //\App\Repositories\Contracts\CommunityContentNewsContract
+        //\App\Repositories\Traits\EloquentCommunityContentNewsRepository
+        $stringToWrite = "\$app->singleton('Illuminate\Contracts\Routing\ResponseFactory', function (\$app) {
+            return new \Illuminate\Routing\ResponseFactory(
+                \$app['Illuminate\Contracts\View\Factory'],
+                \$app['Illuminate\Routing\Redirector']
+            );
+        });";
+        $content = file_get_contents($appPath);
+        if (strpos($content, $stringToWrite) === false) {
+            $content = str_replace('return $app;', "", $content);
+            $content .= PHP_EOL . $stringToWrite . PHP_EOL;
+            $content .= PHP_EOL . 'return $app;';
+            file_put_contents($appPath, $content);
         }
     }
 

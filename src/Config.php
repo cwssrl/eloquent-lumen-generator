@@ -109,7 +109,7 @@ class Config
     {
         return require((file_exists(base_path("config/eloquent_model_generator.php"))) ?
             base_path("config/eloquent_model_generator.php") :
-            (__DIR__ . '/Resources/config.php'));
+            (__DIR__ . '/Resources/eloquent_model_generator.php'));
 
     }
 
