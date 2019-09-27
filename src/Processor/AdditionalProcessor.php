@@ -158,12 +158,12 @@ class AdditionalProcessor implements ProcessorInterface
                 "Handler.php",
                 __DIR__ . '/../Resources/Traits', "Handler.php.stub", true);
 
-            $this->addResponseFactoryOnAppFile();
+            $this->addResponseFactoryAndUncommentFacadesAndWithEloquentOnAppFile();
         }
 
     }
 
-    private function addResponseFactoryOnAppFile()
+    private function addResponseFactoryAndUncommentFacadesAndWithEloquentOnAppFile()
     {
         $appPath = base_path("bootstrap/app.php");
         //\App\Repositories\Contracts\CommunityContentNewsContract
@@ -179,6 +179,26 @@ class AdditionalProcessor implements ProcessorInterface
             $content = str_replace('return $app;', "", $content);
             $content .= PHP_EOL . $stringToWrite . PHP_EOL;
             $content .= PHP_EOL . 'return $app;';
+            file_put_contents($appPath, $content);
+        }
+
+        // $app->withFacades();
+
+        $stringToLookFor = '// $app->withFacades();';
+        $atLeastOne = false;
+        if(strpos($content,$stringToLookFor) !== false)
+        {
+            $content = str_replace($stringToLookFor, '$app->withFacades();', $content);
+            $atLeastOne = true;
+        }
+        $stringToLookFor = '// $app->withEloquent();';
+        if(strpos($content,$stringToLookFor) !== false)
+        {
+            $content = str_replace($stringToLookFor, '$app->withEloquent();', $content);
+            $atLeastOne = true;
+        }
+        if($atLeastOne)
+        {
             file_put_contents($appPath, $content);
         }
     }

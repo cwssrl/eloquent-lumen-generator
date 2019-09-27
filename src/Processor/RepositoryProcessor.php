@@ -55,7 +55,7 @@ class RepositoryProcessor implements ProcessorInterface
         $content = file_get_contents($appPath);
         if (strpos($content, $stringToWrite) === false) {
             $content = str_replace('return $app;', "", $content);
-            $content .= PHP_EOL . $stringToWrite . PHP_EOL;
+            $content .= PHP_EOL . $stringToWrite;
             $content .= PHP_EOL . 'return $app;';
             file_put_contents($appPath, $content);
         }
