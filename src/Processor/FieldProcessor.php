@@ -80,14 +80,19 @@ class FieldProcessor implements ProcessorInterface
             } else {
                 if (in_array($columnName, $timestampsColumns))
                     $timestampsCounter++;
-                else
-                {
+                else {
                     $mappings[$columnName] = $this->getValidMappingFromColumnType($columnTypeName);
                 }
             }
         }
 
         $fillableProperty = new PropertyModel("blockingRelations");
+        $fillableProperty->setAccess('public')
+            ->setValue([])
+            ->setDocBlock(new DocBlockModel('@var array'));
+        $model->addProperty($fillableProperty);
+
+        $fillableProperty = new PropertyModel("relationsToDelete");
         $fillableProperty->setAccess('public')
             ->setValue([])
             ->setDocBlock(new DocBlockModel('@var array'));
