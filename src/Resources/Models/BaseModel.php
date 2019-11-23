@@ -97,8 +97,14 @@ class BaseModel extends Model
     {
         if (isset($this->relationsToDelete) && is_array($this->relationsToDelete)) {
             foreach ($this->relationsToDelete as $relationsToDelete) {
-                if ($this->$relationsToDelete()->count())
-                    $this->$relationsToDelete()->delete();
+                $currentRelation = $this->$relationsToDelete();
+                if ($currentRelation->count()) {
+                    if (method_exists($currentRelation, "getPivotClass")) {
+                        $currentRelation->sync([]);
+                    } else {
+                        $currentRelation->delete();
+                    }
+                }
             }
         }
         return null;
