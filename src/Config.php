@@ -129,12 +129,23 @@ class Config
             copy($directoryWhereGetFileToCopy . "/" . $filenameToCopy, $filePath);
         }
         $content = file_get_contents($filePath);
+        $modelName = $model->getName()->getName();
         $content = str_replace('$APP_NAME$', $this->getAppNamespace(), $content);
-        $content = str_replace('$MODEL_NAME$', $model->getName()->getName(), $content);
-        $content = str_replace('$CAMEL_MODEL_NAME$', Str::camel($model->getName()->getName()), $content);
+        $content = str_replace('$MODEL_NAME$', $modelName, $content);
+        $content = str_replace('$CAMEL_MODEL_NAME$', Str::camel($modelName), $content);
         $content = str_replace('$MODEL_FULL_CLASS$',
-            $model->getNamespace()->getNamespace() . "\\" . $model->getName()->getName(),
+            $model->getNamespace()->getNamespace() . "\\" . $modelName,
             $content);
+        $content = str_replace(
+            '$PLURAL_SNAKE_MODEL_NAME$',
+            Str::snake(Str::plural($modelName)),
+            $content
+        );
+        $content = str_replace(
+            '$PLURAL_PASCAL_MODEL_NAME$',
+            Str::plural($modelName),
+            $content
+        );
         file_put_contents($filePath, $content);
 
     }

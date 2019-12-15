@@ -22,13 +22,84 @@ class $MODEL_NAME$APIController extends APIBaseController
         $this->$CAMEL_MODEL_NAME$Repository = $$CAMEL_MODEL_NAME$Repository;
     }
 
+/**
+     *
+     * @OA\Get(
+     *     path="/api/v1/$PLURAL_SNAKE_MODEL_NAME$",
+     *     operationId="get$PLURAL_PASCAL_MODEL_NAME$",
+     *     tags={"$PLURAL_PASCAL_MODEL_NAME$"},
+     *     summary="Get all $PLURAL_PASCAL_MODEL_NAME$",
+     *     description="Return all $PLURAL_PASCAL_MODEL_NAME$ that matches request",
+     *    security={
+     *       {"oauth2Auth": {"$PLURAL_SNAKE_MODEL_NAME$_view"}}
+     *     },
+     *     @OA\Parameter(
+     *         name="criteria",
+     *         in="query",
+     *         description="Some optional other parameter",
+     *         required=false,
+     *         @OA\Schema(type="string")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="successful operation",
+     *          @OA\JsonContent(
+     *             type="array",
+     *             @OA\Items(ref="#/components/schemas/$MODEL_NAME$")
+     *         ),
+     *     ),
+     *     @OA\Response(
+     *         response="400",
+     *         description="Error: Bad request. When required parameters were not supplied.",
+     *     ),
+     * )
+     */
     public function index(Request $request)
     {
         $$CAMEL_MODEL_NAME$s = $this->$CAMEL_MODEL_NAME$Repository->getByRequest($request);
         return $this->sendResponse(new $MODEL_NAME$CollectionResource($MODEL_NAME$Resource::collection($$CAMEL_MODEL_NAME$s)->resource));
     }
 
-
+    /**
+         * @OA\Post(
+         *     path="/api/entertainment/v1/$PLURAL_SNAKE_MODEL_NAME$",
+         *     operationId="add$MODEL_NAME$",
+         *     tags={"$PLURAL_PASCAL_MODEL_NAME$"},
+         *    security={
+         *       {"oauth2Auth": {"$PLURAL_SNAKE_MODEL_NAME$_create"}}
+         *     },
+         *     summary="Add a new $MODEL_NAME$",
+         *     description="",
+         *     @OA\RequestBody(
+         *         description="$MODEL_NAME$ object that needs to be added to the store",
+         *         required=true,
+         *         @OA\JsonContent(ref="#/components/schemas/$MODEL_NAME$"),
+         *         @OA\MediaType(
+         *             mediaType="application/xml",
+         *             @OA\Schema(ref="#/components/schemas/$MODEL_NAME$")
+         *         ),
+         *     ),
+         *     @OA\RequestBody(
+         *         description="$MODEL_NAME$ object that needs to be added to the store",
+         *         required=true,
+         *         @OA\MediaType(
+         *             mediaType="application/xml",
+         *             @OA\Schema(ref="#/components/schemas/$MODEL_NAME$")
+         *         )
+         *     ),
+         *     @OA\Response(
+         *         response=405,
+         *         description="Invalid $MODEL_NAME$",
+         *     ),
+         *     @OA\Response(
+         *         response=200,
+         *         description="successful operation",
+         *          @OA\JsonContent(
+         *             ref="#/components/schemas/$MODEL_NAME$"
+         *         ),
+         *     ),
+         * )
+         */
     public function store(Request $request)
     {
         $this->validate($request,$MODEL_NAME$::$rules);
@@ -40,7 +111,41 @@ class $MODEL_NAME$APIController extends APIBaseController
         return $this->sendResponse(new $MODEL_NAME$Resource($$CAMEL_MODEL_NAME$));
     }
 
-
+/**
+     * @OA\Get(
+     *     path="/api/entertainment/v1/$PLURAL_SNAKE_MODEL_NAME$/{id}",
+     *     operationId="get$MODEL_NAME$",
+     *     tags={"$PLURAL_PASCAL_MODEL_NAME$"},
+     *     summary="Find $MODEL_NAME$ by ID",
+     *     description="Returns a single $MODEL_NAME$",
+     *    security={
+     *       {"oauth2Auth": {"$PLURAL_SNAKE_MODEL_NAME$_view"}}
+     *     },
+     *     @OA\Parameter(
+     *         description="ID of $MODEL_NAME$ to return",
+     *         in="path",
+     *         name="id",
+     *         required=true,
+     *         @OA\Schema(
+     *           type="integer",
+     *           format="int64"
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="successful operation",
+     *         @OA\JsonContent(ref="#/components/schemas/$MODEL_NAME$")
+     *     ),
+     *     @OA\Response(
+     *         response="400",
+     *         description="Invalid ID supplied"
+     *     ),
+     *     @OA\Response(
+     *         response="404",
+     *         description="Item not found"
+     *     )
+     * )
+     */
     public function show($id)
     {
         /** @var $MODEL_NAME$ $$CAMEL_MODEL_NAME$ */
@@ -53,7 +158,54 @@ class $MODEL_NAME$APIController extends APIBaseController
         return $this->sendResponse(new $MODEL_NAME$Resource($$CAMEL_MODEL_NAME$));
     }
 
-
+/**
+     * @OA\Put(
+     *     path="/api/entertainment/v1/$PLURAL_SNAKE_MODEL_NAME$/{id}",
+     *     operationId="update$MODEL_NAME$",
+     *     tags={"Beds"},
+     *     summary="Update an existing $MODEL_NAME$",
+     *     description="",
+     *    security={
+     *       {"oauth2Auth": {"$PLURAL_SNAKE_MODEL_NAME$_edit"}}
+     *     },
+     *     @OA\Parameter(
+     *         description="$MODEL_NAME$ id to update",
+     *         in="path",
+     *         name="id",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="integer",
+     *             format="int64"
+     *         )
+     *     ),
+     *     @OA\RequestBody(
+     *         description="$MODEL_NAME$ object that needs to be updated into the store",
+     *         required=true,
+     *         @OA\JsonContent(ref="#/components/schemas/$MODEL_NAME$"),
+     *         @OA\MediaType(
+     *            mediaType="application/xml",
+     *            @OA\Schema(ref="#/components/schemas/$MODEL_NAME$")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="successful operation",
+     *         @OA\JsonContent(ref="#/components/schemas/$MODEL_NAME$")
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Invalid ID supplied"
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Item not found"
+     *     ),
+     *     @OA\Response(
+     *         response=405,
+     *         description="Invalid $MODEL_NAME$",
+     *     )
+     * )
+     */
     public function update($id, Request $request)
     {
         $this->validate($request,$MODEL_NAME$::$rules);
@@ -72,7 +224,40 @@ class $MODEL_NAME$APIController extends APIBaseController
         return $this->sendResponse(new $MODEL_NAME$Resource($$CAMEL_MODEL_NAME$));
     }
 
-
+/**
+     * @OA\Delete(
+     *     path="/api/entertainment/v1/$PLURAL_SNAKE_MODEL_NAME$/{id}",
+     *     operationId="delete$MODEL_NAME$",
+     *     tags={"$PLURAL_PASCAL_MODEL_NAME$"},
+     *     summary="Deletes an $MODEL_NAME$",
+     *     description="",
+     *    security={
+     *       {"oauth2Auth": {"$PLURAL_SNAKE_MODEL_NAME$_delete"}}
+     *     },
+     *     @OA\Parameter(
+     *         description="$MODEL_NAME$ id to delete",
+     *         in="path",
+     *         name="id",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="integer",
+     *             format="int64"
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=204,
+     *         description="successful operation"
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Invalid ID supplied"
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="$MODEL_NAME$ not found"
+     *     )
+     * )
+     */
     public function destroy($id)
     {
         /** @var $MODEL_NAME$ $$CAMEL_MODEL_NAME$ */
