@@ -3,8 +3,12 @@
 namespace App\Repositories;
 
 use App\Exceptions\GenericException;
+use App\Models\BaseModel;
 use Carbon\Carbon;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
@@ -31,7 +35,7 @@ abstract class EloquentRepository implements RepositoryContract
      * Find a model by its id, if does not exist returns null
      *
      * @param int $id
-     * @return \Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model|mixed|null|static|static[]
+     * @return Collection|\Illuminate\Database\Eloquent\Model|mixed|null|static|static[]
      */
     public function find($id)
     {
@@ -52,7 +56,7 @@ abstract class EloquentRepository implements RepositoryContract
      * Find a model by its id, if does not exist throw an exception
      *
      * @param int $id
-     * @return \Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model|mixed|null|static|static[]
+     * @return Collection|\Illuminate\Database\Eloquent\Model|mixed|null|static|static[]
      * @throws GenericException
      */
     public function findOrThrowException($id)
@@ -85,9 +89,11 @@ abstract class EloquentRepository implements RepositoryContract
      * Get Items by request parameters
      *
      * @param Request $request
-     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator|\Illuminate\Database\Eloquent\Collection|mixed|static[]
+     * @param string|null $relationToLoad
+     * @param array|null $fieldsToSelect
+     * @return LengthAwarePaginator|Collection|mixed|static[]
      */
-    public function getByRequest(Request $request, $relationToLoad = null)
+    public function getByRequest(Request $request, $relationToLoad = null, array $fieldsToSelect = null)
     {
         $allFieldsQuery = $order = $sort = $paginate = $trashed = $queries = $queryableFields = $queryType = null;
 
@@ -101,6 +107,9 @@ abstract class EloquentRepository implements RepositoryContract
             $queries = array_merge($queries, ["id" => $request->get('id')]);
         }
         $query = $this->buildQueryByRequestFields($queryableFields, $queryType, $allFieldsQuery, $queries);
+        if (!empty($fieldsToSelect)) {
+            $query = $query->select($fieldsToSelect);
+        }
         if (!empty($relationToLoad))
             $query->with([$relationToLoad]);
         return empty($paginate) ? $this->getAll($order, $sort, $query, $trashed) :
@@ -175,24 +184,29 @@ abstract class EloquentRepository implements RepositoryContract
      */
     protected function buildQueryByRequestFields(array $queryableFields, $queryType, $allFieldQueries = null, array $queries = [])
     {
+        //We wrap new repo new query into model new query to make repo clauses surrounded by parenthesis
         /** @var Builder $query */
         $query = $this->newQuery();
 
         if (empty($queryableFields) || (empty($allFieldQueries) && !count($queries)))
             return $query;
-        $casts = [];
-        /*if (isset($this->model->translatedAttributes)) {
-            $temp = (get_class($this->model) . "Translation");
-            if (class_exists($temp))
-                $casts = (new $temp)->getCasts();
-        }*/
-        $casts = array_merge($casts, $this->model->getCasts());
-        //check if we need to query a value in all fields or if we have to build a query only for specific fields
-        if (!empty($allFieldQueries))
-            $query = $this->loadAllFieldQuery($query, $allFieldQueries, $queryableFields, $casts);
-        else {
-            $query = $this->loadFieldsSpecificQuery($query, $queryType, $queries, $casts);
-        }
+        //TODO Test queries and parenthesis
+        $query = $query->where(function ($query) use ($queryableFields, $queries, $queryType) {
+            $casts = [];
+            /*if (isset($this->model->translatedAttributes)) {
+                $temp = (get_class($this->model) . "Translation");
+                if (class_exists($temp))
+                    $casts = (new $temp)->getCasts();
+            }*/
+            $casts = array_merge($casts, $this->model->getCasts());
+            //check if we need to query a value in all fields or if we have to build a query only for specific fields
+            if (!empty($allFieldQueries))
+                $query = $this->loadAllFieldQuery($query, $allFieldQueries, $queryableFields, $casts);
+            else {
+                $query = $this->loadFieldsSpecificQuery($query, $queryType, $queries, $casts);
+            }
+            return $query;
+        });
         return $query;
     }
 
@@ -499,7 +513,7 @@ abstract class EloquentRepository implements RepositoryContract
      * @param string $sort
      * @param Builder|null $query
      * @param bool $trashed
-     * @return \Illuminate\Database\Eloquent\Collection|mixed|static[]
+     * @return Collection|mixed|static[]
      */
     public function getAll($order = 'asc', $sort = 'id', Builder $query = null, $trashed = false)
     {
@@ -529,7 +543,7 @@ abstract class EloquentRepository implements RepositoryContract
      * @param string $sort
      * @param Builder|null $query
      * @param bool $trashed
-     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator|mixed
+     * @return LengthAwarePaginator|mixed
      */
     public function getPaginated($per_page, $order = 'asc', $sort = 'id', Builder $query = null, $trashed = false)
     {
@@ -548,7 +562,7 @@ abstract class EloquentRepository implements RepositoryContract
      * Get all items including only selected fields
      *
      * @param mixed $fields
-     * @return \Illuminate\Database\Eloquent\Collection|static[]
+     * @return Collection|static[]
      */
     public function getFields($fields)
     {

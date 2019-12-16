@@ -2,6 +2,8 @@
 
 namespace App\Repositories;
 
+use Illuminate\Http\Request;
+
 /**
  * Interface RepositoryContract
  * @package App\Repositories\Backend
@@ -99,4 +101,12 @@ interface RepositoryContract
      * @return mixed
      */
     public function update(array $input, $modelId = null, $model = null);
+
+    /**
+     * @param Request $request
+     * @param null $relationToLoad
+     * @param array|null $fieldsToSelect
+     * @return mixed
+     */
+    public function getByRequest(Request $request, $relationToLoad = null, array $fieldsToSelect = null);
 }
