@@ -1,6 +1,6 @@
 CHANGELOG
 
-[Unreleased]
+0.0.8, 2019-12-17
 -----------------
 * Fixed rewrite of ResponseFactory on app.php
 
