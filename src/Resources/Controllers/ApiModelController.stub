@@ -62,7 +62,7 @@ class $MODEL_NAME$APIController extends APIBaseController
 
     /**
          * @OA\Post(
-         *     path="/api/entertainment/v1/$PLURAL_SNAKE_MODEL_NAME$",
+         *     path="/api/v1/$PLURAL_SNAKE_MODEL_NAME$",
          *     operationId="add$MODEL_NAME$",
          *     tags={"$PLURAL_PASCAL_MODEL_NAME$"},
          *    security={
@@ -113,7 +113,7 @@ class $MODEL_NAME$APIController extends APIBaseController
 
 /**
      * @OA\Get(
-     *     path="/api/entertainment/v1/$PLURAL_SNAKE_MODEL_NAME$/{id}",
+     *     path="/api/v1/$PLURAL_SNAKE_MODEL_NAME$/{id}",
      *     operationId="get$MODEL_NAME$",
      *     tags={"$PLURAL_PASCAL_MODEL_NAME$"},
      *     summary="Find $MODEL_NAME$ by ID",
@@ -160,7 +160,7 @@ class $MODEL_NAME$APIController extends APIBaseController
 
 /**
      * @OA\Put(
-     *     path="/api/entertainment/v1/$PLURAL_SNAKE_MODEL_NAME$/{id}",
+     *     path="/api/v1/$PLURAL_SNAKE_MODEL_NAME$/{id}",
      *     operationId="update$MODEL_NAME$",
      *     tags={"Beds"},
      *     summary="Update an existing $MODEL_NAME$",
@@ -226,7 +226,7 @@ class $MODEL_NAME$APIController extends APIBaseController
 
 /**
      * @OA\Delete(
-     *     path="/api/entertainment/v1/$PLURAL_SNAKE_MODEL_NAME$/{id}",
+     *     path="/api/v1/$PLURAL_SNAKE_MODEL_NAME$/{id}",
      *     operationId="delete$MODEL_NAME$",
      *     tags={"$PLURAL_PASCAL_MODEL_NAME$"},
      *     summary="Deletes an $MODEL_NAME$",

@@ -166,6 +166,7 @@ class AdditionalProcessor implements ProcessorInterface
     private function addResponseFactoryAndUncommentFacadesAndWithEloquentOnAppFile()
     {
         $appPath = base_path("bootstrap/app.php");
+        $stringToLookFor = '$app->singleton(\'Illuminate\Contracts\Routing\ResponseFactory';
         //\App\Repositories\Contracts\CommunityContentNewsContract
         //\App\Repositories\Traits\EloquentCommunityContentNewsRepository
         $stringToWrite = "\$app->singleton('Illuminate\Contracts\Routing\ResponseFactory', function (\$app) {
@@ -175,7 +176,7 @@ class AdditionalProcessor implements ProcessorInterface
             );
         });";
         $content = file_get_contents($appPath);
-        if (strpos($content, $stringToWrite) === false) {
+        if (strpos($content, $stringToLookFor) === false) {
             $content = str_replace('return $app;', "", $content);
             $content .= PHP_EOL . $stringToWrite . PHP_EOL;
             $content .= PHP_EOL . 'return $app;';

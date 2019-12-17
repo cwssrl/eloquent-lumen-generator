@@ -1,5 +1,9 @@
 CHANGELOG
 
+0.0.8, 2019-12-17
+-----------------
+* Fixed rewrite of ResponseFactory on app.php
+
 0.0.7, 2019-12-16
 -----------------
 * Updated wrapped queries management
