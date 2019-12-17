@@ -162,7 +162,7 @@ class $MODEL_NAME$APIController extends APIBaseController
      * @OA\Put(
      *     path="/api/v1/$PLURAL_SNAKE_MODEL_NAME$/{id}",
      *     operationId="update$MODEL_NAME$",
-     *     tags={"Beds"},
+     *     tags={"$PLURAL_PASCAL_MODEL_NAME$"},
      *     summary="Update an existing $MODEL_NAME$",
      *     description="",
      *    security={

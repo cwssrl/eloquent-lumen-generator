@@ -1,5 +1,9 @@
 CHANGELOG
 
+0.0.9, 2019-12-17
+-----------------
+* Fixed api docs
+
 0.0.8, 2019-12-17
 -----------------
 * Fixed rewrite of ResponseFactory on app.php
