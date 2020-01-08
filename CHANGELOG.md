@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - php_codesniffer
 - editorconfig file
 - styleci.yaml
+- created circleci
 
 
 ## [0.0.10], 2019-12-18
