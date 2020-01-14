@@ -14,6 +14,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
+## [1.0.0], 2020-01-14
+
+### Added
+
+### Changed
+
+- Changelog and composer 
+
+### Fixed
+
+### Removed
+
 ## [0.0.12], 2020-01-14
 
 ### Changed
