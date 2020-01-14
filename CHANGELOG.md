@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed check for bind on app file
 - Moved resources files from php class to stub files
 - Fixed php style by PSR12 rules
+- Updated phpdocs
 
 ## [0.0.10], 2019-12-18
 
