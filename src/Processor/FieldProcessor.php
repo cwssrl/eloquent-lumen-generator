@@ -147,17 +147,13 @@ class FieldProcessor implements ProcessorInterface
             case "json":
                 return "array";
             case "text":
-                return "string";
             case "datetimetz":
-                return "string";
+            case "guid":
             case "blob":
                 return "string";
             case "decimal":
                 return "float";
-            case "guid":
-                return "string";
             case "smallint":
-                return "integer";
             case "bigint":
                 return "integer";
             default:
@@ -168,6 +164,7 @@ class FieldProcessor implements ProcessorInterface
 
     /**
      * @param Column $column
+     * @return string
      */
     private function getRules(Column $column, $mapping)
     {
@@ -193,8 +190,6 @@ class FieldProcessor implements ProcessorInterface
                 array_push($rules, "boolean");
                 break;
             case "date":
-                array_push($rules, "date");
-                break;
             case "datetime":
                 array_push($rules, "date");
                 break;
