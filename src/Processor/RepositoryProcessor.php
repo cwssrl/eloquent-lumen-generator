@@ -57,11 +57,11 @@ class RepositoryProcessor implements ProcessorInterface
     private function bindOnAppFile($contractName, $repoName)
     {
         $appPath = base_path("bootstrap/app.php");
-        //\App\Repositories\Contracts\CommunityContentNewsContract
-        //\App\Repositories\Traits\EloquentCommunityContentNewsRepository
         $stringToWrite = "\$app->bind($contractName::class,$repoName::class);";
+        $stringToWriteWithMiddleSpace = "\$app->bind($contractName::class, $repoName::class);";
+
         $content = file_get_contents($appPath);
-        if (strpos($content, $stringToWrite) === false) {
+        if (strpos($content, $stringToWrite) === false && strpos($content,$stringToWriteWithMiddleSpace) == false) {
             $content = str_replace('return $app;', "", $content);
             $content .= PHP_EOL . $stringToWrite;
             $content .= PHP_EOL . 'return $app;';
