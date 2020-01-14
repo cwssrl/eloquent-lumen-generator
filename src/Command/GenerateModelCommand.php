@@ -80,7 +80,7 @@ class GenerateModelCommand extends Command
                 if (
                     !$isAnotherSchemaTableName &&
                     !in_array(strtolower($name), $exceptTables) &&
-                    !$this->isTableNameARelationTableName($name, $names)
+                    !Misc::isTableNameARelationTableName($name, $names)
                 ) {
                     dump($name . " " . $this->getDefaultClassName($name));
                     $this->checkIfTableIsATranslationOneAndIfTranslatableIsInstalled($name);
@@ -178,40 +178,6 @@ class GenerateModelCommand extends Command
             ['all', 'all', InputOption::VALUE_OPTIONAL, "If true creates all items", false],
             ['all-api', 'api', InputOption::VALUE_OPTIONAL, "If true creates all api items", false],
         ];
-    }
-
-    /**
-     * Check if table name is a relation one by Laravel standard
-     *
-     * @param string $tableName
-     * @param array $allTablesName
-     * @return boolean
-     */
-    private function isTableNameARelationTableName($tableName, $allTablesName)
-    {
-        $singol = [];
-        $containedInTableName = [];
-        $singolarizedCurrentTable = Str::singular($tableName);
-        foreach ($allTablesName as $p) {
-            $sin = Str::singular($p);
-            $singol[] = $sin;
-            if (strpos($tableName, $sin) !== false && $sin !== $singolarizedCurrentTable) {
-                $containedInTableName[] = $sin;
-            }
-        }
-
-        $countContained = count($containedInTableName);
-        if ($countContained < 2) {
-            return false;
-        }
-        if ($countContained > 1 && (count(array_intersect($containedInTableName, $singol)) == $countContained)) {
-            $first = explode("_", $containedInTableName[0]);
-            $second = explode("_", $containedInTableName[1]);
-            if (empty(array_intersect($first, $second)) && empty(array_intersect($second, $first))) {
-                return true;
-            }
-        }
-        return false;
     }
 
     /**

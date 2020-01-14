@@ -74,11 +74,17 @@ class BelongsToMany extends Relation
         return $this;
     }
 
+    /**
+     * @return bool
+     */
     public function getWithTimestamps()
     {
         return $this->withTimestamps;
     }
 
+    /**
+     * @return string|null
+     */
     public function getPivotsAsString()
     {
         if (!count($this->pivots)) {

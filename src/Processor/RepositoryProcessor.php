@@ -70,6 +70,12 @@ class RepositoryProcessor implements ProcessorInterface
         }
     }
 
+    /**
+     * Copy base files if needed
+     *
+     * @param Config $config
+     * @param EloquentModel $model
+     */
     private function checkIfBaseFilesAlreadyExistsOtherwiseCreate(Config $config, EloquentModel $model)
     {
         $repoResourceFolder = __DIR__ . '/../Resources/Repositories';

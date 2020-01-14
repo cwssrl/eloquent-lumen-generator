@@ -29,7 +29,6 @@ class EloquentModelBuilder
     /**
      * @param Config $config
      * @return EloquentModel
-     * @throws GeneratorException
      */
     public function createModel(Config $config)
     {
@@ -68,7 +67,6 @@ class EloquentModelBuilder
             if ($one->getPriority() == $two->getPriority()) {
                 return 0;
             }
-
             return $one->getPriority() < $two->getPriority() ? 1 : -1;
         });
     }

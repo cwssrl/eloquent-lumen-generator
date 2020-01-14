@@ -7,7 +7,7 @@ use Cws\EloquentModelGenerator\Config;
 use Cws\EloquentModelGenerator\Model\EloquentModel;
 
 /**
- * Class NamespaceProcessor
+ * Class AdditionalProcessor
  * @package Cws\EloquentModelGenerator\Processor
  */
 class AdditionalProcessor implements ProcessorInterface
@@ -58,6 +58,14 @@ class AdditionalProcessor implements ProcessorInterface
         }
     }
 
+    /**
+     * Prepare lines to print on route files
+     *
+     * @param $isApi
+     * @param EloquentModel $model
+     * @param $controllerPath
+     * @return string|null
+     */
     private function prepareRouteCommand($isApi, EloquentModel $model, $controllerPath)
     {
         $toPrint = null;
@@ -222,12 +230,13 @@ class AdditionalProcessor implements ProcessorInterface
         }
     }
 
+    /**
+     * Add response factory to bootstrap/app file and uncomment facades and with eloquent
+     */
     private function addResponseFactoryAndUncommentFacadesAndWithEloquentOnAppFile()
     {
         $appPath = base_path("bootstrap/app.php");
         $stringToLookFor = '$app->singleton(\'Illuminate\Contracts\Routing\ResponseFactory';
-        //\App\Repositories\Contracts\CommunityContentNewsContract
-        //\App\Repositories\Traits\EloquentCommunityContentNewsRepository
         $stringToWrite = "\$app->singleton('Illuminate\Contracts\Routing\ResponseFactory', function (\$app) {
             return new \Illuminate\Routing\ResponseFactory(
                 \$app['Illuminate\Contracts\View\Factory'],
@@ -241,8 +250,6 @@ class AdditionalProcessor implements ProcessorInterface
             $content .= PHP_EOL . 'return $app;';
             file_put_contents($appPath, $content);
         }
-
-        // $app->withFacades();
 
         $stringToLookFor = '// $app->withFacades();';
         $atLeastOne = false;

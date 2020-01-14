@@ -61,7 +61,6 @@ class Config
         $this->config[$key] = $value;
     }
 
-
     /**
      * @param array $high
      * @param array $low
@@ -112,6 +111,16 @@ class Config
             (__DIR__ . '/Resources/eloquent_model_generator.php'));
     }
 
+    /**
+     * Check if a file already exists otherwise create it by directives
+     *
+     * @param EloquentModel $model
+     * @param $directoryWhereSearchFor
+     * @param $filenameToSearchFor
+     * @param $directoryWhereGetFileToCopy
+     * @param $filenameToCopy
+     * @param bool $overwrite
+     */
     public function checkIfFileAlreadyExistsOrCopyIt(
         EloquentModel $model,
         $directoryWhereSearchFor,
@@ -153,6 +162,11 @@ class Config
         file_put_contents($filePath, $content);
     }
 
+    /**
+     * Get the app namespace
+     *
+     * @return mixed
+     */
     public function getAppNamespace()
     {
         return \Illuminate\Container\Container::getInstance()->getNamespace();

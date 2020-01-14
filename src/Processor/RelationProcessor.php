@@ -90,7 +90,7 @@ class RelationProcessor implements ProcessorInterface
                         if (count($localColumns) !== 1) {
                             continue;
                         }
-                        $isTableNameARelationTableName = self::isTableNameARelationTableName($table->getName(), $names);
+                        $isTableNameARelationTableName = Misc::isTableNameARelationTableName($table->getName(), $names);
                         if (
                             count($foreignKeys) === 2 &&
                             ((count($table->getColumns()) === 2) || ((count($table->getColumns()) > 2  &&
@@ -138,31 +138,7 @@ class RelationProcessor implements ProcessorInterface
         }
     }
 
-    private function isTableNameARelationTableName($tableName, $allTablesName)
-    {
-        $singol = [];
-        $containedInTableName = [];
-        $singolarizedCurrentTable = Str::singular($tableName);
-        foreach ($allTablesName as $p) {
-            $sin = Str::singular($p);
-            $singol[] = $sin;
-            if (strpos($tableName, $sin) !== false && $sin !== $singolarizedCurrentTable) {
-                $containedInTableName[] = $sin;
-            }
-        }
-        $countContained = count($containedInTableName);
-        if ($countContained < 2) {
-            return false;
-        }
-        if ($countContained > 1 && (count(array_intersect($containedInTableName, $singol)) == $countContained)) {
-            $first = explode("_", $containedInTableName[0]);
-            $second = explode("_", $containedInTableName[1]);
-            if (empty(array_intersect($first, $second)) && empty(array_intersect($second, $first))) {
-                return true;
-            }
-        }
-        return false;
-    }
+
 
     /**
      * @inheritdoc

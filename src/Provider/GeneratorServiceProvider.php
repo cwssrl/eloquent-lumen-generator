@@ -49,6 +49,9 @@ class GeneratorServiceProvider extends ServiceProvider
         });
     }
 
+    /**
+     * Boot the package copying config file
+     */
     public function boot()
     {
         $configFolderPath = base_path() . "/config";

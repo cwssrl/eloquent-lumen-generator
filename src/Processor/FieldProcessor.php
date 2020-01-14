@@ -128,6 +128,13 @@ class FieldProcessor implements ProcessorInterface
         return $this;
     }
 
+    /**
+     * Add soft deletes and remove timestamps if needed
+     *
+     * @param $model
+     * @param $columnNames
+     * @param bool $excludeTimestamps
+     */
     private function checkTimestampsAndSoftDeletes(&$model, $columnNames, $excludeTimestamps = false)
     {
         if (in_array('deleted_at', $columnNames)) {
@@ -141,6 +148,12 @@ class FieldProcessor implements ProcessorInterface
         }
     }
 
+    /**
+     * Get the casts from columnType
+     *
+     * @param $columnType
+     * @return string
+     */
     private function getValidMappingFromColumnType($columnType)
     {
         switch ($columnType) {
@@ -163,12 +176,14 @@ class FieldProcessor implements ProcessorInterface
     }
 
     /**
+     * Get the rules for this column
+     *
      * @param Column $column
+     * @param string $mapping
      * @return string
      */
     private function getRules(Column $column, $mapping)
     {
-        //$this->typeRegistry->resolveType($column->getType()->getName())
         $rules = [];
         if ($column->getNotnull()) {
             array_push($rules, "required");
@@ -207,6 +222,12 @@ class FieldProcessor implements ProcessorInterface
         return 5;
     }
 
+    /**
+     * Add translations attributes if needed
+     *
+     * @param EloquentModel $model
+     * @param AbstractSchemaManager $schemaManager
+     */
     private function processTranslation(EloquentModel &$model, AbstractSchemaManager $schemaManager)
     {
         $translationTable = $this->checkIfHasTranslation($model, $schemaManager);
@@ -217,6 +238,13 @@ class FieldProcessor implements ProcessorInterface
         }
     }
 
+    /**
+     * Get the translation table of this model
+     *
+     * @param EloquentModel $model
+     * @param AbstractSchemaManager $schemaManager
+     * @return Table
+     */
     private function checkIfHasTranslation(EloquentModel $model, AbstractSchemaManager $schemaManager)
     {
         $translationTableName = Str::singular($model->getTableName()) . "_translations";
@@ -225,6 +253,12 @@ class FieldProcessor implements ProcessorInterface
         }
     }
 
+    /**
+     * Add translation attributes
+     *
+     * @param EloquentModel $model
+     * @param Table $translationTable
+     */
     private function getTranslatedAttributes(EloquentModel &$model, Table $translationTable)
     {
         $columns = [];
