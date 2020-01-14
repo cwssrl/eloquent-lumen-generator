@@ -40,7 +40,7 @@ class EloquentModelBuilder
             $processor->process($model, $config);
         }
         $config->checkIfFileAlreadyExistsOrCopyIt($model, Misc::appPath("Models"),
-            "BaseModel.php",
+            "BaseModel.php.stub",
             __DIR__ . '/Resources/Models', "BaseModel.php");
         return $model;
     }

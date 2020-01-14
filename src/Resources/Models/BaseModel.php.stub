@@ -33,7 +33,8 @@ class BaseModel extends Model
         // when checking the field. We will just return the DateTime right away.
         if ($value instanceof DateTimeInterface) {
             return new Carbon(
-                $value->format('Y-m-d H:i:s'), $value->getTimezone()
+                $value->format('Y-m-d H:i:s'),
+                $value->getTimezone()
             );
         }
 
@@ -56,19 +57,24 @@ class BaseModel extends Model
         // the database connection and use that format to create the Carbon object
         // that is returned back out to the developers after we convert it here.
         $format = str_replace('.v', '.u', $this->getDateFormat());
-        if ($this->isValidDate($value, $format))
+        if ($this->isValidDate($value, $format)) {
             return Carbon::createFromFormat(
-                $format, $value
+                $format,
+                $value
             );
-        else
+        } else {
             foreach ($this->secondaryDateFormat as $format) {
-                if ($this->isValidDate($value, $format))
+                if ($this->isValidDate($value, $format)) {
                     return Carbon::createFromFormat(
-                        $format, $value
+                        $format,
+                        $value
                     );
+                }
             }
+        }
         return Carbon::createFromFormat(
-            $format, $value
+            $format,
+            $value
         );
     }
 
@@ -78,16 +84,17 @@ class BaseModel extends Model
      */
     public function relationHasIdColumn($relationName)
     {
-        return isset($this->manyToManyWithIdRelationNames) &&
-            in_array($relationName, $this->manyToManyWithIdRelationNames);
+        return (isset($this->manyToManyWithIdRelationNames) &&
+            in_array($relationName, $this->manyToManyWithIdRelationNames));
     }
 
     public function getBlockingRelations()
     {
         if (isset($this->blockingRelations) && is_array($this->blockingRelations)) {
             foreach ($this->blockingRelations as $blockingRelations) {
-                if ($this->$blockingRelations()->count())
+                if ($this->$blockingRelations()->count()) {
                     return true;
+                }
             }
         }
         return null;
@@ -113,8 +120,9 @@ class BaseModel extends Model
     public function delete()
     {
         $blockingRelations = $this->getBlockingRelations();
-        if (!empty($blockingRelations))
+        if (!empty($blockingRelations)) {
             throw new \Exception(trans('exceptions.generic.delete_related_items'));
+        }
         \DB::beginTransaction();
         $this->deleteRelations();
         $output = parent::delete();
@@ -132,8 +140,9 @@ class BaseModel extends Model
      */
     private function isValidDate(string $date = null, string $format = "d/m/Y H:i:s")
     {
-        if (is_null($date))
+        if (is_null($date)) {
             return false;
+        }
         try {
             Carbon::createFromFormat($format, $date);
             return true;
