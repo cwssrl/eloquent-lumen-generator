@@ -52,6 +52,7 @@ class RelationProcessor implements ProcessorInterface
 
     /**
      * @inheritdoc
+     * @throws GeneratorException
      */
     public function process(EloquentModel $model, Config $config)
     {
@@ -328,7 +329,7 @@ class RelationProcessor implements ProcessorInterface
 
     /**
      * @param array $array
-     * @return array
+     * @return string
      */
     protected function prepareArguments(array $array)
     {

@@ -2,8 +2,6 @@
 
 namespace Cws\EloquentModelGenerator\Command;
 
-use App\Http\Requests\ClassName\RequestStub;
-use Astrotomic\Translatable\Translatable;
 use Cws\EloquentModelGenerator\Config;
 use Cws\EloquentModelGenerator\Generator;
 use Cws\EloquentModelGenerator\Misc;
@@ -55,6 +53,7 @@ class GenerateModelCommand extends Command
 
     /**
      * Add support for Laravel 5.5
+     * @throws \Cws\EloquentModelGenerator\Exception\GeneratorException
      */
     public function handle()
     {
@@ -63,12 +62,13 @@ class GenerateModelCommand extends Command
 
     /**
      * Executes the command
+     * @throws \Cws\EloquentModelGenerator\Exception\GeneratorException
      */
     public function fire()
     {
         $config = $this->createConfig();
         $schemaManager = $this->databaseManager->connection($config->get('connection'))->getDoctrineSchemaManager();
-        $prefix = $this->databaseManager->connection($config->get('connection'))->getTablePrefix();
+        //$prefix = $this->databaseManager->connection($config->get('connection'))->getTablePrefix();
         //If argument is "all" we will create models for all tables
         if (strtolower($config->get('class_name')) === 'all') {
             $names = $schemaManager->listTableNames();
@@ -97,9 +97,9 @@ class GenerateModelCommand extends Command
     }
 
     /**
-     * Undocumented function
+     * If table is a translation one it reminds to you that install trans package is suggested
      *
-     * @param [type] $tableName
+     * @param string $tableName
      * @return void
      */
     private function checkIfTableIsATranslationOneAndIfTranslatableIsInstalled($tableName)
@@ -181,10 +181,10 @@ class GenerateModelCommand extends Command
     }
 
     /**
-     * Undocumented function
+     * Check if table name is a relation one by Laravel standard
      *
-     * @param [type] $tableName
-     * @param [type] $allTablesName
+     * @param string $tableName
+     * @param array $allTablesName
      * @return boolean
      */
     private function isTableNameARelationTableName($tableName, $allTablesName)
@@ -215,10 +215,10 @@ class GenerateModelCommand extends Command
     }
 
     /**
-     * Undocumented function
+     * Get the default class name by table name
      *
-     * @param [type] $tableName
-     * @return void
+     * @param string $tableName
+     * @return string
      */
     private function getDefaultClassName($tableName)
     {
