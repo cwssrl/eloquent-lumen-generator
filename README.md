@@ -26,13 +26,13 @@ Step 4 (optional). If you want to edit package configurations, you have to copy 
 ## Usage
 Use
 ```
-php artisan cws:generate Book --all
+php artisan cws:generate Book --all-api
 ```
 to generate all you need for the Book class. Generator will look for table with name `books` and generate the model, the repo, the contract, the controller, the routes for it.
 
 You can also generate data for all your tables at once
 ```
-php artisan cws:generate all --all
+php artisan cws:generate all --all-api
 ```
 
 ### Valid options
