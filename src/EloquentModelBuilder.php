@@ -41,9 +41,9 @@ class EloquentModelBuilder
         $config->checkIfFileAlreadyExistsOrCopyIt(
             $model,
             Misc::appPath("Models"),
-            "BaseModel.php.stub",
+            "BaseModel.php",
             __DIR__ . '/Resources/Models',
-            "BaseModel.php"
+            "BaseModel.php.stub"
         );
         return $model;
     }

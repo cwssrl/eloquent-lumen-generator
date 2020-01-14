@@ -3,7 +3,6 @@
 namespace App\Repositories;
 
 use App\Exceptions\GenericException;
-use App\Models\BaseModel;
 use Carbon\Carbon;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
