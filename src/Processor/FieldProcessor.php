@@ -79,9 +79,9 @@ class FieldProcessor implements ProcessorInterface
                 $mappings[$columnName] = $this->getValidMappingFromColumnType($columnTypeName);
                 $rules[$columnName] = $this->getRules($column, $mappings[$columnName]);
             } else {
-                if (in_array($columnName, $timestampsColumns))
+                if (in_array($columnName, $timestampsColumns)) {
                     $timestampsCounter++;
-                else {
+                } else {
                     $mappings[$columnName] = $this->getValidMappingFromColumnType($columnTypeName);
                 }
             }
@@ -170,15 +170,17 @@ class FieldProcessor implements ProcessorInterface
     {
         //$this->typeRegistry->resolveType($column->getType()->getName())
         $rules = [];
-        if ($column->getNotnull())
+        if ($column->getNotnull()) {
             array_push($rules, "required");
-        else
+        } else {
             array_push($rules, "nullable");
+        }
         switch ($mapping) {
             case "string":
                 $length = $column->getLength();
-                if (is_numeric($length))
+                if (is_numeric($length)) {
                     array_push($rules, "max:" . $length);
+                }
                 break;
             case "integer":
                 array_push($rules, "integer");
@@ -218,27 +220,31 @@ class FieldProcessor implements ProcessorInterface
     private function checkIfHasTranslation(EloquentModel $model, AbstractSchemaManager $schemaManager)
     {
         $translationTableName = Str::singular($model->getTableName()) . "_translations";
-        if ($schemaManager->tablesExist([$translationTableName]))
+        if ($schemaManager->tablesExist([$translationTableName])) {
             return $schemaManager->listTableDetails($translationTableName);
+        }
     }
 
     private function getTranslatedAttributes(EloquentModel &$model, Table $translationTable)
     {
         $columns = [];
-        $primaryColumnNames = $translationTable->getPrimaryKey() ? $translationTable->getPrimaryKey()->getColumns() : [];
+        $primaryColumnNames = $translationTable->getPrimaryKey() ?
+            $translationTable->getPrimaryKey()->getColumns() : [];
         $foreignKeys = ($translationTable->getForeignKeys());
         if (count($foreignKeys)) {
             foreach ($foreignKeys as $fk) {
                 $tableForeignColumns = $fk->getColumns();
-                foreach ($tableForeignColumns as $columnName)
+                foreach ($tableForeignColumns as $columnName) {
                     array_push($primaryColumnNames, $columnName);
+                }
             }
         }
 
         array_push($primaryColumnNames, "locale");
         foreach ($translationTable->getColumns() as $column) {
-            if (!in_array($column->getName(), $primaryColumnNames))
+            if (!in_array($column->getName(), $primaryColumnNames)) {
                 array_push($columns, $column->getName());
+            }
         }
         $fillableProperty = new PropertyModel('translatedAttributes');
         $fillableProperty->setAccess('public')

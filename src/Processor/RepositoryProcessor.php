@@ -17,8 +17,9 @@ class RepositoryProcessor implements ProcessorInterface
      */
     public function process(EloquentModel $model, Config $config)
     {
-        if (!Misc::endsWith($model->getTableName(), "_translations"))
+        if (!Misc::endsWith($model->getTableName(), "_translations")) {
             $this->createRepositoryForModelIfNeeded($config, $model);
+        }
         return $this;
     }
 
@@ -61,7 +62,7 @@ class RepositoryProcessor implements ProcessorInterface
         $stringToWriteWithMiddleSpace = "\$app->bind($contractName::class, $repoName::class);";
 
         $content = file_get_contents($appPath);
-        if (strpos($content, $stringToWrite) === false && strpos($content,$stringToWriteWithMiddleSpace) == false) {
+        if (strpos($content, $stringToWrite) === false && strpos($content, $stringToWriteWithMiddleSpace) == false) {
             $content = str_replace('return $app;', "", $content);
             $content .= PHP_EOL . $stringToWrite;
             $content .= PHP_EOL . 'return $app;';

@@ -21,7 +21,7 @@ use Cws\EloquentModelGenerator\Processor\TableNameProcessor;
  */
 class GeneratorServiceProvider extends ServiceProvider
 {
-    const PROCESSOR_TAG = 'eloquent_model_generator.processor';
+    private const PROCESSOR_TAG = 'eloquent_model_generator.processor';
 
     /**
      * {@inheritDoc}
@@ -55,8 +55,12 @@ class GeneratorServiceProvider extends ServiceProvider
         if (!file_exists($configFolderPath)) {
             mkdir($configFolderPath);
         }
-        $this->publishes([
-            __DIR__ . '/../Resources/eloquent_model_generator.php' => ($configFolderPath . '/eloquent_model_generator.php')
-        ], 'config');
+        $this->publishes(
+            [
+                __DIR__ . '/../Resources/eloquent_model_generator.php' =>
+                    ($configFolderPath . '/eloquent_model_generator.php')
+            ],
+            'config'
+        );
     }
 }
