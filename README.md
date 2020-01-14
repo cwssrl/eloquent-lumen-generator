@@ -8,6 +8,12 @@ It comes with the possibility to generate the following items:
 - Routes;
 - Resources;
 - Translation management for tables.
+It manages MySql and PostgreSql as database. 
+
+## Requirements
+
+To make this package works you have to make your migrations and run them. All the package will create items based on 
+the table that it can find on the database set on your .env file.
 
 ## Installation
 Step 1. Add Eloquent Lumen Generator to your project:
@@ -55,3 +61,29 @@ api-controller | Creates api controller too
 api-routes | Creates api routes too
 api-routes-path | Set the path where find api route file (default api.php)
 all-api | Create all objects related to api, models and repos included 
+
+
+## Contributing
+
+Please see [CONTRIBUTING](CONTRIBUTING.md) for details.
+
+## Testing
+
+``` bash
+composer test
+```
+
+## Changelog
+
+Please see [CHANGELOG](CHANGELOG.md) for more information what has changed recently.
+
+## Credits
+
+- [Samuele Salvatico](https://www.linkedin.com/in/samuele-salvatico-89527464/)
+- [Andrea Romanello](https://www.linkedin.com/in/andrea-romanello/)
+
+This package is heavily based on [Cws Code Generator](https://github.com/cwssrl/code-generator) that is a fork of the [krlove/code-generator](https://github.com/krlove/code-generator) package
+
+## License
+
+The MIT License (MIT). Please see [License File](LICENSE.md) for more information.

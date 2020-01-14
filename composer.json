@@ -2,16 +2,24 @@
     "name": "cwssrl/eloquent-lumen-generator",
     "description": "Eloquent Lumen Generator",
     "license": "MIT",
+    "keywords": [
+        "lumen",
+        "cws",
+        "generator",
+        "scaffolding"
+    ],
     "authors": [
         {
             "name": "Samuele Salvatico",
             "email": "samuele.salvatico.social@gmail.com",
-            "role": "Developer"
+            "role": "Developer",
+            "homepage": "https://www.linkedin.com/in/samuele-salvatico-89527464/"
         },
         {
             "name": "Andrea Romanello",
             "email": "andrea.romanello@cws.it",
-            "role": "Developer"
+            "role": "Developer",
+            "homepage": "https://www.linkedin.com/in/andrea-romanello/"
         }
     ],
     "autoload": {
@@ -39,5 +47,11 @@
     "require-dev": {
         "squizlabs/php_codesniffer": "^3.5",
         "phpunit/phpunit": "^8"
+    },
+    "scripts": {
+        "test": "./vendor/bin/phpcs --standard=phpcs.xml src/ && ./vendor/bin/phpunit"
+    },
+    "config": {
+        "sort-packages": true
     }
 }
