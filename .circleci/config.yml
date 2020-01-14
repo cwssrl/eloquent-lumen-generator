@@ -22,4 +22,4 @@ jobs:
             command: php composer.phar install
         - run:
             name: Run CS tests
-            command: ./vendor/bin/phpcs --standard=PSR2 --extensions=php src
+            command: ./vendor/bin/phpcs --standard=PSR12 --extensions=php src
