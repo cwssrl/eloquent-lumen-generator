@@ -13,7 +13,7 @@ class EmgHelper
     /**
      * @var string
      */
-    const DEFAULT_PRIMARY_KEY = 'id';
+    private const DEFAULT_PRIMARY_KEY = 'id';
 
     /**
      * @param string $fullClassName

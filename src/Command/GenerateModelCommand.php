@@ -77,14 +77,17 @@ class GenerateModelCommand extends Command
             foreach ($names as $name) {
                 //if table is from another schema and the one in connection it contains schema_name.table_name
                 $isAnotherSchemaTableName = count(explode('.', $name)) > 1;
-                if (!$isAnotherSchemaTableName && !in_array(strtolower($name), $exceptTables) && !$this->isTableNameARelationTableName($name, $names)) {
+                if (
+                    !$isAnotherSchemaTableName &&
+                    !in_array(strtolower($name), $exceptTables) &&
+                    !$this->isTableNameARelationTableName($name, $names)
+                ) {
                     dump($name . " " . $this->getDefaultClassName($name));
                     $this->checkIfTableIsATranslationOneAndIfTranslatableIsInstalled($name);
                     $config->set("class_name", $this->getDefaultClassName($name));
                     $config->set("table_name", $name);
                     $model = $this->generator->generateModel($config, null, "output_path", null, true);
                     $this->output->writeln(sprintf('Model %s generated', $model->getName()->getName()));
-
                 }
             }
         } else {
@@ -93,10 +96,15 @@ class GenerateModelCommand extends Command
         }
     }
 
+    /**
+     * Undocumented function
+     *
+     * @param [type] $tableName
+     * @return void
+     */
     private function checkIfTableIsATranslationOneAndIfTranslatableIsInstalled($tableName)
     {
-        if(Misc::endsWith($tableName,"_translations") && !class_exists("Astrotomic\Translatable\Locales",true))
-        {
+        if (Misc::endsWith($tableName, "_translations") && !class_exists("Astrotomic\Translatable\Locales", true)) {
             $this->warn("Be careful, to manage translation tables you need to require Astrotomic/laravel-translatable");
         }
     }
@@ -123,7 +131,10 @@ class GenerateModelCommand extends Command
             $config = array_merge($config, array_fill_keys(["controller", "routes", "request", "repository"], true));
         }
         if (array_key_exists('all-api', $config) && $config['all-api'] !== false) {
-            $config = array_merge($config, array_fill_keys(["api-controller", "api-routes", "request", "repository", "api-resource"], true));
+            $config = array_merge(
+                $config,
+                array_fill_keys(["api-controller", "api-routes", "request", "repository", "api-resource"], true)
+            );
         }
         return new Config($config, $this->appConfig->get('eloquent_model_generator.model_defaults'));
     }
@@ -169,6 +180,13 @@ class GenerateModelCommand extends Command
         ];
     }
 
+    /**
+     * Undocumented function
+     *
+     * @param [type] $tableName
+     * @param [type] $allTablesName
+     * @return boolean
+     */
     private function isTableNameARelationTableName($tableName, $allTablesName)
     {
         $singol = [];
@@ -177,22 +195,31 @@ class GenerateModelCommand extends Command
         foreach ($allTablesName as $p) {
             $sin = Str::singular($p);
             $singol[] = $sin;
-            if (strpos($tableName, $sin) !== false && $sin !== $singolarizedCurrentTable)
+            if (strpos($tableName, $sin) !== false && $sin !== $singolarizedCurrentTable) {
                 $containedInTableName[] = $sin;
+            }
         }
 
         $countContained = count($containedInTableName);
-        if ($countContained < 2)
+        if ($countContained < 2) {
             return false;
+        }
         if ($countContained > 1 && (count(array_intersect($containedInTableName, $singol)) == $countContained)) {
             $first = explode("_", $containedInTableName[0]);
             $second = explode("_", $containedInTableName[1]);
-            if (empty(array_intersect($first, $second)) && empty(array_intersect($second, $first)))
+            if (empty(array_intersect($first, $second)) && empty(array_intersect($second, $first))) {
                 return true;
+            }
         }
         return false;
     }
 
+    /**
+     * Undocumented function
+     *
+     * @param [type] $tableName
+     * @return void
+     */
     private function getDefaultClassName($tableName)
     {
         return Str::ucfirst(Str::camel(Str::singular($tableName)));

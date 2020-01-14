@@ -104,9 +104,13 @@ class AdditionalProcessor implements ProcessorInterface
     {
         if ($config->get("resource") !== false) {
             //invoke the artisan command to create controller
-            $config->checkIfFileAlreadyExistsOrCopyIt($model, Misc::appPath("Http/Resources"),
+            $config->checkIfFileAlreadyExistsOrCopyIt(
+                $model,
+                Misc::appPath("Http/Resources"),
                 $model->getName()->getName() . "Resource.php",
-                __DIR__ . '/../Resources/Resources', "Resource.stub");
+                __DIR__ . '/../Resources/Resources',
+                "Resource.stub"
+            );
 
             $config->checkIfFileAlreadyExistsOrCopyIt($model, Misc::appPath("Http/Resources"),
                 "RestResourceCollection.php",
