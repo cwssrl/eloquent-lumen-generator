@@ -74,7 +74,9 @@ class AdditionalProcessor implements ProcessorInterface
 ]);
              */
             $modelName = $model->getName()->getName();
-            $controllerFullPath = ("'" . (empty($controllerPath) ? "" : ($controllerPath . "\\")) . $modelName . "APIController@%s'");
+            $controllerFullPath = (
+                "'" . (empty($controllerPath) ? "" : ($controllerPath . "\\")) . $modelName . "APIController@%s'"
+            );
             $command = "\$router->%s('%s%s', ['as' => '%s', 'uses' => $controllerFullPath]);";
             $routes = [
                 ["verb" => "get", "param" => "", "name" => "index", "method" => "index"],
@@ -87,7 +89,14 @@ class AdditionalProcessor implements ProcessorInterface
             $tableName = $model->getTableName();
             $toPrint = null;
             foreach ($routes as $params) {
-                $toPrint .= sprintf($command, $params["verb"], $tableName, $params["param"], $tableName . "." . $params["name"], $params["method"]);
+                $toPrint .= sprintf(
+                    $command,
+                    $params["verb"],
+                    $tableName,
+                    $params["param"],
+                    ($tableName . "." . $params["name"]),
+                    $params["method"]
+                );
                 $toPrint .= PHP_EOL;
             }
         }
@@ -112,17 +121,38 @@ class AdditionalProcessor implements ProcessorInterface
                 "Resource.stub"
             );
 
-            $config->checkIfFileAlreadyExistsOrCopyIt($model, Misc::appPath("Http/Resources"),
+            $config->checkIfFileAlreadyExistsOrCopyIt(
+                $model,
+                Misc::appPath("Http/Resources"),
                 "RestResourceCollection.php",
-                __DIR__ . '/../Resources/Api', "RestResourceCollection.php.stub");
-            $config->checkIfFileAlreadyExistsOrCopyIt($model, Misc::appPath("Http/Resources"),
+                __DIR__ . '/../Resources/Api',
+                "RestResourceCollection.php.stub"
+            );
+            $config->checkIfFileAlreadyExistsOrCopyIt(
+                $model,
+                Misc::appPath("Http/Resources"),
                 $model->getName()->getName() . "CollectionResource.php",
-                __DIR__ . '/../Resources/Resources', "ResourceCollection.stub");
+                __DIR__ . '/../Resources/Resources',
+                "ResourceCollection.stub"
+            );
 
-            $collectionContent = file_get_contents(Misc::appPath("Http/Resources/" . $model->getName()->getName() . "CollectionResource.php"));
-            $collectionContent = str_replace("use Illuminate\Http\Resources\Json\ResourceCollection;", "", $collectionContent);
-            $collectionContent = str_replace("extends ResourceCollection", "extends RestResourceCollection", $collectionContent);
-            file_put_contents(Misc::appPath("Http/Resources/" . $model->getName()->getName() . "CollectionResource.php"), $collectionContent);
+            $collectionContent = file_get_contents(
+                Misc::appPath("Http/Resources/" . $model->getName()->getName() . "CollectionResource.php")
+            );
+            $collectionContent = str_replace(
+                "use Illuminate\Http\Resources\Json\ResourceCollection;",
+                "",
+                $collectionContent
+            );
+            $collectionContent = str_replace(
+                "extends ResourceCollection",
+                "extends RestResourceCollection",
+                $collectionContent
+            );
+            file_put_contents(
+                Misc::appPath("Http/Resources/" . $model->getName()->getName() . "CollectionResource.php"),
+                $collectionContent
+            );
         }
     }
 
@@ -135,36 +165,61 @@ class AdditionalProcessor implements ProcessorInterface
     private function createApiControllerForModelIfNeeded(Config $config, EloquentModel $model)
     {
         if ($config->get("api-controller") !== false) {
-            $config->checkIfFileAlreadyExistsOrCopyIt($model, Misc::appPath("Http/Controllers"),
+            $config->checkIfFileAlreadyExistsOrCopyIt(
+                $model,
+                Misc::appPath("Http/Controllers"),
                 "Controller.php",
-                __DIR__ . '/../Resources/Controllers', "BaseController.stub");
+                __DIR__ . '/../Resources/Controllers',
+                "BaseController.stub"
+            );
 
             $apiControllersFolder = Misc::appPath("Http/Controllers/API");
-            if (!is_dir($apiControllersFolder))
+            if (!is_dir($apiControllersFolder)) {
                 mkdir($apiControllersFolder);
-            $config->checkIfFileAlreadyExistsOrCopyIt($model, Misc::appPath("Http/Controllers/API"),
+            }
+            $config->checkIfFileAlreadyExistsOrCopyIt(
+                $model,
+                Misc::appPath("Http/Controllers/API"),
                 "APIBaseController.php",
-                __DIR__ . '/../Resources/Controllers', "APIBaseController.stub");
-            $config->checkIfFileAlreadyExistsOrCopyIt($model, Misc::appPath("Http/Controllers/API"),
+                __DIR__ . '/../Resources/Controllers',
+                "APIBaseController.stub"
+            );
+            $config->checkIfFileAlreadyExistsOrCopyIt(
+                $model,
+                Misc::appPath("Http/Controllers/API"),
                 $model->getName()->getName() . "APIController.php",
-                __DIR__ . '/../Resources/Controllers', "ApiModelController.stub");
+                __DIR__ . '/../Resources/Controllers',
+                "ApiModelController.stub"
+            );
             $traitsFolder = Misc::appPath("Traits");
-            if (!is_dir($traitsFolder))
+            if (!is_dir($traitsFolder)) {
                 mkdir($traitsFolder);
-
-            $config->checkIfFileAlreadyExistsOrCopyIt($model, $traitsFolder,
+            }
+            $config->checkIfFileAlreadyExistsOrCopyIt(
+                $model,
+                $traitsFolder,
                 "RestExceptionHandlerTrait.php",
-                __DIR__ . '/../Resources/Traits', "RestExceptionHandlerTrait.php.stub");
-            $config->checkIfFileAlreadyExistsOrCopyIt($model, $traitsFolder,
+                __DIR__ . '/../Resources/Traits',
+                "RestExceptionHandlerTrait.php.stub"
+            );
+            $config->checkIfFileAlreadyExistsOrCopyIt(
+                $model,
+                $traitsFolder,
                 "RestTrait.php",
-                __DIR__ . '/../Resources/Traits', "RestTrait.php.stub");
-            $config->checkIfFileAlreadyExistsOrCopyIt($model, Misc::appPath("Exceptions"),
+                __DIR__ . '/../Resources/Traits',
+                "RestTrait.php.stub"
+            );
+            $config->checkIfFileAlreadyExistsOrCopyIt(
+                $model,
+                Misc::appPath("Exceptions"),
                 "Handler.php",
-                __DIR__ . '/../Resources/Traits', "Handler.php.stub", true);
+                __DIR__ . '/../Resources/Traits',
+                "Handler.php.stub",
+                true
+            );
 
             $this->addResponseFactoryAndUncommentFacadesAndWithEloquentOnAppFile();
         }
-
     }
 
     private function addResponseFactoryAndUncommentFacadesAndWithEloquentOnAppFile()
@@ -191,19 +246,16 @@ class AdditionalProcessor implements ProcessorInterface
 
         $stringToLookFor = '// $app->withFacades();';
         $atLeastOne = false;
-        if(strpos($content,$stringToLookFor) !== false)
-        {
+        if (strpos($content, $stringToLookFor) !== false) {
             $content = str_replace($stringToLookFor, '$app->withFacades();', $content);
             $atLeastOne = true;
         }
         $stringToLookFor = '// $app->withEloquent();';
-        if(strpos($content,$stringToLookFor) !== false)
-        {
+        if (strpos($content, $stringToLookFor) !== false) {
             $content = str_replace($stringToLookFor, '$app->withEloquent();', $content);
             $atLeastOne = true;
         }
-        if($atLeastOne)
-        {
+        if ($atLeastOne) {
             file_put_contents($appPath, $content);
         }
     }

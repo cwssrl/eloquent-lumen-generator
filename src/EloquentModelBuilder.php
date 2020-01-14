@@ -39,9 +39,13 @@ class EloquentModelBuilder
         foreach ($this->processors as $processor) {
             $processor->process($model, $config);
         }
-        $config->checkIfFileAlreadyExistsOrCopyIt($model, Misc::appPath("Models"),
+        $config->checkIfFileAlreadyExistsOrCopyIt(
+            $model,
+            Misc::appPath("Models"),
             "BaseModel.php.stub",
-            __DIR__ . '/Resources/Models', "BaseModel.php");
+            __DIR__ . '/Resources/Models',
+            "BaseModel.php"
+        );
         return $model;
     }
 
@@ -52,12 +56,11 @@ class EloquentModelBuilder
     {
         $temp = [];
         $current = null;
-        if(!is_array($this->processors)) {
+        if (!is_array($this->processors)) {
             $iterator = $this->processors->getIterator();
             while (!empty($current = $iterator->current())) {
                 array_push($temp, $current);
                 $iterator->next();
-
             }
             $this->processors = $temp;
         }

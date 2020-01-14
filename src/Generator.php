@@ -43,11 +43,17 @@ class Generator
      * @return ClassModel
      * @throws GeneratorException
      */
-    public function generateModel(Config $config, EloquentModel $model = null, string $keyName = "output_path", string $filename = null, $generateControllerAndRequest = false)
-    {
+    public function generateModel(
+        Config $config,
+        EloquentModel $model = null,
+        string $keyName = "output_path",
+        string $filename = null,
+        $generateControllerAndRequest = false
+    ) {
         $this->registerUserTypes($config);
-        if (empty($model))
+        if (empty($model)) {
             $model = $this->builder->createModel($config);
+        }
         $content = $model->render();
 
         $outputPath = $this->resolveOutputPath($config, $keyName, $filename);
@@ -84,8 +90,9 @@ class Generator
             throw new GeneratorException(sprintf('%s is not writeable', $path));
         }
 
-        if (empty($filename))
+        if (empty($filename)) {
             $filename = $config->get('class_name');
+        }
         return $path . '/' . $filename . '.php';
     }
 
@@ -113,13 +120,27 @@ class Generator
     private function createControllerForModelIfNeeded(Config $config, EloquentModel $model)
     {
         if ($config->get("controller") !== false) {
-            $config->checkIfFileAlreadyExistsOrCopyIt($model, Misc::appPath("Http/Controllers"),
+            $config->checkIfFileAlreadyExistsOrCopyIt(
+                $model,
+                Misc::appPath("Http/Controllers"),
                 "Controller.php",
-                __DIR__ . '/Resources/Controllers', "BaseController.stub");
+                __DIR__ . '/Resources/Controllers',
+                "BaseController.stub"
+            );
 
             $modelFullPath = "\\" . $model->getNamespace()->getNamespace() . "\\" . $model->getName()->getName();
             //invoke the artisan command to create controller
-            dump(exec("php artisan make:controller " . $config->get('controller_path') . "/" . $model->getName()->getName() . "Controller --model=$modelFullPath"));
+            dump(
+                exec(
+                    (
+                        "php artisan make:controller " .
+                        $config->get('controller_path') .
+                        "/" .
+                        $model->getName()->getName() .
+                        "Controller --model=$modelFullPath"
+                    )
+                )
+            );
         }
     }
 
@@ -131,10 +152,10 @@ class Generator
      */
     private function createRequestsForModelIfNeeded(Config $config, EloquentModel $model)
     {
-       /* if ($config->get("request") !== false) {
-            $this->createRequest($config, $model);
-            $this->createRequest($config, $model, "Update");
-        }*/
+        /* if ($config->get("request") !== false) {
+             $this->createRequest($config, $model);
+             $this->createRequest($config, $model, "Update");
+         }*/
     }
 
     /**
@@ -174,9 +195,11 @@ class Generator
             . "\t * @return array"));
         $method->setBody("return " . $modelName . '::$rules;');
         $a->addMethod($method);
-
-        $this->updateControllerFile($modelName, $requestNamePrefix,
-            "\\" . $a->getNamespace()->getNamespace() . "\\" . $a->getName()->getName());
+        $this->updateControllerFile(
+            $modelName,
+            $requestNamePrefix,
+            ("\\" . $a->getNamespace()->getNamespace() . "\\" . $a->getName()->getName())
+        );
         //render the model
         $generator = app("Cws\EloquentModelGenerator\Generator");
         $generator->generateModel($config, $a, "request_path", $requestName);

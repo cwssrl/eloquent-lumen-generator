@@ -5,7 +5,7 @@ namespace Cws\EloquentModelGenerator;
 class Misc
 {
 
-    static function endsWith(string $searchInto, string $stringToLookFor)
+    public static function endsWith(string $searchInto, string $stringToLookFor)
     {
         $len = strlen($stringToLookFor);
         if ($len == 0) {
@@ -14,13 +14,13 @@ class Misc
         return (substr($searchInto, -$len) === $stringToLookFor);
     }
 
-    static function startsWith($string, $startString)
+    public static function startsWith($string, $startString)
     {
         $len = strlen($startString);
         return (substr($string, 0, $len) === $startString);
     }
 
-    static function appPath($subPath = null)
+    public static function appPath($subPath = null)
     {
         return empty($subPath) ? base_path('app') :
             base_path('app/' . trim($subPath, "/"));
