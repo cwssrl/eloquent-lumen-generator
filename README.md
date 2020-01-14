@@ -55,3 +55,26 @@ api-controller | Creates api controller too
 api-routes | Creates api routes too
 api-routes-path | Set the path where find api route file (default api.php)
 all-api | Create all objects related to api, models and repos included 
+
+
+## Contributing
+
+Please see [CONTRIBUTING](CONTRIBUTING.md) for details.
+
+## Testing
+
+``` bash
+composer test
+```
+
+## Changelog
+
+Please see [CHANGELOG](CHANGELOG.md) for more information what has changed recently.
+
+## Credits
+
+- 
+
+## License
+
+The MIT License (MIT). Please see [License File](LICENSE.md) for more information.
