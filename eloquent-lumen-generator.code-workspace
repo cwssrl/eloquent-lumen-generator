@@ -1,0 +1,15 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+        "phpcs.enable": true,
+        "phpcs.executablePath": "./vendor/bin/phpcs",
+        "phpcs.standard": "./phpcs.xml",
+        "phpcs.ignorePatterns": [
+            "vendor/"
+        ]
+	}
+}

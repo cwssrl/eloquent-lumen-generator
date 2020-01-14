@@ -1,38 +1,43 @@
 {
-  "name": "cwssrl/eloquent-lumen-generator",
-  "description": "Eloquent Lumen Generator",
-  "license": "MIT",
-  "authors": [
-    {
-      "name": "Samuele Salvatico",
-      "email": "samuele.salvatico.social@gmail.com",
-      "role": "Developer"
+    "name": "cwssrl/eloquent-lumen-generator",
+    "description": "Eloquent Lumen Generator",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Samuele Salvatico",
+            "email": "samuele.salvatico.social@gmail.com",
+            "role": "Developer"
+        },
+        {
+            "name": "Andrea Romanello",
+            "email": "andrea.romanello@cws.it",
+            "role": "Developer"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Cws\\EloquentModelGenerator\\": "src/"
+        }
     },
-    {
-      "name": "Andrea Romanello",
-      "email": "andrea.romanello@cws.it",
-      "role": "Developer"
+    "require": {
+        "php": "~7.2",
+        "laravel/lumen-framework": "^6.0",
+        "doctrine/dbal": "^2.5",
+        "cwssrl/code-generator": "^1.0.4",
+        "illuminate/routing": "^6.0"
+    },
+    "suggest": {
+        "Astrotomic/laravel-translatable": "Allows to configure translation tables"
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Cws\\EloquentModelGenerator\\Provider\\GeneratorServiceProvider"
+            ]
+        }
+    },
+    "require-dev": {
+        "squizlabs/php_codesniffer": "^3.5",
+        "phpunit/phpunit": "^8"
     }
-  ],
-  "autoload": {
-    "psr-4": {
-      "Cws\\EloquentModelGenerator\\": "src/"
-    }
-  },
-  "require": {
-    "laravel/lumen-framework": "^6.0",
-    "doctrine/dbal": "^2.5",
-    "cwssrl/code-generator": "^1.0.4",
-    "illuminate/routing": "^6.0"
-  },
-  "suggest": {
-    "Astrotomic/laravel-translatable": "Allows to configure translation tables"
-  },
-  "extra": {
-    "laravel": {
-      "providers": [
-        "Cws\\EloquentModelGenerator\\Provider\\GeneratorServiceProvider"
-      ]
-    }
-  }
 }

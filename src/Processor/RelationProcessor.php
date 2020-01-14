@@ -52,14 +52,13 @@ class RelationProcessor implements ProcessorInterface
 
     /**
      * @inheritdoc
+     * @throws GeneratorException
      */
     public function process(EloquentModel $model, Config $config)
     {
         if (!Misc::endsWith($model->getTableName(), "_translations")) {
-
             $schemaManager = $this->databaseManager->connection($config->get('connection'))->getDoctrineSchemaManager();
             $prefix = $this->databaseManager->connection($config->get('connection'))->getTablePrefix();
-
             $foreignKeys = $schemaManager->listTableForeignKeys($prefix . $model->getTableName());
             foreach ($foreignKeys as $tableForeignKey) {
                 $tableForeignColumns = $tableForeignKey->getForeignColumns();
@@ -77,9 +76,9 @@ class RelationProcessor implements ProcessorInterface
 
             $tables = $schemaManager->listTables();
             $names = [];
-            foreach ($tables as $table)
+            foreach ($tables as $table) {
                 array_push($names, $table->getName());
-
+            }
             foreach ($tables as $table) {
                 if ($table->getName() === $prefix . $model->getTableName()) {
                     continue;
@@ -91,14 +90,24 @@ class RelationProcessor implements ProcessorInterface
                         if (count($localColumns) !== 1) {
                             continue;
                         }
-                        $isTableNameARelationTableName = self::isTableNameARelationTableName($table->getName(), $names);
-                        if (count($foreignKeys) === 2 && ((count($table->getColumns()) === 2) || ((count($table->getColumns()) > 2 && $isTableNameARelationTableName)))) {
+                        $isTableNameARelationTableName = Misc::isTableNameARelationTableName($table->getName(), $names);
+                        if (
+                            count($foreignKeys) === 2 &&
+                            ((count($table->getColumns()) === 2) || ((count($table->getColumns()) > 2  &&
+                                    $isTableNameARelationTableName))
+                            )
+                        ) {
                             $keys = array_keys($foreignKeys);
                             $key = array_search($name, $keys) === 0 ? 1 : 0;
                             $secondForeignKey = $foreignKeys[$keys[$key]];
-                            $secondForeignTable = $this->removePrefix($prefix, $secondForeignKey->getForeignTableName());
-                            $pivots = array_diff(array_keys($table->getColumns()),
-                                ['created_at', 'updated_at', $secondForeignKey->getLocalColumns()[0], $localColumns[0]]);
+                            $secondForeignTable = $this->removePrefix(
+                                $prefix,
+                                $secondForeignKey->getForeignTableName()
+                            );
+                            $pivots = array_diff(
+                                array_keys($table->getColumns()),
+                                ['created_at', 'updated_at', $secondForeignKey->getLocalColumns()[0], $localColumns[0]]
+                            );
                             $relation = new BelongsToMany(
                                 $secondForeignTable,
                                 $this->removePrefix($prefix, $table->getName()),
@@ -106,7 +115,6 @@ class RelationProcessor implements ProcessorInterface
                                 $secondForeignKey->getLocalColumns()[0],
                                 ($table->hasColumn('created_at') && $table->hasColumn('updated_at')),
                                 $pivots
-
                             );
                             $this->addRelation($model, $relation);
 
@@ -130,28 +138,7 @@ class RelationProcessor implements ProcessorInterface
         }
     }
 
-    private function isTableNameARelationTableName($tableName, $allTablesName)
-    {
-        $singol = [];
-        $containedInTableName = [];
-        $singolarizedCurrentTable = Str::singular($tableName);
-        foreach ($allTablesName as $p) {
-            $sin = Str::singular($p);
-            $singol[] = $sin;
-            if (strpos($tableName, $sin) !== false && $sin !== $singolarizedCurrentTable)
-                $containedInTableName[] = $sin;
-        }
-        $countContained = count($containedInTableName);
-        if ($countContained < 2)
-            return false;
-        if ($countContained > 1 && (count(array_intersect($containedInTableName, $singol)) == $countContained)) {
-            $first = explode("_", $containedInTableName[0]);
-            $second = explode("_", $containedInTableName[1]);
-            if (empty(array_intersect($first, $second)) && empty(array_intersect($second, $first)))
-                return true;
-        }
-        return false;
-    }
+
 
     /**
      * @inheritdoc
@@ -196,19 +183,21 @@ class RelationProcessor implements ProcessorInterface
 
             $virtualPropertyType = $relationClass;
         } elseif ($relation instanceof HasMany) {
-            $name = $this->getValidMethodNameForHasMany($model, $relation); // Str::plural(Str::camel($relation->getTableName()));
+            $name = $this->getValidMethodNameForHasMany($model, $relation);
             $docBlock = sprintf('@return \%s', EloquentHasMany::class);
 
             $virtualPropertyType = sprintf('%s[]', $relationClass);
         } elseif ($relation instanceof BelongsTo) {
             $relationKey = $this->resolveArgument(
                 $relation->getForeignColumnName(),
-                $this->helper->getDefaultForeignColumnName($relation->getTableName()));
-            if (empty($relationKey))
+                $this->helper->getDefaultForeignColumnName($relation->getTableName())
+            );
+            if (empty($relationKey)) {
                 $name = Str::singular(Str::camel($relation->getTableName()));
-            else {
-                if (Misc::endsWith($relationKey, "_id"))
+            } else {
+                if (Misc::endsWith($relationKey, "_id")) {
                     $relationKey = substr($relationKey, 0, -3);
+                }
                 $name = Str::singular(Str::camel($relationKey));
             }
             $docBlock = sprintf('@return \%s', EloquentBelongsTo::class);
@@ -236,13 +225,16 @@ class RelationProcessor implements ProcessorInterface
         $name = Str::plural(Str::camel($relation->getTableName()));
         $thisModelName = Str::snake($model->getName()->getName());
         $foreignColumnName = $relation->getForeignColumnName();
-        if (($thisModelName . "_id") === $foreignColumnName)
-            if (!in_array($name, $model->getMethodNames()))
+        if (($thisModelName . "_id") === $foreignColumnName) {
+            if (!in_array($name, $model->getMethodNames())) {
                 return $name;
-            else
+            } else {
                 return ("HasMany" . $name);
+            }
+        }
         $foreignColumnName = Str::singular($relation->getTableName()) .
-            Str::plural(Str::ucfirst((Misc::endsWith($foreignColumnName, "_id") ? substr($foreignColumnName, 0, -3) : $foreignColumnName)));
+            Str::plural(Str::ucfirst((Misc::endsWith($foreignColumnName, "_id") ?
+                substr($foreignColumnName, 0, -3) : $foreignColumnName)));
         return Str::plural(Str::camel($foreignColumnName));
     }
 
@@ -301,16 +293,19 @@ class RelationProcessor implements ProcessorInterface
             );
         }
 
-        return sprintf('return $this->%s(%s)%s%s;', $name,
+        return sprintf(
+            'return $this->%s(%s)%s%s;',
+            $name,
             $this->prepareArguments($arguments),
-            $timestamps ? "->withTimestamps()" : "",
-            empty($pivots) ? "" : ("->withPivot(" . $pivots . ")"));
-
+            ($timestamps ? "->withTimestamps()" : ""),
+            (empty($pivots) ? "" : ("->withPivot(" . $pivots . ")")
+            )
+        );
     }
 
     /**
      * @param array $array
-     * @return array
+     * @return string
      */
     protected function prepareArguments(array $array)
     {

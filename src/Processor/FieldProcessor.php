@@ -71,16 +71,17 @@ class FieldProcessor implements ProcessorInterface
             $columnTypeName = $column->getType()->getName();
             $model->addProperty(new VirtualPropertyModel(
                 $columnName,
-                $this->typeRegistry->resolveType($columnTypeName)
+                $this->typeRegistry->resolveType($columnTypeName),
+                !$column->getNotnull()
             ));
             if (!in_array($columnName, $primaryColumnNames) && !in_array($columnName, $timestampsColumns)) {
                 $columnNames[] = $columnName;
                 $mappings[$columnName] = $this->getValidMappingFromColumnType($columnTypeName);
                 $rules[$columnName] = $this->getRules($column, $mappings[$columnName]);
             } else {
-                if (in_array($columnName, $timestampsColumns))
+                if (in_array($columnName, $timestampsColumns)) {
                     $timestampsCounter++;
-                else {
+                } else {
                     $mappings[$columnName] = $this->getValidMappingFromColumnType($columnTypeName);
                 }
             }
@@ -127,6 +128,13 @@ class FieldProcessor implements ProcessorInterface
         return $this;
     }
 
+    /**
+     * Add soft deletes and remove timestamps if needed
+     *
+     * @param $model
+     * @param $columnNames
+     * @param bool $excludeTimestamps
+     */
     private function checkTimestampsAndSoftDeletes(&$model, $columnNames, $excludeTimestamps = false)
     {
         if (in_array('deleted_at', $columnNames)) {
@@ -140,23 +148,25 @@ class FieldProcessor implements ProcessorInterface
         }
     }
 
+    /**
+     * Get the casts from columnType
+     *
+     * @param $columnType
+     * @return string
+     */
     private function getValidMappingFromColumnType($columnType)
     {
         switch ($columnType) {
             case "json":
                 return "array";
             case "text":
-                return "string";
             case "datetimetz":
-                return "string";
+            case "guid":
             case "blob":
                 return "string";
             case "decimal":
                 return "float";
-            case "guid":
-                return "string";
             case "smallint":
-                return "integer";
             case "bigint":
                 return "integer";
             default:
@@ -166,21 +176,26 @@ class FieldProcessor implements ProcessorInterface
     }
 
     /**
+     * Get the rules for this column
+     *
      * @param Column $column
+     * @param string $mapping
+     * @return string
      */
     private function getRules(Column $column, $mapping)
     {
-        //$this->typeRegistry->resolveType($column->getType()->getName())
         $rules = [];
-        if ($column->getNotnull())
+        if ($column->getNotnull()) {
             array_push($rules, "required");
-        else
+        } else {
             array_push($rules, "nullable");
+        }
         switch ($mapping) {
             case "string":
                 $length = $column->getLength();
-                if (is_numeric($length))
+                if (is_numeric($length)) {
                     array_push($rules, "max:" . $length);
+                }
                 break;
             case "integer":
                 array_push($rules, "integer");
@@ -192,8 +207,6 @@ class FieldProcessor implements ProcessorInterface
                 array_push($rules, "boolean");
                 break;
             case "date":
-                array_push($rules, "date");
-                break;
             case "datetime":
                 array_push($rules, "date");
                 break;
@@ -209,6 +222,12 @@ class FieldProcessor implements ProcessorInterface
         return 5;
     }
 
+    /**
+     * Add translations attributes if needed
+     *
+     * @param EloquentModel $model
+     * @param AbstractSchemaManager $schemaManager
+     */
     private function processTranslation(EloquentModel &$model, AbstractSchemaManager $schemaManager)
     {
         $translationTable = $this->checkIfHasTranslation($model, $schemaManager);
@@ -219,30 +238,47 @@ class FieldProcessor implements ProcessorInterface
         }
     }
 
+    /**
+     * Get the translation table of this model
+     *
+     * @param EloquentModel $model
+     * @param AbstractSchemaManager $schemaManager
+     * @return Table
+     */
     private function checkIfHasTranslation(EloquentModel $model, AbstractSchemaManager $schemaManager)
     {
         $translationTableName = Str::singular($model->getTableName()) . "_translations";
-        if ($schemaManager->tablesExist([$translationTableName]))
+        if ($schemaManager->tablesExist([$translationTableName])) {
             return $schemaManager->listTableDetails($translationTableName);
+        }
     }
 
+    /**
+     * Add translation attributes
+     *
+     * @param EloquentModel $model
+     * @param Table $translationTable
+     */
     private function getTranslatedAttributes(EloquentModel &$model, Table $translationTable)
     {
         $columns = [];
-        $primaryColumnNames = $translationTable->getPrimaryKey() ? $translationTable->getPrimaryKey()->getColumns() : [];
+        $primaryColumnNames = $translationTable->getPrimaryKey() ?
+            $translationTable->getPrimaryKey()->getColumns() : [];
         $foreignKeys = ($translationTable->getForeignKeys());
         if (count($foreignKeys)) {
             foreach ($foreignKeys as $fk) {
                 $tableForeignColumns = $fk->getColumns();
-                foreach ($tableForeignColumns as $columnName)
+                foreach ($tableForeignColumns as $columnName) {
                     array_push($primaryColumnNames, $columnName);
+                }
             }
         }
 
         array_push($primaryColumnNames, "locale");
         foreach ($translationTable->getColumns() as $column) {
-            if (!in_array($column->getName(), $primaryColumnNames))
+            if (!in_array($column->getName(), $primaryColumnNames)) {
                 array_push($columns, $column->getName());
+            }
         }
         $fillableProperty = new PropertyModel('translatedAttributes');
         $fillableProperty->setAccess('public')

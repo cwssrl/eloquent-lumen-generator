@@ -61,7 +61,6 @@ class Config
         $this->config[$key] = $value;
     }
 
-
     /**
      * @param array $high
      * @param array $low
@@ -110,21 +109,33 @@ class Config
         return require((file_exists(base_path("config/eloquent_model_generator.php"))) ?
             base_path("config/eloquent_model_generator.php") :
             (__DIR__ . '/Resources/eloquent_model_generator.php'));
-
     }
 
-    public function checkIfFileAlreadyExistsOrCopyIt(EloquentModel $model, $directoryWhereSearchFor,
-                                                     $filenameToSearchFor,
-                                                     $directoryWhereGetFileToCopy,
-                                                     $filenameToCopy, $overwrite = false
-    )
-    {
-        if (!is_dir($directoryWhereSearchFor))
+    /**
+     * Check if a file already exists otherwise create it by directives
+     *
+     * @param EloquentModel $model
+     * @param $directoryWhereSearchFor
+     * @param $filenameToSearchFor
+     * @param $directoryWhereGetFileToCopy
+     * @param $filenameToCopy
+     * @param bool $overwrite
+     */
+    public function checkIfFileAlreadyExistsOrCopyIt(
+        EloquentModel $model,
+        $directoryWhereSearchFor,
+        $filenameToSearchFor,
+        $directoryWhereGetFileToCopy,
+        $filenameToCopy,
+        $overwrite = false
+    ) {
+        if (!is_dir($directoryWhereSearchFor)) {
             mkdir($directoryWhereSearchFor);
+        }
         $filePath = $directoryWhereSearchFor . "/" . $filenameToSearchFor;
         if (!file_exists($filePath)) {
             copy($directoryWhereGetFileToCopy . "/" . $filenameToCopy, $filePath);
-        } else if ($overwrite) {
+        } elseif ($overwrite) {
             unlink($filePath);
             copy($directoryWhereGetFileToCopy . "/" . $filenameToCopy, $filePath);
         }
@@ -133,9 +144,11 @@ class Config
         $content = str_replace('$APP_NAME$', $this->getAppNamespace(), $content);
         $content = str_replace('$MODEL_NAME$', $modelName, $content);
         $content = str_replace('$CAMEL_MODEL_NAME$', Str::camel($modelName), $content);
-        $content = str_replace('$MODEL_FULL_CLASS$',
+        $content = str_replace(
+            '$MODEL_FULL_CLASS$',
             $model->getNamespace()->getNamespace() . "\\" . $modelName,
-            $content);
+            $content
+        );
         $content = str_replace(
             '$PLURAL_SNAKE_MODEL_NAME$',
             Str::snake(Str::plural($modelName)),
@@ -147,9 +160,13 @@ class Config
             $content
         );
         file_put_contents($filePath, $content);
-
     }
 
+    /**
+     * Get the app namespace
+     *
+     * @return mixed
+     */
     public function getAppNamespace()
     {
         return \Illuminate\Container\Container::getInstance()->getNamespace();

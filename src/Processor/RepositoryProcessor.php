@@ -17,8 +17,9 @@ class RepositoryProcessor implements ProcessorInterface
      */
     public function process(EloquentModel $model, Config $config)
     {
-        if (!Misc::endsWith($model->getTableName(), "_translations"))
+        if (!Misc::endsWith($model->getTableName(), "_translations")) {
             $this->createRepositoryForModelIfNeeded($config, $model);
+        }
         return $this;
     }
 
@@ -34,12 +35,20 @@ class RepositoryProcessor implements ProcessorInterface
             $this->checkIfBaseFilesAlreadyExistsOtherwiseCreate($config, $model);
             $repoResourceFolder = __DIR__ . '/../Resources/Repositories';
             $modelName = $model->getName()->getName();
-            $config->checkIfFileAlreadyExistsOrCopyIt($model, Misc::appPath('Repositories/' . $modelName),
+            $config->checkIfFileAlreadyExistsOrCopyIt(
+                $model,
+                Misc::appPath('Repositories/' . $modelName),
                 $modelName . "Contract.php",
-                $repoResourceFolder, "ModelContract.php");
-            $config->checkIfFileAlreadyExistsOrCopyIt($model, Misc::appPath('Repositories/' . $modelName),
+                $repoResourceFolder,
+                "ModelContract.php.stub"
+            );
+            $config->checkIfFileAlreadyExistsOrCopyIt(
+                $model,
+                Misc::appPath('Repositories/' . $modelName),
                 "Eloquent" . $modelName . "Repository.php",
-                $repoResourceFolder, "EloquentModelRepository.php");
+                $repoResourceFolder,
+                "EloquentModelRepository.php.stub"
+            );
             $contractPath = $config->getAppNamespace() . "Repositories\\$modelName\\" . $modelName . "Contract";
             $repoPath = $config->getAppNamespace() . "Repositories\\$modelName\\Eloquent" . $modelName . "Repository";
             $this->bindOnAppFile($contractPath, $repoPath);
@@ -49,11 +58,11 @@ class RepositoryProcessor implements ProcessorInterface
     private function bindOnAppFile($contractName, $repoName)
     {
         $appPath = base_path("bootstrap/app.php");
-        //\App\Repositories\Contracts\CommunityContentNewsContract
-        //\App\Repositories\Traits\EloquentCommunityContentNewsRepository
         $stringToWrite = "\$app->bind($contractName::class,$repoName::class);";
+        $stringToWriteWithMiddleSpace = "\$app->bind($contractName::class, $repoName::class);";
+
         $content = file_get_contents($appPath);
-        if (strpos($content, $stringToWrite) === false) {
+        if (strpos($content, $stringToWrite) === false && strpos($content, $stringToWriteWithMiddleSpace) == false) {
             $content = str_replace('return $app;', "", $content);
             $content .= PHP_EOL . $stringToWrite;
             $content .= PHP_EOL . 'return $app;';
@@ -61,15 +70,36 @@ class RepositoryProcessor implements ProcessorInterface
         }
     }
 
+    /**
+     * Copy base files if needed
+     *
+     * @param Config $config
+     * @param EloquentModel $model
+     */
     private function checkIfBaseFilesAlreadyExistsOtherwiseCreate(Config $config, EloquentModel $model)
     {
         $repoResourceFolder = __DIR__ . '/../Resources/Repositories';
-        $config->checkIfFileAlreadyExistsOrCopyIt($model, Misc::appPath('Exceptions'), "GenericException.php",
-            $repoResourceFolder, "GenericException.php");
-        $config->checkIfFileAlreadyExistsOrCopyIt($model, Misc::appPath('Repositories'), "RepositoryContract.php",
-            $repoResourceFolder, "RepositoryContract.php");
-        $config->checkIfFileAlreadyExistsOrCopyIt($model, Misc::appPath('Repositories'), "EloquentRepository.php",
-            $repoResourceFolder, "EloquentRepository.php");
+        $config->checkIfFileAlreadyExistsOrCopyIt(
+            $model,
+            Misc::appPath('Exceptions'),
+            "GenericException.php",
+            $repoResourceFolder,
+            "GenericException.php.stub"
+        );
+        $config->checkIfFileAlreadyExistsOrCopyIt(
+            $model,
+            Misc::appPath('Repositories'),
+            "RepositoryContract.php",
+            $repoResourceFolder,
+            "RepositoryContract.php.stub"
+        );
+        $config->checkIfFileAlreadyExistsOrCopyIt(
+            $model,
+            Misc::appPath('Repositories'),
+            "EloquentRepository.php",
+            $repoResourceFolder,
+            "EloquentRepository.php.stub"
+        );
     }
 
     /**

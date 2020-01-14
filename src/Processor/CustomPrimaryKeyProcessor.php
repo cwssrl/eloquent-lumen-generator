@@ -38,6 +38,7 @@ class CustomPrimaryKeyProcessor implements ProcessorInterface
 
     /**
      * @inheritdoc
+     * @throws \Doctrine\DBAL\Schema\SchemaException
      */
     public function process(EloquentModel $model, Config $config)
     {
