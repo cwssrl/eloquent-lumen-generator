@@ -15,15 +15,9 @@ use Cws\EloquentModelGenerator\TypeRegistry;
  */
 class CustomPrimaryKeyProcessor implements ProcessorInterface
 {
-    /**
-     * @var DatabaseManager
-     */
-    protected $databaseManager;
+    protected \Illuminate\Database\DatabaseManager $databaseManager;
 
-    /**
-     * @var TypeRegistry
-     */
-    protected $typeRegistry;
+    protected \Cws\EloquentModelGenerator\TypeRegistry $typeRegistry;
 
     /**
      * FieldProcessor constructor.

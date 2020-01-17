@@ -8,20 +8,11 @@ namespace Cws\EloquentModelGenerator\Model;
  */
 abstract class Relation
 {
-    /**
-     * @var string
-     */
-    protected $tableName;
+    protected string $tableName;
 
-    /**
-     * @var string
-     */
-    protected $foreignColumnName;
+    protected string $foreignColumnName;
 
-    /**
-     * @var string
-     */
-    protected $localColumnName;
+    protected string $localColumnName;
 
     /**
      * Relation constructor.

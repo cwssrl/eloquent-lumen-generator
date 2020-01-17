@@ -15,7 +15,7 @@ class EloquentModelBuilder
     /**
      * @var ProcessorInterface[]
      */
-    protected $processors;
+    protected array $processors;
 
     /**
      * EloquentModelBuilder constructor.

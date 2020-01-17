@@ -23,20 +23,11 @@ class GenerateModelCommand extends Command
      */
     protected $name = 'cws:generate';
 
-    /**
-     * @var Generator
-     */
-    protected $generator;
+    protected \Cws\EloquentModelGenerator\Generator $generator;
 
-    /**
-     * @var AppConfig
-     */
-    protected $appConfig;
+    protected AppConfig $appConfig;
 
-    /**
-     * @var DatabaseManager
-     */
-    protected $databaseManager;
+    protected \Illuminate\Database\DatabaseManager $databaseManager;
 
     /**
      * GenerateModelCommand constructor.

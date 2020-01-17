@@ -11,10 +11,7 @@ use Illuminate\Support\Str;
  */
 class Config
 {
-    /**
-     * @var array
-     */
-    protected $config;
+    protected array $config;
 
     /**
      * Config constructor.

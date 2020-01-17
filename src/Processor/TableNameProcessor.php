@@ -16,10 +16,7 @@ use Cws\EloquentModelGenerator\Model\EloquentModel;
  */
 class TableNameProcessor implements ProcessorInterface
 {
-    /**
-     * @var EmgHelper
-     */
-    protected $helper;
+    protected \Cws\EloquentModelGenerator\Helper\EmgHelper $helper;
 
     /**
      * TableNameProcessor constructor.

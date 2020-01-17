@@ -17,15 +17,9 @@ use Cws\CodeGenerator\Model\UseClassModel;
  */
 class Generator
 {
-    /**
-     * @var EloquentModelBuilder
-     */
-    protected $builder;
+    protected \Cws\EloquentModelGenerator\EloquentModelBuilder $builder;
 
-    /**
-     * @var TypeRegistry
-     */
-    protected $typeRegistry;
+    protected \Cws\EloquentModelGenerator\TypeRegistry $typeRegistry;
 
     /**
      * Generator constructor.

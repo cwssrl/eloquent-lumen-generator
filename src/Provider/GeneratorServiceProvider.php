@@ -44,9 +44,7 @@ class GeneratorServiceProvider extends ServiceProvider
             RepositoryProcessor::class
         ], self::PROCESSOR_TAG);
 
-        $this->app->bind(EloquentModelBuilder::class, function ($app) {
-            return new EloquentModelBuilder($app->tagged(self::PROCESSOR_TAG));
-        });
+        $this->app->bind(EloquentModelBuilder::class, fn($app) => new EloquentModelBuilder($app->tagged(self::PROCESSOR_TAG)));
     }
 
     /**

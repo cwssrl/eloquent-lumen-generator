@@ -12,10 +12,7 @@ use Illuminate\Database\DatabaseManager;
  */
 class TypeRegistry
 {
-    /**
-     * @var array
-     */
-    protected $types = [
+    protected array $types = [
         'array'        => 'array',
         'simple_array' => 'array',
         'json_array'   => 'string',
@@ -37,10 +34,7 @@ class TypeRegistry
         'guid'         => 'string',
     ];
 
-    /**
-     * @var DatabaseManager
-     */
-    protected $databaseManager;
+    protected \Illuminate\Database\DatabaseManager $databaseManager;
 
     /**
      * TypeRegistry constructor.

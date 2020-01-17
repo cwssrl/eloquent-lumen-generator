@@ -10,10 +10,7 @@ use Cws\CodeGenerator\Model\ClassModel;
  */
 class EloquentModel extends ClassModel
 {
-    /**
-     * @var string
-     */
-    protected $tableName;
+    protected string $tableName;
 
     /**
      * @param string $tableName

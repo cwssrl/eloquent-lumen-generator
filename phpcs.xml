@@ -21,4 +21,5 @@
     <exclude-pattern>/routes/</exclude-pattern>
     <exclude-pattern>/storage/</exclude-pattern>
     <exclude-pattern>/vendor/</exclude-pattern>
+    <config name="testVersion" value="7.4"/>
 </ruleset>

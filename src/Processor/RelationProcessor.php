@@ -29,15 +29,9 @@ use Cws\EloquentModelGenerator\Misc;
  */
 class RelationProcessor implements ProcessorInterface
 {
-    /**
-     * @var DatabaseManager
-     */
-    protected $databaseManager;
+    protected \Illuminate\Database\DatabaseManager $databaseManager;
 
-    /**
-     * @var EmgHelper
-     */
-    protected $helper;
+    protected \Cws\EloquentModelGenerator\Helper\EmgHelper $helper;
 
     /**
      * FieldProcessor constructor.

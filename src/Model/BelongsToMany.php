@@ -8,20 +8,11 @@ namespace Cws\EloquentModelGenerator\Model;
  */
 class BelongsToMany extends Relation
 {
-    /**
-     * @var string
-     */
-    protected $joinTable;
+    protected string $joinTable;
 
-    /**
-     * @var boolean
-     */
-    protected $withTimestamps;
+    protected bool $withTimestamps;
 
-    /**
-     * @var array
-     */
-    protected $pivots;
+    protected array $pivots;
 
     /**
      * BelongsToMany constructor.

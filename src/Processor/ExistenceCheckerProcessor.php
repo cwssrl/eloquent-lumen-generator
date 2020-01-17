@@ -14,10 +14,7 @@ use Cws\EloquentModelGenerator\Model\EloquentModel;
  */
 class ExistenceCheckerProcessor implements ProcessorInterface
 {
-    /**
-     * @var DatabaseManager
-     */
-    protected $databaseManager;
+    protected \Illuminate\Database\DatabaseManager $databaseManager;
 
     /**
      * ExistenceCheckerProcessor constructor.
