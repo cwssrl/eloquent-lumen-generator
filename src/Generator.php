@@ -136,13 +136,11 @@ class Generator
             //invoke the artisan command to create controller
             dump(
                 exec(
-                    (
-                        "php artisan make:controller " .
+                    ("php artisan make:controller " .
                         $config->get('controller_path') .
                         "/" .
                         $model->getName()->getName() .
-                        "Controller --model=$modelFullPath"
-                    )
+                        "Controller --model=$modelFullPath")
                 )
             );
         }

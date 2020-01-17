@@ -94,8 +94,7 @@ class RelationProcessor implements ProcessorInterface
                         if (
                             count($foreignKeys) === 2 &&
                             ((count($table->getColumns()) === 2) || ((count($table->getColumns()) > 2  &&
-                                    $isTableNameARelationTableName))
-                            )
+                                $isTableNameARelationTableName)))
                         ) {
                             $keys = array_keys($foreignKeys);
                             $key = array_search($name, $keys) === 0 ? 1 : 0;
@@ -298,8 +297,7 @@ class RelationProcessor implements ProcessorInterface
             $name,
             $this->prepareArguments($arguments),
             ($timestamps ? "->withTimestamps()" : ""),
-            (empty($pivots) ? "" : ("->withPivot(" . $pivots . ")")
-            )
+            (empty($pivots) ? "" : ("->withPivot(" . $pivots . ")"))
         );
     }
 

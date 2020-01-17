@@ -60,8 +60,7 @@ class GeneratorServiceProvider extends ServiceProvider
         }
         $this->publishes(
             [
-                __DIR__ . '/../Resources/eloquent_model_generator.php' =>
-                    ($configFolderPath . '/eloquent_model_generator.php')
+                __DIR__ . '/../Resources/eloquent_model_generator.php' => ($configFolderPath . '/eloquent_model_generator.php')
             ],
             'config'
         );

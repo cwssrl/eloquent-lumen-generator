@@ -107,8 +107,7 @@ class Config
     protected function getBaseConfig()
     {
         return require((file_exists(base_path("config/eloquent_model_generator.php"))) ?
-            base_path("config/eloquent_model_generator.php") :
-            (__DIR__ . '/Resources/eloquent_model_generator.php'));
+            base_path("config/eloquent_model_generator.php") : (__DIR__ . '/Resources/eloquent_model_generator.php'));
     }
 
     /**
