@@ -82,7 +82,12 @@ class AdditionalProcessor implements ProcessorInterface
 ]);
              */
             $modelName = $model->getName()->getName();
-            $controllerFullPath = ("'" . (empty($controllerPath) ? "" : ($controllerPath . "\\")) . $modelName . "APIController@%s'");
+            $controllerFullPath = (
+                "'" .
+                (empty($controllerPath) ? "" : ($controllerPath . "\\")) .
+                $modelName .
+                "APIController@%s'"
+                );
             $command = "\$router->%s('%s%s', ['as' => '%s', 'uses' => $controllerFullPath]);";
             $routes = [
                 ["verb" => "get", "param" => "", "name" => "index", "method" => "index"],
