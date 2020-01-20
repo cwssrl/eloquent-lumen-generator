@@ -46,7 +46,7 @@ class Generator
         EloquentModel $model = null,
         string $keyName = "output_path",
         string $filename = null,
-        $generateControllerAndRequest = false
+        bool $generateControllerAndRequest = false
     ): EloquentModel {
         $this->registerUserTypes($config);
         if (empty($model)) {
@@ -71,8 +71,11 @@ class Generator
      * @return string
      * @throws GeneratorException
      */
-    protected function resolveOutputPath(Config $config, string $keyName = "output_path", string $filename = null): string
-    {
+    protected function resolveOutputPath(
+        Config $config,
+        string $keyName = "output_path",
+        string $filename = null
+    ): string {
         $path = $config->get($keyName);
         if ($path === null || stripos($path, '/') !== 0) {
             $path = Misc::appPath($path);
@@ -147,8 +150,11 @@ class Generator
      * @param $requestNamePrefix
      * @param $requestFullClassPath
      */
-    private function updateControllerFile($modelName, $requestNamePrefix, $requestFullClassPath): void
-    {
+    private function updateControllerFile(
+        string $modelName,
+        string $requestNamePrefix,
+        string $requestFullClassPath
+    ): void {
         $pattern = Misc::appPath() . "/" . $modelName . "Controller.php";
         $controllersFiles = $this->recursiveGlob($pattern);
         if (count($controllersFiles)) {
@@ -177,7 +183,7 @@ class Generator
      * @param $pattern
      * @return array
      */
-    private function recursiveGlob($pattern): array
+    private function recursiveGlob(string $pattern): array
     {
         $first_files = glob($pattern);
         foreach (glob(dirname($pattern) . '/*') as $dir) {

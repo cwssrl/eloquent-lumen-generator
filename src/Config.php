@@ -18,7 +18,7 @@ class Config
      * @param array $inputConfig
      * @param array|null $appConfig
      */
-    public function __construct($inputConfig, $appConfig = null)
+    public function __construct(array $inputConfig, array $appConfig = null)
     {
         $inputConfig = $this->resolveKeys($inputConfig);
 
@@ -119,11 +119,11 @@ class Config
      */
     public function checkIfFileAlreadyExistsOrCopyIt(
         EloquentModel $model,
-        $directoryWhereSearchFor,
-        $filenameToSearchFor,
-        $directoryWhereGetFileToCopy,
-        $filenameToCopy,
-        $overwrite = false
+        string $directoryWhereSearchFor,
+        string $filenameToSearchFor,
+        string $directoryWhereGetFileToCopy,
+        string $filenameToCopy,
+        bool $overwrite = false
     ): void {
         if (!is_dir($directoryWhereSearchFor)) {
             mkdir($directoryWhereSearchFor);

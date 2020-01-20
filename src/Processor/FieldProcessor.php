@@ -129,8 +129,11 @@ class FieldProcessor implements ProcessorInterface
      * @param $columnNames
      * @param bool $excludeTimestamps
      */
-    private function checkTimestampsAndSoftDeletes(&$model, $columnNames, $excludeTimestamps = false): void
-    {
+    private function checkTimestampsAndSoftDeletes(
+        EloquentModel &$model,
+        array $columnNames,
+        bool $excludeTimestamps = false
+    ): void {
         if (in_array('deleted_at', $columnNames)) {
             $model->addUses(new UseClassModel("Illuminate\Database\Eloquent\SoftDeletes"));
             $model->addTrait(new UseTraitModel("SoftDeletes"));
@@ -148,7 +151,7 @@ class FieldProcessor implements ProcessorInterface
      * @param $columnType
      * @return string
      */
-    private function getValidMappingFromColumnType($columnType): string
+    private function getValidMappingFromColumnType(string $columnType): string
     {
         switch ($columnType) {
             case "json":
@@ -176,7 +179,7 @@ class FieldProcessor implements ProcessorInterface
      * @param string $mapping
      * @return string
      */
-    private function getRules(Column $column, $mapping): string
+    private function getRules(Column $column, string $mapping): string
     {
         $rules = [];
         if ($column->getNotnull()) {

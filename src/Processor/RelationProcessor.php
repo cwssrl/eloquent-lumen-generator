@@ -328,7 +328,7 @@ class RelationProcessor implements ProcessorInterface
      * @param string $default
      * @return string|null
      */
-    protected function resolveArgument($actual, $default): string
+    protected function resolveArgument(string $actual, string $default): string
     {
         return $actual === $default ? null : $actual;
     }
@@ -339,7 +339,7 @@ class RelationProcessor implements ProcessorInterface
      * @param string $tableName
      * @return string
      */
-    protected function addPrefix($prefix, $tableName): string
+    protected function addPrefix(string $prefix, string $tableName): string
     {
         return $prefix . $tableName;
     }
@@ -350,7 +350,7 @@ class RelationProcessor implements ProcessorInterface
      * @param string $tableName
      * @return string
      */
-    protected function removePrefix($prefix, $tableName): string
+    protected function removePrefix(string $prefix, string $tableName): string
     {
         return preg_replace("/^$prefix/", '', $tableName);
     }

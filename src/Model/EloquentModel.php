@@ -17,7 +17,7 @@ class EloquentModel extends ClassModel
      *
      * @return $this
      */
-    public function setTableName($tableName): EloquentModel
+    public function setTableName(string $tableName): EloquentModel
     {
         $this->tableName = $tableName;
 

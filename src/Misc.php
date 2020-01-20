@@ -33,7 +33,7 @@ class Misc
      * @param $allTablesName
      * @return bool
      */
-    public static function isTableNameARelationTableName($tableName, $allTablesName): bool
+    public static function isTableNameARelationTableName(string $tableName, array $allTablesName): bool
     {
         $single = [];
         $containedInTableName = [];

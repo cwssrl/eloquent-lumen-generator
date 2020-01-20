@@ -21,7 +21,7 @@ class EloquentModelBuilder
      * EloquentModelBuilder constructor.
      * @param ProcessorInterface[] $processors
      */
-    public function __construct($processors)
+    public function __construct(array $processors)
     {
         $this->processors = $processors;
     }

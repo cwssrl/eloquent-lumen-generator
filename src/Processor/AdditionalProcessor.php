@@ -67,7 +67,7 @@ class AdditionalProcessor implements ProcessorInterface
      * @param $controllerPath
      * @return string|null
      */
-    private function prepareRouteCommand($isApi, EloquentModel $model, $controllerPath): string
+    private function prepareRouteCommand(bool $isApi, EloquentModel $model, $controllerPath): string
     {
         $toPrint = null;
         if (!$isApi) {

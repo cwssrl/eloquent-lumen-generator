@@ -20,7 +20,7 @@ abstract class Relation
      * @param string $joinColumnName
      * @param string $localColumnName
      */
-    public function __construct($tableName, $joinColumnName, $localColumnName)
+    public function __construct(string $tableName, string $joinColumnName, string $localColumnName)
     {
         $this->setTableName($tableName);
         $this->setForeignColumnName($joinColumnName);
@@ -40,7 +40,7 @@ abstract class Relation
      *
      * @return $this
      */
-    public function setTableName($tableName): Relation
+    public function setTableName(string $tableName): Relation
     {
         $this->tableName = $tableName;
 
@@ -60,7 +60,7 @@ abstract class Relation
      *
      * @return $this
      */
-    public function setForeignColumnName($foreignColumnName): Relation
+    public function setForeignColumnName(string $foreignColumnName): Relation
     {
         $this->foreignColumnName = $foreignColumnName;
 
@@ -80,7 +80,7 @@ abstract class Relation
      *
      * @return $this
      */
-    public function setLocalColumnName($localColumnName): Relation
+    public function setLocalColumnName(string $localColumnName): Relation
     {
         $this->localColumnName = $localColumnName;
 

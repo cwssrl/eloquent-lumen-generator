@@ -93,7 +93,7 @@ class GenerateModelCommand extends Command
      * @param string $tableName
      * @return void
      */
-    private function checkIfTableIsATranslationOneAndIfTranslatableIsInstalled($tableName): void
+    private function checkIfTableIsATranslationOneAndIfTranslatableIsInstalled(string $tableName): void
     {
         if (Misc::endsWith($tableName, "_translations") && !class_exists("Astrotomic\Translatable\Locales", true)) {
             $this->warn("Be careful, to manage translation tables you need to require Astrotomic/laravel-translatable");
@@ -141,6 +141,8 @@ class GenerateModelCommand extends Command
     }
 
     /**
+     * Undocumented function
+     *
      * @return array
      */
     protected function getOptions(): array
@@ -177,7 +179,7 @@ class GenerateModelCommand extends Command
      * @param string $tableName
      * @return string
      */
-    private function getDefaultClassName($tableName): string
+    private function getDefaultClassName(string $tableName): string
     {
         return Str::ucfirst(Str::camel(Str::singular($tableName)));
     }

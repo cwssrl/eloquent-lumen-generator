@@ -24,11 +24,11 @@ class BelongsToMany extends Relation
      * @param array $pivots
      */
     public function __construct(
-        $tableName,
-        $joinTable,
-        $foreignColumnName,
-        $localColumnName,
-        $withTimestamps,
+        string $tableName,
+        string $joinTable,
+        string $foreignColumnName,
+        string $localColumnName,
+        string $withTimestamps,
         array $pivots = []
     ) {
         $this->joinTable = $joinTable;
@@ -58,7 +58,7 @@ class BelongsToMany extends Relation
      *
      * @return $this
      */
-    public function setJoinTable($joinTable): BelongsToMany
+    public function setJoinTable(string $joinTable): BelongsToMany
     {
         $this->joinTable = $joinTable;
 

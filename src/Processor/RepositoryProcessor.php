@@ -55,7 +55,7 @@ class RepositoryProcessor implements ProcessorInterface
         }
     }
 
-    private function bindOnAppFile($contractName, $repoName): void
+    private function bindOnAppFile(string $contractName, string $repoName): void
     {
         $appPath = base_path("bootstrap/app.php");
         $stringToWrite = "\$app->bind($contractName::class,$repoName::class);";
