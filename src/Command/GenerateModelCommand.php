@@ -46,7 +46,7 @@ class GenerateModelCommand extends Command
      * Add support for Laravel 5.5
      * @throws \Cws\EloquentModelGenerator\Exception\GeneratorException
      */
-    public function handle()
+    public function handle(): void
     {
         $this->fire();
     }
@@ -55,7 +55,7 @@ class GenerateModelCommand extends Command
      * Executes the command
      * @throws \Cws\EloquentModelGenerator\Exception\GeneratorException
      */
-    public function fire()
+    public function fire(): void
     {
         $config = $this->createConfig();
         $schemaManager = $this->databaseManager->connection($config->get('connection'))->getDoctrineSchemaManager();
@@ -93,7 +93,7 @@ class GenerateModelCommand extends Command
      * @param string $tableName
      * @return void
      */
-    private function checkIfTableIsATranslationOneAndIfTranslatableIsInstalled($tableName)
+    private function checkIfTableIsATranslationOneAndIfTranslatableIsInstalled($tableName): void
     {
         if (Misc::endsWith($tableName, "_translations") && !class_exists("Astrotomic\Translatable\Locales", true)) {
             $this->warn("Be careful, to manage translation tables you need to require Astrotomic/laravel-translatable");
@@ -103,7 +103,7 @@ class GenerateModelCommand extends Command
     /**
      * @return Config
      */
-    protected function createConfig()
+    protected function createConfig(): Config
     {
         $config = [];
         foreach ($this->getArguments() as $argument) {
@@ -133,7 +133,7 @@ class GenerateModelCommand extends Command
     /**
      * @return array
      */
-    protected function getArguments()
+    protected function getArguments(): array
     {
         return [
             ['class-name', InputArgument::REQUIRED, 'Model class name'],
@@ -143,7 +143,7 @@ class GenerateModelCommand extends Command
     /**
      * @return array
      */
-    protected function getOptions()
+    protected function getOptions(): array
     {
         return [
             ['table-name', 'tn', InputOption::VALUE_OPTIONAL, 'Name of the table to use', null],
@@ -177,7 +177,7 @@ class GenerateModelCommand extends Command
      * @param string $tableName
      * @return string
      */
-    private function getDefaultClassName($tableName)
+    private function getDefaultClassName($tableName): string
     {
         return Str::ucfirst(Str::camel(Str::singular($tableName)));
     }

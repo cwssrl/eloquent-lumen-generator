@@ -30,7 +30,7 @@ class TableNameProcessor implements ProcessorInterface
     /**
      * @inheritdoc
      */
-    public function process(EloquentModel $model, Config $config)
+    public function process(EloquentModel $model, Config $config): void
     {
         $className     = $config->get('class_name');
         $baseClassName = $config->get('base_class_name');
@@ -50,7 +50,7 @@ class TableNameProcessor implements ProcessorInterface
     /**
      * @inheritdoc
      */
-    public function getPriority()
+    public function getPriority(): int
     {
         return 10;
     }

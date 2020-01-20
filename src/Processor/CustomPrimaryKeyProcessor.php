@@ -34,7 +34,7 @@ class CustomPrimaryKeyProcessor implements ProcessorInterface
      * @inheritdoc
      * @throws \Doctrine\DBAL\Schema\SchemaException
      */
-    public function process(EloquentModel $model, Config $config)
+    public function process(EloquentModel $model, Config $config): void
     {
         $schemaManager = $this->databaseManager->connection($config->get('connection'))->getDoctrineSchemaManager();
         $prefix        = $this->databaseManager->connection($config->get('connection'))->getTablePrefix();
@@ -81,7 +81,7 @@ class CustomPrimaryKeyProcessor implements ProcessorInterface
     /**
      * @inheritdoc
      */
-    public function getPriority()
+    public function getPriority(): int
     {
         return 6;
     }

@@ -15,7 +15,7 @@ class RepositoryProcessor implements ProcessorInterface
     /**
      * @inheritdoc
      */
-    public function process(EloquentModel $model, Config $config)
+    public function process(EloquentModel $model, Config $config): RepositoryProcessor
     {
         if (!Misc::endsWith($model->getTableName(), "_translations")) {
             $this->createRepositoryForModelIfNeeded($config, $model);
@@ -29,7 +29,7 @@ class RepositoryProcessor implements ProcessorInterface
      * @param Config $config
      * @param EloquentModel $model
      */
-    private function createRepositoryForModelIfNeeded(Config $config, EloquentModel $model)
+    private function createRepositoryForModelIfNeeded(Config $config, EloquentModel $model): void
     {
         if ($config->get("repository") !== false) {
             $this->checkIfBaseFilesAlreadyExistsOtherwiseCreate($config, $model);
@@ -55,7 +55,7 @@ class RepositoryProcessor implements ProcessorInterface
         }
     }
 
-    private function bindOnAppFile($contractName, $repoName)
+    private function bindOnAppFile($contractName, $repoName): void
     {
         $appPath = base_path("bootstrap/app.php");
         $stringToWrite = "\$app->bind($contractName::class,$repoName::class);";
@@ -76,7 +76,7 @@ class RepositoryProcessor implements ProcessorInterface
      * @param Config $config
      * @param EloquentModel $model
      */
-    private function checkIfBaseFilesAlreadyExistsOtherwiseCreate(Config $config, EloquentModel $model)
+    private function checkIfBaseFilesAlreadyExistsOtherwiseCreate(Config $config, EloquentModel $model): void
     {
         $repoResourceFolder = __DIR__ . '/../Resources/Repositories';
         $config->checkIfFileAlreadyExistsOrCopyIt(
@@ -105,7 +105,7 @@ class RepositoryProcessor implements ProcessorInterface
     /**
      * @inheritdoc
      */
-    public function getPriority()
+    public function getPriority(): int
     {
         return 2;
     }

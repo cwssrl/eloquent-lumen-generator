@@ -48,7 +48,7 @@ class RelationProcessor implements ProcessorInterface
      * @inheritdoc
      * @throws GeneratorException
      */
-    public function process(EloquentModel $model, Config $config)
+    public function process(EloquentModel $model, Config $config): void
     {
         if (!Misc::endsWith($model->getTableName(), "_translations")) {
             $schemaManager = $this->databaseManager->connection($config->get('connection'))->getDoctrineSchemaManager();
@@ -136,7 +136,7 @@ class RelationProcessor implements ProcessorInterface
     /**
      * @inheritdoc
      */
-    public function getPriority()
+    public function getPriority(): int
     {
         return 5;
     }
@@ -146,7 +146,7 @@ class RelationProcessor implements ProcessorInterface
      * @param string $column
      * @return bool
      */
-    protected function isColumnUnique(Table $table, $column)
+    protected function isColumnUnique(Table $table, $column): bool
     {
         foreach ($table->getIndexes() as $index) {
             $indexColumns = $index->getColumns();
@@ -167,7 +167,7 @@ class RelationProcessor implements ProcessorInterface
      * @param Relation $relation
      * @throws GeneratorException
      */
-    protected function addRelation(EloquentModel $model, Relation $relation)
+    protected function addRelation(EloquentModel $model, Relation $relation): void
     {
         $relationClass = Str::singular(Str::studly($relation->getTableName()));
         if ($relation instanceof HasOne) {
@@ -213,7 +213,7 @@ class RelationProcessor implements ProcessorInterface
         $model->addProperty(new VirtualPropertyModel($name, $virtualPropertyType));
     }
 
-    private function getValidMethodNameForHasMany(EloquentModel $model, Relation $relation)
+    private function getValidMethodNameForHasMany(EloquentModel $model, Relation $relation): string
     {
         $name = Str::plural(Str::camel($relation->getTableName()));
         $thisModelName = Str::snake($model->getName()->getName());
@@ -236,7 +236,7 @@ class RelationProcessor implements ProcessorInterface
      * @param Relation $relation
      * @return string
      */
-    protected function createMethodBody(EloquentModel $model, Relation $relation)
+    protected function createMethodBody(EloquentModel $model, Relation $relation): string
     {
         $reflectionObject = new \ReflectionObject($relation);
         $name = Str::camel($reflectionObject->getShortName());
@@ -299,7 +299,7 @@ class RelationProcessor implements ProcessorInterface
      * @param array $array
      * @return string
      */
-    protected function prepareArguments(array $array)
+    protected function prepareArguments(array $array): string
     {
         $array = array_reverse($array);
         $milestone = false;
@@ -328,7 +328,7 @@ class RelationProcessor implements ProcessorInterface
      * @param string $default
      * @return string|null
      */
-    protected function resolveArgument($actual, $default)
+    protected function resolveArgument($actual, $default): string
     {
         return $actual === $default ? null : $actual;
     }
@@ -339,7 +339,7 @@ class RelationProcessor implements ProcessorInterface
      * @param string $tableName
      * @return string
      */
-    protected function addPrefix($prefix, $tableName)
+    protected function addPrefix($prefix, $tableName): string
     {
         return $prefix . $tableName;
     }
@@ -350,7 +350,7 @@ class RelationProcessor implements ProcessorInterface
      * @param string $tableName
      * @return string
      */
-    protected function removePrefix($prefix, $tableName)
+    protected function removePrefix($prefix, $tableName): string
     {
         return preg_replace("/^$prefix/", '', $tableName);
     }

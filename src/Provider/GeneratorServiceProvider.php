@@ -26,7 +26,7 @@ class GeneratorServiceProvider extends ServiceProvider
     /**
      * {@inheritDoc}
      */
-    public function register()
+    public function register(): void
     {
         $this->commands([
             GenerateModelCommand::class,
@@ -44,13 +44,16 @@ class GeneratorServiceProvider extends ServiceProvider
             RepositoryProcessor::class
         ], self::PROCESSOR_TAG);
 
-        $this->app->bind(EloquentModelBuilder::class, fn($app) => new EloquentModelBuilder($app->tagged(self::PROCESSOR_TAG)));
+        $this->app->bind(
+            EloquentModelBuilder::class,
+            fn($app) => new EloquentModelBuilder($app->tagged(self::PROCESSOR_TAG))
+        );
     }
 
     /**
      * Boot the package copying config file
      */
-    public function boot()
+    public function boot(): void
     {
         $configFolderPath = base_path() . "/config";
         if (!file_exists($configFolderPath)) {

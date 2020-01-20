@@ -47,7 +47,7 @@ class Generator
         string $keyName = "output_path",
         string $filename = null,
         $generateControllerAndRequest = false
-    ) {
+    ): EloquentModel {
         $this->registerUserTypes($config);
         if (empty($model)) {
             $model = $this->builder->createModel($config);
@@ -71,7 +71,7 @@ class Generator
      * @return string
      * @throws GeneratorException
      */
-    protected function resolveOutputPath(Config $config, string $keyName = "output_path", string $filename = null)
+    protected function resolveOutputPath(Config $config, string $keyName = "output_path", string $filename = null): string
     {
         $path = $config->get($keyName);
         if ($path === null || stripos($path, '/') !== 0) {
@@ -97,7 +97,7 @@ class Generator
     /**
      * @param Config $config
      */
-    protected function registerUserTypes(Config $config)
+    protected function registerUserTypes(Config $config): void
     {
         $userTypes = $config->get('db_types');
         if ($userTypes && is_array($userTypes)) {
@@ -115,7 +115,7 @@ class Generator
      * @param Config $config
      * @param EloquentModel $model
      */
-    private function createControllerForModelIfNeeded(Config $config, EloquentModel $model)
+    private function createControllerForModelIfNeeded(Config $config, EloquentModel $model): void
     {
         if ($config->get("controller") !== false) {
             $config->checkIfFileAlreadyExistsOrCopyIt(
@@ -147,7 +147,7 @@ class Generator
      * @param $requestNamePrefix
      * @param $requestFullClassPath
      */
-    private function updateControllerFile($modelName, $requestNamePrefix, $requestFullClassPath)
+    private function updateControllerFile($modelName, $requestNamePrefix, $requestFullClassPath): void
     {
         $pattern = Misc::appPath() . "/" . $modelName . "Controller.php";
         $controllersFiles = $this->recursiveGlob($pattern);
@@ -177,7 +177,7 @@ class Generator
      * @param $pattern
      * @return array
      */
-    private function recursiveGlob($pattern)
+    private function recursiveGlob($pattern): array
     {
         $first_files = glob($pattern);
         foreach (glob(dirname($pattern) . '/*') as $dir) {

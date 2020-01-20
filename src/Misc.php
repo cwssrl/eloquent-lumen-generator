@@ -7,7 +7,7 @@ use Illuminate\Support\Str;
 class Misc
 {
 
-    public static function endsWith(string $searchInto, string $stringToLookFor)
+    public static function endsWith(string $searchInto, string $stringToLookFor): bool
     {
         $len = strlen($stringToLookFor);
         if ($len == 0) {
@@ -16,13 +16,13 @@ class Misc
         return (substr($searchInto, -$len) === $stringToLookFor);
     }
 
-    public static function startsWith($string, $startString)
+    public static function startsWith($string, $startString): bool
     {
         $len = strlen($startString);
         return (substr($string, 0, $len) === $startString);
     }
 
-    public static function appPath($subPath = null)
+    public static function appPath($subPath = null): string
     {
         return empty($subPath) ? base_path('app') :
             base_path('app/' . trim($subPath, "/"));
@@ -33,7 +33,7 @@ class Misc
      * @param $allTablesName
      * @return bool
      */
-    public static function isTableNameARelationTableName($tableName, $allTablesName)
+    public static function isTableNameARelationTableName($tableName, $allTablesName): bool
     {
         $single = [];
         $containedInTableName = [];

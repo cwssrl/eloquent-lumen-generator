@@ -19,7 +19,7 @@ class EmgHelper
      * @param string $fullClassName
      * @return string
      */
-    public function getShortClassName($fullClassName)
+    public function getShortClassName($fullClassName): string
     {
         $pieces = explode('\\', $fullClassName);
 
@@ -30,7 +30,7 @@ class EmgHelper
      * @param string $className
      * @return string
      */
-    public function getDefaultTableName($className)
+    public function getDefaultTableName($className): string
     {
         return Str::plural(Str::snake($className));
     }
@@ -39,7 +39,7 @@ class EmgHelper
      * @param string $table
      * @return string
      */
-    public function getDefaultForeignColumnName($table)
+    public function getDefaultForeignColumnName($table): string
     {
         return sprintf('%s_%s', Str::singular($table), self::DEFAULT_PRIMARY_KEY);
     }
@@ -49,7 +49,7 @@ class EmgHelper
      * @param string $tableTwo
      * @return string
      */
-    public function getDefaultJoinTableName($tableOne, $tableTwo)
+    public function getDefaultJoinTableName($tableOne, $tableTwo): string
     {
         $tables = [Str::singular($tableOne), Str::singular($tableTwo)];
         sort($tables);

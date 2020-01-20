@@ -48,7 +48,7 @@ class BelongsToMany extends Relation
     /**
      * @return string
      */
-    public function getJoinTable()
+    public function getJoinTable(): string
     {
         return $this->joinTable;
     }
@@ -58,7 +58,7 @@ class BelongsToMany extends Relation
      *
      * @return $this
      */
-    public function setJoinTable($joinTable)
+    public function setJoinTable($joinTable): BelongsToMany
     {
         $this->joinTable = $joinTable;
 
@@ -68,7 +68,7 @@ class BelongsToMany extends Relation
     /**
      * @return bool
      */
-    public function getWithTimestamps()
+    public function getWithTimestamps(): string
     {
         return $this->withTimestamps;
     }
@@ -76,7 +76,7 @@ class BelongsToMany extends Relation
     /**
      * @return string|null
      */
-    public function getPivotsAsString()
+    public function getPivotsAsString(): string
     {
         if (!count($this->pivots)) {
             return null;

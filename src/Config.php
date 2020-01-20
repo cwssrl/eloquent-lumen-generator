@@ -34,7 +34,7 @@ class Config
      * @param mixed|null $default
      * @return mixed|null
      */
-    public function get($key, $default = null)
+    public function get($key, $default = null): string
     {
         return $this->has($key) ? $this->config[$key] : $default;
     }
@@ -43,7 +43,7 @@ class Config
      * @param string $key
      * @return bool
      */
-    public function has($key)
+    public function has($key): bool
     {
         return isset($this->config[$key]);
     }
@@ -53,7 +53,7 @@ class Config
      * @param string $value
      * @return null
      */
-    public function set($key, $value)
+    public function set($key, $value): void
     {
         $this->config[$key] = $value;
     }
@@ -63,7 +63,7 @@ class Config
      * @param array $low
      * @return array
      */
-    protected function merge(array $high, array $low)
+    protected function merge(array $high, array $low): array
     {
         foreach ($high as $key => $value) {
             if ($value !== null) {
@@ -78,7 +78,7 @@ class Config
      * @param array $array
      * @return array
      */
-    protected function resolveKeys(array $array)
+    protected function resolveKeys(array $array): array
     {
         $resolved = [];
         foreach ($array as $key => $value) {
@@ -93,7 +93,7 @@ class Config
      * @param string $key
      * @return mixed
      */
-    protected function resolveKey($key)
+    protected function resolveKey($key): string
     {
         return str_replace('-', '_', strtolower($key));
     }
@@ -101,7 +101,7 @@ class Config
     /**
      * @return array
      */
-    protected function getBaseConfig()
+    protected function getBaseConfig(): array
     {
         return require((file_exists(base_path("config/eloquent_model_generator.php"))) ?
             base_path("config/eloquent_model_generator.php") : (__DIR__ . '/Resources/eloquent_model_generator.php'));
@@ -124,7 +124,7 @@ class Config
         $directoryWhereGetFileToCopy,
         $filenameToCopy,
         $overwrite = false
-    ) {
+    ): void {
         if (!is_dir($directoryWhereSearchFor)) {
             mkdir($directoryWhereSearchFor);
         }
@@ -163,7 +163,7 @@ class Config
      *
      * @return mixed
      */
-    public function getAppNamespace()
+    public function getAppNamespace(): string
     {
         return \Illuminate\Container\Container::getInstance()->getNamespace();
     }

@@ -16,7 +16,7 @@ class CustomPropertyProcessor implements ProcessorInterface
     /**
      * @inheritdoc
      */
-    public function process(EloquentModel $model, Config $config)
+    public function process(EloquentModel $model, Config $config): void
     {
         if ($config->get('no_timestamps') === true) {
             $pNoTimestamps = new PropertyModel('timestamps', 'public', false);
@@ -46,7 +46,7 @@ class CustomPropertyProcessor implements ProcessorInterface
     /**
      * @inheritdoc
      */
-    public function getPriority()
+    public function getPriority(): int
     {
         return 5;
     }

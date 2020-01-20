@@ -5,6 +5,7 @@ namespace Cws\EloquentModelGenerator\Processor;
 use Cws\EloquentModelGenerator\Misc;
 use Cws\EloquentModelGenerator\Config;
 use Cws\EloquentModelGenerator\Model\EloquentModel;
+use phpDocumentor\Reflection\Types\Boolean;
 
 /**
  * Class AdditionalProcessor
@@ -15,7 +16,7 @@ class AdditionalProcessor implements ProcessorInterface
     /**
      * @inheritdoc
      */
-    public function process(EloquentModel $model, Config $config)
+    public function process(EloquentModel $model, Config $config): AdditionalProcessor
     {
         if (!Misc::endsWith($model->getTableName(), "_translations")) {
             $this->createRoutesForModelIfNeeded($config, $model);
@@ -32,7 +33,7 @@ class AdditionalProcessor implements ProcessorInterface
      * @param Config $config
      * @param EloquentModel $model
      */
-    private function createRoutesForModelIfNeeded(Config $config, EloquentModel $model, bool $isApi = false)
+    private function createRoutesForModelIfNeeded(Config $config, EloquentModel $model, bool $isApi = false): void
     {
         if ((!$isApi && $config->get("routes") !== false) || ($isApi && $config->get("api_routes") !== false)) {
             $controllerPath = $config->get('controller_path');
@@ -66,7 +67,7 @@ class AdditionalProcessor implements ProcessorInterface
      * @param $controllerPath
      * @return string|null
      */
-    private function prepareRouteCommand($isApi, EloquentModel $model, $controllerPath)
+    private function prepareRouteCommand($isApi, EloquentModel $model, $controllerPath): string
     {
         $toPrint = null;
         if (!$isApi) {
@@ -120,7 +121,7 @@ class AdditionalProcessor implements ProcessorInterface
      * @param Config $config
      * @param EloquentModel $model
      */
-    private function createApiResourceForModelIfNeeded(Config $config, EloquentModel $model)
+    private function createApiResourceForModelIfNeeded(Config $config, EloquentModel $model): void
     {
         if ($config->get("resource") !== false) {
             //invoke the artisan command to create controller
@@ -173,7 +174,7 @@ class AdditionalProcessor implements ProcessorInterface
      * @param Config $config
      * @param EloquentModel $model
      */
-    private function createApiControllerForModelIfNeeded(Config $config, EloquentModel $model)
+    private function createApiControllerForModelIfNeeded(Config $config, EloquentModel $model): void
     {
         if ($config->get("api-controller") !== false) {
             $config->checkIfFileAlreadyExistsOrCopyIt(
@@ -236,7 +237,7 @@ class AdditionalProcessor implements ProcessorInterface
     /**
      * Add response factory to bootstrap/app file and uncomment facades and with eloquent
      */
-    private function addResponseFactoryAndUncommentFacadesAndWithEloquentOnAppFile()
+    private function addResponseFactoryAndUncommentFacadesAndWithEloquentOnAppFile(): void
     {
         $appPath = base_path("bootstrap/app.php");
         $stringToLookFor = '$app->singleton(\'Illuminate\Contracts\Routing\ResponseFactory';
@@ -273,7 +274,7 @@ class AdditionalProcessor implements ProcessorInterface
     /**
      * @inheritdoc
      */
-    public function getPriority()
+    public function getPriority(): int
     {
         return 0;
     }

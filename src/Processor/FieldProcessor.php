@@ -40,7 +40,7 @@ class FieldProcessor implements ProcessorInterface
     /**
      * @inheritdoc
      */
-    public function process(EloquentModel $model, Config $config)
+    public function process(EloquentModel $model, Config $config): FieldProcessor
     {
         $schemaManager = $this->databaseManager->connection($config->get('connection'))->getDoctrineSchemaManager();
         $prefix = $this->databaseManager->connection($config->get('connection'))->getTablePrefix();
@@ -129,7 +129,7 @@ class FieldProcessor implements ProcessorInterface
      * @param $columnNames
      * @param bool $excludeTimestamps
      */
-    private function checkTimestampsAndSoftDeletes(&$model, $columnNames, $excludeTimestamps = false)
+    private function checkTimestampsAndSoftDeletes(&$model, $columnNames, $excludeTimestamps = false): void
     {
         if (in_array('deleted_at', $columnNames)) {
             $model->addUses(new UseClassModel("Illuminate\Database\Eloquent\SoftDeletes"));
@@ -148,7 +148,7 @@ class FieldProcessor implements ProcessorInterface
      * @param $columnType
      * @return string
      */
-    private function getValidMappingFromColumnType($columnType)
+    private function getValidMappingFromColumnType($columnType): string
     {
         switch ($columnType) {
             case "json":
@@ -176,7 +176,7 @@ class FieldProcessor implements ProcessorInterface
      * @param string $mapping
      * @return string
      */
-    private function getRules(Column $column, $mapping)
+    private function getRules(Column $column, $mapping): string
     {
         $rules = [];
         if ($column->getNotnull()) {
@@ -211,7 +211,7 @@ class FieldProcessor implements ProcessorInterface
     /**
      * @inheritdoc
      */
-    public function getPriority()
+    public function getPriority(): int
     {
         return 5;
     }
@@ -222,7 +222,7 @@ class FieldProcessor implements ProcessorInterface
      * @param EloquentModel $model
      * @param AbstractSchemaManager $schemaManager
      */
-    private function processTranslation(EloquentModel &$model, AbstractSchemaManager $schemaManager)
+    private function processTranslation(EloquentModel &$model, AbstractSchemaManager $schemaManager): void
     {
         $translationTable = $this->checkIfHasTranslation($model, $schemaManager);
         if (!empty($translationTable)) {
@@ -239,7 +239,7 @@ class FieldProcessor implements ProcessorInterface
      * @param AbstractSchemaManager $schemaManager
      * @return Table
      */
-    private function checkIfHasTranslation(EloquentModel $model, AbstractSchemaManager $schemaManager)
+    private function checkIfHasTranslation(EloquentModel $model, AbstractSchemaManager $schemaManager): Table
     {
         $translationTableName = Str::singular($model->getTableName()) . "_translations";
         if ($schemaManager->tablesExist([$translationTableName])) {
@@ -253,7 +253,7 @@ class FieldProcessor implements ProcessorInterface
      * @param EloquentModel $model
      * @param Table $translationTable
      */
-    private function getTranslatedAttributes(EloquentModel &$model, Table $translationTable)
+    private function getTranslatedAttributes(EloquentModel &$model, Table $translationTable): void
     {
         $columns = [];
         $primaryColumnNames = $translationTable->getPrimaryKey() ?

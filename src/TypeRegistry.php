@@ -50,7 +50,7 @@ class TypeRegistry
      * @param string $value
      * @param string|null $connection
      */
-    public function registerType($type, $value, $connection = null)
+    public function registerType($type, $value, $connection = null): void
     {
         $this->types[$type] = $value;
 
@@ -63,7 +63,7 @@ class TypeRegistry
      *
      * @return string
      */
-    public function resolveType($type)
+    public function resolveType($type): string
     {
         return array_key_exists($type, $this->types) ? $this->types[$type] : 'mixed';
     }

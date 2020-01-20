@@ -30,7 +30,7 @@ abstract class Relation
     /**
      * @return string
      */
-    public function getTableName()
+    public function getTableName(): string
     {
         return $this->tableName;
     }
@@ -40,7 +40,7 @@ abstract class Relation
      *
      * @return $this
      */
-    public function setTableName($tableName)
+    public function setTableName($tableName): Relation
     {
         $this->tableName = $tableName;
 
@@ -50,7 +50,7 @@ abstract class Relation
     /**
      * @return string
      */
-    public function getForeignColumnName()
+    public function getForeignColumnName(): string
     {
         return $this->foreignColumnName;
     }
@@ -60,7 +60,7 @@ abstract class Relation
      *
      * @return $this
      */
-    public function setForeignColumnName($foreignColumnName)
+    public function setForeignColumnName($foreignColumnName): Relation
     {
         $this->foreignColumnName = $foreignColumnName;
 
@@ -70,7 +70,7 @@ abstract class Relation
     /**
      * @return string
      */
-    public function getLocalColumnName()
+    public function getLocalColumnName(): string
     {
         return $this->localColumnName;
     }
@@ -80,7 +80,7 @@ abstract class Relation
      *
      * @return $this
      */
-    public function setLocalColumnName($localColumnName)
+    public function setLocalColumnName($localColumnName): Relation
     {
         $this->localColumnName = $localColumnName;
 

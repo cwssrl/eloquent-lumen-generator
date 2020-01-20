@@ -30,7 +30,7 @@ class EloquentModelBuilder
      * @param Config $config
      * @return EloquentModel
      */
-    public function createModel(Config $config)
+    public function createModel(Config $config): EloquentModel
     {
         $model = new EloquentModel();
         $this->prepareProcessors();
@@ -51,7 +51,13 @@ class EloquentModelBuilder
     /**
      * Sort processors by priority
      */
-    protected function prepareProcessors()
+
+     /**
+      * Undocumented function
+      *
+      * @return void
+      */
+    protected function prepareProcessors(): void
     {
         $temp = [];
         $current = null;

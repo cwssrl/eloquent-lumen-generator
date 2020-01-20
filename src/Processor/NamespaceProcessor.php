@@ -15,7 +15,7 @@ class NamespaceProcessor implements ProcessorInterface
     /**
      * @inheritdoc
      */
-    public function process(EloquentModel $model, Config $config)
+    public function process(EloquentModel $model, Config $config): void
     {
         $model->setNamespace(new NamespaceModel($config->get('namespace')));
     }
@@ -23,7 +23,7 @@ class NamespaceProcessor implements ProcessorInterface
     /**
      * @inheritdoc
      */
-    public function getPriority()
+    public function getPriority(): int
     {
         return 6;
     }
