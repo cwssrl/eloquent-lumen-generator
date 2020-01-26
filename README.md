@@ -1,5 +1,7 @@
 # Eloquent Lumen Generator
 
+[![SonarCloud](https://sonarcloud.io/images/project_badges/sonarcloud-white.svg)](https://sonarcloud.io/dashboard?id=cwssrl_eloquent-lumen-generator)  [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=cwssrl_eloquent-lumen-generator&metric=alert_status)](https://sonarcloud.io/dashboard?id=cwssrl_eloquent-lumen-generator)  [![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=cwssrl_eloquent-lumen-generator&metric=vulnerabilities)](https://sonarcloud.io/dashboard?id=cwssrl_eloquent-lumen-generator)
+
 Eloquent Lumen Generator is a tool based on [Code Generator](https://github.com/cwssrl/code-generator) for generating Eloquent models.
 It comes with the possibility to generate the following items:
 - Model;
